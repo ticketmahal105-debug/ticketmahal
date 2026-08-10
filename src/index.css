@@ -1,0 +1,52 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+@theme {
+  --color-ivory: #F8F5EF;
+  --color-beige: #EFE6DA;
+  --color-champagne: #D6B37B;
+  --color-charcoal: #2B2B2B;
+  
+  --font-inter: "Inter", sans-serif;
+  --font-playfair: "Playfair Display", serif;
+}
+
+@layer base {
+  body {
+    @apply bg-ivory text-charcoal font-inter antialiased overflow-x-hidden;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-playfair;
+  }
+}
+
+/* Custom background for the entire page to give that premium quiet luxury feel */
+.bg-premium-noise {
+  background-color: #F8F5EF; /* Warm Ivory */
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(39, 39%, 90%, 1) 0px, transparent 60%),
+    radial-gradient(at 100% 100%, hsla(38, 25%, 85%, 1) 0px, transparent 60%);
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Subtle noise overlay */
+.bg-premium-noise::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  z-index: 0;
+}
+
+/* Hide scrollbar for the category chips */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

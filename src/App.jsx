@@ -6,6 +6,21 @@ import BrowseCategories from './components/BrowseCategories';
 import ResetPassword from './pages/ResetPassword';
 import AuthCallback from './pages/AuthCallback';
 import ProtectedRoute from './routes/ProtectedRoute';
+import ProfilePage from './pages/ProfilePage';
+import MyTicketsPage from './pages/MyTicketsPage';
+import MyBookingsPage from './pages/MyBookingsPage';
+import BookingDetailsPage from './pages/BookingDetailsPage';
+import WishlistPage from './pages/WishlistPage';
+import { WishlistProvider } from './context/WishlistContext';
+import AdminRoute from './routes/AdminRoute';
+import AdminLayout from './admin/layouts/AdminLayout';
+import AdminDashboard from './admin/pages/AdminDashboard';
+import AdminEvents from './admin/pages/AdminEvents';
+import AdminEventForm from './admin/pages/AdminEventForm';
+import AdminBookings from './admin/pages/AdminBookings';
+import AdminBookingDetails from './admin/pages/AdminBookingDetails';
+import AdminTickets from './admin/pages/AdminTickets';
+import AdminUsers from './admin/pages/AdminUsers';
 
 function Home() {
   return (
@@ -19,23 +34,12 @@ function Home() {
   );
 }
 
-// Example protected component placeholder
-function Profile() {
-  return (
-    <div className="bg-premium-noise min-h-screen selection:bg-champagne/30 selection:text-charcoal pt-32 px-6">
-      <Navbar />
-      <div className="max-w-7xl mx-auto">
-        <h1 className="font-playfair text-3xl text-charcoal">My Profile</h1>
-        <p className="mt-4 text-charcoal/70">This is a protected route.</p>
-      </div>
-    </div>
-  );
-}
 
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <WishlistProvider>
+        <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/reset-password" element={<ResetPassword />} />
@@ -46,12 +50,73 @@ function App() {
             path="/profile" 
             element={
               <ProtectedRoute>
-                <Profile />
+                <ProfilePage />
               </ProtectedRoute>
             } 
           />
+          <Route 
+            path="/my-tickets" 
+            element={
+              <ProtectedRoute>
+                <MyTicketsPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/my-bookings" 
+            element={
+              <ProtectedRoute>
+                <MyBookingsPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/my-bookings/:bookingNumber" 
+            element={
+              <ProtectedRoute>
+                <BookingDetailsPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/bookings" 
+            element={
+              <ProtectedRoute>
+                <MyBookingsPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/bookings/:bookingNumber" 
+            element={
+              <ProtectedRoute>
+                <BookingDetailsPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/wishlist" 
+            element={
+              <ProtectedRoute>
+                <WishlistPage />
+              </ProtectedRoute>
+            } 
+          />
+
+          {/* Admin Routes */}
+          <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="events" element={<AdminEvents />} />
+            <Route path="events/new" element={<AdminEventForm />} />
+            <Route path="events/:id/edit" element={<AdminEventForm />} />
+            <Route path="bookings" element={<AdminBookings />} />
+            <Route path="bookings/:bookingNumber" element={<AdminBookingDetails />} />
+            <Route path="tickets" element={<AdminTickets />} />
+            <Route path="users" element={<AdminUsers />} />
+          </Route>
         </Routes>
       </BrowserRouter>
+      </WishlistProvider>
     </AuthProvider>
   );
 }

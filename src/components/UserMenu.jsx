@@ -1,14 +1,35 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
-import { User, Ticket, Calendar, Heart, LogOut, ChevronDown } from 'lucide-react';
+import { User, Ticket, Calendar, Heart, LogOut, ChevronDown, ShieldAlert } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 
 const UserMenu = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const menuRef = useRef(null);
+
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      if (!user) return;
+      try {
+        const { data } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+        if (data?.role === 'admin') {
+          setIsAdmin(true);
+        }
+      } catch (err) {
+        console.error('Error fetching role in UserMenu:', err);
+      }
+    };
+    fetchUserRole();
+  }, [user]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -82,6 +103,14 @@ const UserMenu = () => {
             </div>
             
             <div className="py-1">
+              {isAdmin && (
+                <button 
+                  onClick={() => { setIsOpen(false); navigate('/admin'); }}
+                  className="w-full text-left px-4 py-2.5 text-sm text-champagne hover:bg-champagne/10 transition-colors flex items-center gap-3 font-semibold border-b border-beige/30"
+                >
+                  <ShieldAlert size={16} /> Admin Panel
+                </button>
+              )}
               <button 
                 onClick={() => { setIsOpen(false); navigate('/profile'); }}
                 className="w-full text-left px-4 py-2.5 text-sm text-charcoal/70 hover:text-charcoal hover:bg-ivory transition-colors flex items-center gap-3"
@@ -107,6 +136,7 @@ const UserMenu = () => {
                 <Heart size={16} className="text-charcoal/40" /> Wishlist
               </button>
             </div>
+
             
             <div className="border-t border-beige/40 py-1 mt-1">
               <button 

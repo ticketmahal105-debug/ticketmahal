@@ -1,0 +1,37 @@
+const TicketsSkeleton = () => {
+  return (
+    <div className="flex flex-col gap-4 animate-pulse">
+      {[1, 2, 3].map((i) => (
+        <div
+          key={i}
+          className="bg-white border border-beige/60 rounded-2xl p-4 flex flex-col md:flex-row gap-4 overflow-hidden"
+        >
+          {/* Image skeleton */}
+          <div className="w-full md:w-[200px] h-36 md:h-auto bg-beige/40 rounded-xl shrink-0" />
+
+          {/* Content skeleton */}
+          <div className="flex-1 flex flex-col justify-between gap-4 py-1">
+            <div className="flex flex-col gap-2">
+              <div className="h-5 w-16 bg-beige/40 rounded-full" />
+              <div className="h-7 w-56 bg-beige/50 rounded-lg" />
+              <div className="h-4 w-40 bg-beige/30 rounded-md" />
+              <div className="h-4 w-32 bg-beige/30 rounded-md" />
+            </div>
+            <div className="flex gap-3">
+              <div className="h-4 w-24 bg-beige/30 rounded-md" />
+              <div className="h-4 w-20 bg-beige/30 rounded-md" />
+            </div>
+          </div>
+
+          {/* Action skeleton */}
+          <div className="flex flex-col items-end justify-between gap-4 shrink-0">
+            <div className="h-6 w-20 bg-beige/40 rounded-full" />
+            <div className="h-9 w-28 bg-beige/40 rounded-full" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default TicketsSkeleton;

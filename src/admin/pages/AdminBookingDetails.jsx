@@ -70,16 +70,16 @@ const AdminBookingDetails = () => {
   if (loading) {
     return (
       <div className="flex justify-center py-20">
-        <div className="w-8 h-8 border-2 border-champagne/30 border-t-champagne rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-ticket-gold/30 border-t-ticket-burgundy rounded-full animate-spin" />
       </div>
     );
   }
 
   if (error || !booking) {
     return (
-      <div className="text-center py-20 bg-white border border-beige/60 rounded-3xl shadow-sm">
+      <div className="text-center py-20 bg-ticket-white border border-ticket-beige/60 rounded-3xl shadow-sm">
         <p className="text-red-500 font-medium mb-4">{error || "Booking not found"}</p>
-        <button onClick={() => navigate('/admin/bookings')} className="px-5 py-2.5 bg-charcoal text-white rounded-full text-sm">
+        <button onClick={() => navigate('/admin/bookings')} className="px-5 py-2.5 bg-ticket-charcoal text-ticket-white rounded-full text-sm">
           Back to Bookings
         </button>
       </div>
@@ -92,15 +92,15 @@ const AdminBookingDetails = () => {
       <div className="flex items-center gap-3">
         <button
           onClick={() => navigate('/admin/bookings')}
-          className="p-2 border border-beige hover:border-champagne hover:text-champagne text-charcoal/60 rounded-xl transition-all"
+          className="p-2 border border-ticket-beige hover:border-ticket-burgundy hover:text-ticket-burgundy text-ticket-charcoal/60 rounded-xl transition-all"
         >
           <ArrowLeft size={16} />
         </button>
         <div>
-          <h1 className="font-playfair text-3xl font-semibold text-charcoal tracking-wide mb-1">
+          <h1 className="font-playfair text-3xl font-semibold text-ticket-charcoal tracking-wide mb-1">
             Booking #{booking.booking_number}
           </h1>
-          <p className="text-charcoal/60 text-sm">Review transaction details, manage states, and view ticket barcodes.</p>
+          <p className="text-ticket-charcoal/60 text-sm">Review transaction details, manage states, and view ticket barcodes.</p>
         </div>
       </div>
 
@@ -110,54 +110,54 @@ const AdminBookingDetails = () => {
         <div className="lg:col-span-2 flex flex-col gap-6">
           
           {/* Card: Event & Customer Info */}
-          <div className="bg-white border border-beige/60 rounded-3xl p-6 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-ticket-white border border-ticket-beige/60 rounded-3xl p-6 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-6">
             
             {/* Event info */}
             <div>
-              <div className="flex items-center gap-2 text-champagne text-xs font-semibold uppercase tracking-wider mb-3">
+              <div className="flex items-center gap-2 text-ticket-burgundy text-xs font-semibold uppercase tracking-wider mb-3">
                 <Calendar size={14} />
                 <span>Event Information</span>
               </div>
-              <h3 className="font-playfair text-xl font-bold text-charcoal mb-2">{booking.events?.event_name}</h3>
-              <p className="text-sm text-charcoal/60">{new Date(booking.events?.event_date).toLocaleDateString()}</p>
-              <p className="text-sm text-charcoal/60">{booking.events?.venue_name}, {booking.events?.city}</p>
+              <h3 className="font-playfair text-xl font-bold text-ticket-charcoal mb-2">{booking.events?.event_name}</h3>
+              <p className="text-sm text-ticket-charcoal/60">{new Date(booking.events?.event_date).toLocaleDateString()}</p>
+              <p className="text-sm text-ticket-charcoal/60">{booking.events?.venue_name}, {booking.events?.city}</p>
             </div>
 
             {/* Customer Info */}
-            <div className="md:border-l border-beige/40 md:pl-6">
-              <div className="flex items-center gap-2 text-champagne text-xs font-semibold uppercase tracking-wider mb-3">
+            <div className="md:border-l border-ticket-beige/40 md:pl-6">
+              <div className="flex items-center gap-2 text-ticket-burgundy text-xs font-semibold uppercase tracking-wider mb-3">
                 <User size={14} />
                 <span>Customer Profile</span>
               </div>
-              <h3 className="font-semibold text-charcoal text-base">
+              <h3 className="font-semibold text-ticket-charcoal text-base">
                 {booking.profiles?.first_name} {booking.profiles?.last_name}
               </h3>
-              <p className="text-sm text-charcoal/60">{booking.profiles?.email}</p>
-              <p className="text-xs text-charcoal/40 mt-2">ID: {booking.profiles?.id}</p>
+              <p className="text-sm text-ticket-charcoal/60">{booking.profiles?.email}</p>
+              <p className="text-xs text-ticket-charcoal/40 mt-2">ID: {booking.profiles?.id}</p>
             </div>
 
           </div>
 
           {/* Card: Tickets Issued */}
-          <div className="bg-white border border-beige/60 rounded-3xl p-6 shadow-sm">
-            <h3 className="font-playfair text-lg font-semibold text-charcoal mb-4 border-b border-beige/40 pb-2">
+          <div className="bg-ticket-white border border-ticket-beige/60 rounded-3xl p-6 shadow-sm">
+            <h3 className="font-playfair text-lg font-semibold text-ticket-charcoal mb-4 border-b border-ticket-beige/40 pb-2">
               Issued Tickets ({tickets.length})
             </h3>
             
             {tickets.length === 0 ? (
-              <p className="text-sm text-charcoal/50">No tickets generated for this booking.</p>
+              <p className="text-sm text-ticket-charcoal/50">No tickets generated for this booking.</p>
             ) : (
               <div className="flex flex-col gap-3">
                 {tickets.map((ticket) => (
-                  <div key={ticket.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-ivory/30 border border-beige/40 rounded-2xl gap-3">
+                  <div key={ticket.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-ticket-ivory/30 border border-ticket-beige/40 rounded-2xl gap-3">
                     <div>
-                      <div className="text-sm font-semibold text-charcoal">{ticket.ticket_number}</div>
-                      <div className="text-xs text-champagne font-medium uppercase tracking-wider mt-0.5">
+                      <div className="text-sm font-semibold text-ticket-charcoal">{ticket.ticket_number}</div>
+                      <div className="text-xs text-ticket-burgundy font-medium uppercase tracking-wider mt-0.5">
                         {ticket.ticket_type || 'General'} Tier
                       </div>
                     </div>
                     <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
-                      <span className="text-xs text-charcoal/50">Qty: {ticket.quantity || 1}</span>
+                      <span className="text-xs text-ticket-charcoal/50">Qty: {ticket.quantity || 1}</span>
                       <span className={`px-2.5 py-1 rounded-full border text-xs font-semibold capitalize ${
                         ticket.status === 'active' 
                           ? 'bg-green-50 text-green-700 border-green-200' 
@@ -178,19 +178,19 @@ const AdminBookingDetails = () => {
         <div className="flex flex-col gap-6">
           
           {/* Card: Order Status */}
-          <div className="bg-white border border-beige/60 rounded-3xl p-6 shadow-sm flex flex-col gap-4">
-            <h3 className="font-playfair text-lg font-semibold text-charcoal mb-2 border-b border-beige/40 pb-2">
+          <div className="bg-ticket-white border border-ticket-beige/60 rounded-3xl p-6 shadow-sm flex flex-col gap-4">
+            <h3 className="font-playfair text-lg font-semibold text-ticket-charcoal mb-2 border-b border-ticket-beige/40 pb-2">
               Order Status
             </h3>
 
             <div>
-              <span className="text-xs text-charcoal/60 uppercase font-semibold">Booking State</span>
-              <div className="text-xl font-bold text-charcoal capitalize mt-1">{booking.booking_status}</div>
+              <span className="text-xs text-ticket-charcoal/60 uppercase font-semibold">Booking State</span>
+              <div className="text-xl font-bold text-ticket-charcoal capitalize mt-1">{booking.booking_status}</div>
             </div>
 
             <div>
-              <span className="text-xs text-charcoal/60 uppercase font-semibold">Payment State</span>
-              <div className="text-xl font-bold text-charcoal capitalize mt-1">{booking.payment_status || 'Paid'}</div>
+              <span className="text-xs text-ticket-charcoal/60 uppercase font-semibold">Payment State</span>
+              <div className="text-xl font-bold text-ticket-charcoal capitalize mt-1">{booking.payment_status || 'Paid'}</div>
             </div>
 
             <div className="border-t border-beige/45 pt-4 flex flex-col gap-2">
@@ -198,7 +198,7 @@ const AdminBookingDetails = () => {
                 <button
                   onClick={() => handleUpdateStatus('confirmed')}
                   disabled={updating}
-                  className="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl text-sm transition-all"
+                  className="w-full py-3 bg-green-600 hover:bg-green-700 text-ticket-white font-semibold rounded-xl text-sm transition-all"
                 >
                   Confirm Booking
                 </button>
@@ -215,7 +215,7 @@ const AdminBookingDetails = () => {
                   <button
                     onClick={() => handleUpdateStatus('refunded')}
                     disabled={updating}
-                    className="w-full py-3 bg-charcoal text-white hover:bg-charcoal/95 font-semibold rounded-xl text-sm transition-all"
+                    className="w-full py-3 bg-ticket-charcoal text-ticket-white hover:bg-ticket-charcoal/95 font-semibold rounded-xl text-sm transition-all"
                   >
                     Refund Booking
                   </button>
@@ -225,17 +225,17 @@ const AdminBookingDetails = () => {
           </div>
 
           {/* Card: Summary */}
-          <div className="bg-white border border-beige/60 rounded-3xl p-6 shadow-sm flex flex-col gap-4">
-            <h3 className="font-playfair text-lg font-semibold text-charcoal mb-2 border-b border-beige/40 pb-2">
+          <div className="bg-ticket-white border border-ticket-beige/60 rounded-3xl p-6 shadow-sm flex flex-col gap-4">
+            <h3 className="font-playfair text-lg font-semibold text-ticket-charcoal mb-2 border-b border-ticket-beige/40 pb-2">
               Pricing Breakdown
             </h3>
             
-            <div className="flex flex-col gap-2 text-sm text-charcoal/70">
+            <div className="flex flex-col gap-2 text-sm text-ticket-charcoal/70">
               <div className="flex justify-between">
                 <span>Subtotal</span>
                 <span>AED {Number(booking.total_amount).toLocaleString()}</span>
               </div>
-              <div className="flex justify-between font-bold text-charcoal text-base border-t border-beige/40 pt-2 mt-2">
+              <div className="flex justify-between font-bold text-ticket-charcoal text-base border-t border-ticket-beige/40 pt-2 mt-2">
                 <span>Total Amount</span>
                 <span>AED {Number(booking.total_amount).toLocaleString()}</span>
               </div>

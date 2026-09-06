@@ -47,7 +47,7 @@ const TicketDetailsModal = ({ ticket, user, onClose }) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="absolute inset-0 bg-charcoal/40 backdrop-blur-sm"
+          className="absolute inset-0 bg-ticket-charcoal/40 backdrop-blur-sm"
         />
 
         {/* Modal */}
@@ -56,19 +56,19 @@ const TicketDetailsModal = ({ ticket, user, onClose }) => {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.96, y: 12 }}
           transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-          className="relative w-full max-w-md bg-ivory rounded-3xl overflow-hidden shadow-2xl border border-beige/40"
+          className="relative w-full max-w-md bg-ticket-ivory rounded-3xl overflow-hidden shadow-2xl border border-ticket-beige/40"
         >
           {/* Close button */}
           <button
             onClick={onClose}
             aria-label="Close ticket modal"
-            className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-white/80 border border-beige/40 flex items-center justify-center text-charcoal/50 hover:text-charcoal hover:bg-white transition-all"
+            className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-white/80 border border-ticket-beige/40 flex items-center justify-center text-ticket-charcoal/50 hover:text-ticket-charcoal hover:bg-white transition-all"
           >
             <X size={16} />
           </button>
 
           {/* Event Image Header */}
-          <div className="relative h-44 w-full overflow-hidden bg-beige/30">
+          <div className="relative h-44 w-full overflow-hidden bg-ticket-beige/30">
             {event?.event_image ? (
               <img
                 src={event.event_image}
@@ -76,16 +76,16 @@ const TicketDetailsModal = ({ ticket, user, onClose }) => {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-champagne/20 to-beige/30">
-                <span className="font-playfair text-3xl text-champagne/50 font-semibold">
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-ticket-burgundy/10 to-beige/30">
+                <span className="font-playfair text-3xl text-ticket-burgundy/50 font-semibold">
                   {event?.event_name?.charAt(0) || 'T'}
                 </span>
               </div>
             )}
             {/* Cancelled overlay */}
             {isCancelled && (
-              <div className="absolute inset-0 bg-charcoal/50 flex items-center justify-center">
-                <span className="text-white font-semibold text-xl tracking-wider uppercase border-2 border-white/50 px-4 py-2 rounded-lg">
+              <div className="absolute inset-0 bg-ticket-charcoal/50 flex items-center justify-center">
+                <span className="text-ticket-white font-semibold text-xl tracking-wider uppercase border-2 border-white/50 px-4 py-2 rounded-lg">
                   Cancelled
                 </span>
               </div>
@@ -96,11 +96,11 @@ const TicketDetailsModal = ({ ticket, user, onClose }) => {
           <div className="px-6 pt-5 pb-6 flex flex-col gap-5">
             {/* Event title */}
             <div>
-              <h2 className="font-playfair text-2xl font-semibold text-charcoal">
+              <h2 className="font-playfair text-2xl font-semibold text-ticket-charcoal">
                 {event?.event_name || 'Event'}
               </h2>
               {event?.category && (
-                <span className="text-xs font-medium text-champagne uppercase tracking-wider">
+                <span className="text-xs font-medium text-ticket-burgundy uppercase tracking-wider">
                   {event.category}
                 </span>
               )}
@@ -108,50 +108,50 @@ const TicketDetailsModal = ({ ticket, user, onClose }) => {
 
             {/* Details grid */}
             <div className="grid grid-cols-1 gap-3">
-              <div className="flex items-center gap-3 text-sm text-charcoal/70">
-                <Calendar size={15} className="text-champagne shrink-0" />
+              <div className="flex items-center gap-3 text-sm text-ticket-charcoal/70">
+                <Calendar size={15} className="text-ticket-burgundy shrink-0" />
                 <span>{formatDate(event?.event_date)}</span>
               </div>
-              <div className="flex items-center gap-3 text-sm text-charcoal/70">
-                <Clock size={15} className="text-champagne shrink-0" />
+              <div className="flex items-center gap-3 text-sm text-ticket-charcoal/70">
+                <Clock size={15} className="text-ticket-burgundy shrink-0" />
                 <span>
                   {formatTime(event?.start_time)}
                   {event?.end_time ? ` – ${formatTime(event.end_time)}` : ''}
                 </span>
               </div>
-              <div className="flex items-center gap-3 text-sm text-charcoal/70">
-                <MapPin size={15} className="text-champagne shrink-0" />
+              <div className="flex items-center gap-3 text-sm text-ticket-charcoal/70">
+                <MapPin size={15} className="text-ticket-burgundy shrink-0" />
                 <span>
                   {event?.venue_name || '—'}
                   {event?.city ? `, ${event.city}` : ''}
                 </span>
               </div>
-              <div className="flex items-center gap-3 text-sm text-charcoal/70">
-                <User size={15} className="text-champagne shrink-0" />
+              <div className="flex items-center gap-3 text-sm text-ticket-charcoal/70">
+                <User size={15} className="text-ticket-burgundy shrink-0" />
                 <span>{getFullName()}</span>
               </div>
             </div>
 
             {/* Divider — tear effect */}
             <div className="relative flex items-center gap-0 my-1">
-              <div className="w-5 h-5 rounded-full bg-ivory border border-beige absolute -left-8" />
-              <div className="flex-1 border-t border-dashed border-beige" />
-              <div className="w-5 h-5 rounded-full bg-ivory border border-beige absolute -right-8" />
+              <div className="w-5 h-5 rounded-full bg-ticket-ivory border border-ticket-beige absolute -left-8" />
+              <div className="flex-1 border-t border-dashed border-ticket-beige" />
+              <div className="w-5 h-5 rounded-full bg-ticket-ivory border border-ticket-beige absolute -right-8" />
             </div>
 
             {/* Ticket meta */}
-            <div className="flex justify-between text-xs text-charcoal/50 font-medium">
+            <div className="flex justify-between text-xs text-ticket-charcoal/50 font-medium">
               <div>
-                <p className="uppercase tracking-wider mb-0.5 text-charcoal/30">Type</p>
-                <p className="text-charcoal font-semibold">{ticket.ticket_type || 'General'}</p>
+                <p className="uppercase tracking-wider mb-0.5 text-ticket-charcoal/30">Type</p>
+                <p className="text-ticket-charcoal font-semibold">{ticket.ticket_type || 'General'}</p>
               </div>
               <div>
-                <p className="uppercase tracking-wider mb-0.5 text-charcoal/30">Qty</p>
-                <p className="text-charcoal font-semibold">{ticket.quantity || 1}</p>
+                <p className="uppercase tracking-wider mb-0.5 text-ticket-charcoal/30">Qty</p>
+                <p className="text-ticket-charcoal font-semibold">{ticket.quantity || 1}</p>
               </div>
               <div className="text-right">
-                <p className="uppercase tracking-wider mb-0.5 text-charcoal/30">Ticket No.</p>
-                <p className="text-charcoal font-semibold font-mono">{ticket.ticket_number}</p>
+                <p className="uppercase tracking-wider mb-0.5 text-ticket-charcoal/30">Ticket No.</p>
+                <p className="text-ticket-charcoal font-semibold font-mono">{ticket.ticket_number}</p>
               </div>
             </div>
 
@@ -159,7 +159,7 @@ const TicketDetailsModal = ({ ticket, user, onClose }) => {
             {!isCancelled && ticket.qr_token && (
               <div className="flex flex-col items-center gap-3 mt-2">
                 <div
-                  className="p-4 bg-white rounded-2xl border border-beige/60 shadow-sm"
+                  className="p-4 bg-ticket-white rounded-2xl border border-ticket-beige/60 shadow-sm"
                   role="img"
                   aria-label={`QR code for ticket ${ticket.ticket_number} — ${event?.event_name} — ${getFullName()}`}
                 >
@@ -171,7 +171,7 @@ const TicketDetailsModal = ({ ticket, user, onClose }) => {
                     level="M"
                   />
                 </div>
-                <p className="text-xs text-charcoal/40 text-center">
+                <p className="text-xs text-ticket-charcoal/40 text-center">
                   Present this QR code at the venue entrance
                 </p>
               </div>
@@ -179,7 +179,7 @@ const TicketDetailsModal = ({ ticket, user, onClose }) => {
 
             {/* Booking reference */}
             {ticket.booking_reference && (
-              <p className="text-center text-xs text-charcoal/30 font-mono mt-1">
+              <p className="text-center text-xs text-ticket-charcoal/30 font-mono mt-1">
                 Booking: {ticket.booking_reference}
               </p>
             )}
@@ -188,7 +188,7 @@ const TicketDetailsModal = ({ ticket, user, onClose }) => {
             <button
               disabled
               title="PDF download coming soon"
-              className="w-full flex items-center justify-center gap-2 py-3 border border-beige rounded-2xl text-sm font-medium text-charcoal/40 cursor-not-allowed transition-all"
+              className="w-full flex items-center justify-center gap-2 py-3 border border-ticket-beige rounded-2xl text-sm font-medium text-ticket-charcoal/40 cursor-not-allowed transition-all"
             >
               <Download size={15} />
               Download Ticket (Coming Soon)

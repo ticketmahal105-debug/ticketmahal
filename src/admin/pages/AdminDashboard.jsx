@@ -47,7 +47,7 @@ const AdminDashboard = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-2 border-champagne/30 border-t-champagne rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-ticket-gold/30 border-t-ticket-burgundy rounded-full animate-spin" />
       </div>
     );
   }
@@ -55,8 +55,8 @@ const AdminDashboard = () => {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="font-playfair text-3xl font-semibold text-charcoal tracking-wide mb-2">Dashboard Overview</h1>
-        <p className="text-charcoal/60 text-sm">Welcome back. Here's what's happening today.</p>
+        <h1 className="font-playfair text-3xl font-semibold text-ticket-charcoal tracking-wide mb-2">Dashboard Overview</h1>
+        <p className="text-ticket-charcoal/60 text-sm">Welcome back. Here's what's happening today.</p>
       </div>
 
       {/* KPI Cards */}
@@ -99,29 +99,29 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Placeholder: Sales Chart */}
-        <div className="lg:col-span-2 bg-white border border-beige/60 rounded-3xl p-6 shadow-sm min-h-[300px] flex flex-col items-center justify-center text-center">
-          <Calendar size={32} className="text-champagne/40 mb-3" />
-          <h3 className="text-charcoal font-semibold mb-1">Sales Overview</h3>
-          <p className="text-charcoal/50 text-sm">Chart integration coming soon.</p>
+        <div className="lg:col-span-2 bg-ticket-white border border-ticket-beige/60 rounded-3xl p-6 shadow-sm min-h-[300px] flex flex-col items-center justify-center text-center">
+          <Calendar size={32} className="text-ticket-burgundy/40 mb-3" />
+          <h3 className="text-ticket-charcoal font-semibold mb-1">Sales Overview</h3>
+          <p className="text-ticket-charcoal/50 text-sm">Chart integration coming soon.</p>
         </div>
 
         {/* Placeholder: Recent Alerts / Activity */}
-        <div className="bg-white border border-beige/60 rounded-3xl p-6 shadow-sm min-h-[300px]">
-          <h3 className="font-playfair text-lg font-semibold text-charcoal mb-4 border-b border-beige/40 pb-2">Recent Activity</h3>
+        <div className="bg-ticket-white border border-ticket-beige/60 rounded-3xl p-6 shadow-sm min-h-[300px]">
+          <h3 className="font-playfair text-lg font-semibold text-ticket-charcoal mb-4 border-b border-ticket-beige/40 pb-2">Recent Activity</h3>
           
           <div className="flex flex-col gap-4">
             <div className="flex gap-3 items-start">
               <div className="mt-0.5"><AlertCircle size={16} className="text-amber-500" /></div>
               <div>
-                <p className="text-sm font-medium text-charcoal">Low Inventory Warning</p>
-                <p className="text-xs text-charcoal/60">Coldplay Live - VIP Tickets (5 left)</p>
+                <p className="text-sm font-medium text-ticket-charcoal">Low Inventory Warning</p>
+                <p className="text-xs text-ticket-charcoal/60">Coldplay Live - VIP Tickets (5 left)</p>
               </div>
             </div>
             <div className="flex gap-3 items-start">
               <div className="mt-0.5"><Receipt size={16} className="text-green-500" /></div>
               <div>
-                <p className="text-sm font-medium text-charcoal">New Booking</p>
-                <p className="text-xs text-charcoal/60">TM-BK-48291 confirmed (AED 1,200)</p>
+                <p className="text-sm font-medium text-ticket-charcoal">New Booking</p>
+                <p className="text-xs text-ticket-charcoal/60">TM-BK-48291 confirmed (AED 1,200)</p>
               </div>
             </div>
           </div>

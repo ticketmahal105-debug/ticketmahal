@@ -86,22 +86,22 @@ const MyTicketsPage = () => {
   };
 
   return (
-    <div className="bg-premium-noise min-h-screen selection:bg-champagne/30 selection:text-charcoal pt-32 px-6 pb-24 font-sans">
+    <div className="bg-premium-noise min-h-screen selection:bg-ticket-burgundy/30 selection:text-charcoal pt-32 px-6 pb-24 font-sans">
       <Navbar />
 
       <div className="max-w-7xl mx-auto">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="font-playfair text-3xl md:text-4xl text-charcoal font-semibold tracking-wide">
+          <h1 className="font-playfair text-3xl md:text-4xl text-ticket-charcoal font-semibold tracking-wide">
             My Tickets
           </h1>
-          <p className="text-charcoal/60 mt-2">View and manage your event tickets.</p>
+          <p className="text-ticket-charcoal/60 mt-2">View and manage your event tickets.</p>
         </div>
 
         <div className="flex flex-col md:flex-row gap-8">
           {/* Sidebar */}
           <div className="w-full md:w-[280px] shrink-0">
-            <div className="bg-white border border-beige rounded-3xl p-4 shadow-sm sticky top-32">
+            <div className="bg-ticket-white border border-ticket-beige rounded-3xl p-4 shadow-sm sticky top-32">
               <ProfileSidebar />
             </div>
           </div>
@@ -116,8 +116,8 @@ const MyTicketsPage = () => {
                   onClick={() => setFilter(f)}
                   className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                     filter === f
-                      ? 'bg-champagne/10 text-champagne border border-champagne/25'
-                      : 'bg-white text-charcoal/60 border border-beige hover:bg-ivory hover:text-charcoal'
+                      ? 'bg-ticket-burgundy/10 text-ticket-burgundy border border-ticket-gold/25'
+                      : 'bg-ticket-white text-ticket-charcoal/60 border border-ticket-beige hover:bg-ivory hover:text-ticket-charcoal'
                   }`}
                 >
                   {FILTER_LABELS[f]}
@@ -130,10 +130,10 @@ const MyTicketsPage = () => {
               <TicketsSkeleton />
             ) : error ? (
               <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
-                <p className="text-charcoal/60">{error}</p>
+                <p className="text-ticket-charcoal/60">{error}</p>
                 <button
                   onClick={fetchTickets}
-                  className="flex items-center gap-2 px-5 py-2.5 border border-beige rounded-full text-sm font-medium text-charcoal hover:bg-ivory transition-colors"
+                  className="flex items-center gap-2 px-5 py-2.5 border border-ticket-beige rounded-full text-sm font-medium text-ticket-charcoal hover:bg-ivory transition-colors"
                 >
                   <RefreshCw size={14} />
                   Try Again

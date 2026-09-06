@@ -1,11 +1,11 @@
 const STATUS_CONFIG = {
   active: {
     label: 'Active',
-    classes: 'bg-champagne/10 text-champagne border border-champagne/25',
+    classes: 'bg-ticket-burgundy/10 text-ticket-burgundy border border-ticket-gold/25',
   },
   used: {
     label: 'Used',
-    classes: 'bg-charcoal/5 text-charcoal/50 border border-charcoal/10',
+    classes: 'bg-ticket-charcoal/5 text-ticket-charcoal/50 border border-ticket-charcoal/10',
   },
   cancelled: {
     label: 'Cancelled',
@@ -13,7 +13,7 @@ const STATUS_CONFIG = {
   },
   expired: {
     label: 'Expired',
-    classes: 'bg-beige/60 text-charcoal/40 border border-beige',
+    classes: 'bg-beige/60 text-ticket-charcoal/40 border border-ticket-beige',
   },
 };
 

@@ -40,8 +40,8 @@ const WishlistButton = ({ eventId, className = '' }) => {
         onClick={handleClick}
         className={`w-9 h-9 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-sm border shadow-sm transition-all duration-300 ${
           saved 
-            ? 'border-champagne/40 text-champagne hover:bg-white' 
-            : 'border-beige text-charcoal/40 hover:text-champagne hover:border-champagne/30'
+            ? 'border-ticket-gold/40 text-ticket-burgundy hover:bg-white' 
+            : 'border-ticket-beige text-ticket-charcoal/40 hover:text-ticket-burgundy hover:border-ticket-gold/30'
         } ${className}`}
         aria-label={saved ? "Remove from wishlist" : "Add to wishlist"}
         aria-pressed={saved}
@@ -54,7 +54,7 @@ const WishlistButton = ({ eventId, className = '' }) => {
         >
           <Heart 
             size={18} 
-            className={saved ? 'fill-champagne' : ''} 
+            className={saved ? 'fill-ticket-burgundy' : ''} 
             strokeWidth={saved ? 1.5 : 2}
           />
         </motion.div>

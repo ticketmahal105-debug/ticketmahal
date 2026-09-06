@@ -8,61 +8,61 @@ const categories = [
     id: 1,
     name: 'Concerts',
     subtitle: '120+ experiences',
-    image: 'https://images.unsplash.com/photo-1540039155732-d68f2c5c4e32?auto=format&fit=crop&q=80&w=400',
+    image: '/images/categories/concerts.jpg',
   },
   {
     id: 2,
     name: 'Theatre & Shows',
     subtitle: '85+ experiences',
-    image: 'https://images.unsplash.com/photo-1507676184212-d0c30a3c2002?auto=format&fit=crop&q=80&w=400',
+    image: '/images/categories/theatre.jpg',
   },
   {
     id: 3,
     name: 'Comedy',
     subtitle: '40+ experiences',
-    image: 'https://images.unsplash.com/photo-1585699324551-f6c309eed262?auto=format&fit=crop&q=80&w=400',
+    image: '/images/categories/comedy.jpg',
   },
   {
     id: 4,
     name: 'Sports',
     subtitle: '30+ experiences',
-    image: 'https://images.unsplash.com/photo-1541252260730-0412e8e2108e?auto=format&fit=crop&q=80&w=400',
+    image: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&q=80&w=800',
   },
   {
     id: 5,
     name: 'Family Attractions',
     subtitle: '95+ experiences',
-    image: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&q=80&w=400',
+    image: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&q=80&w=800',
   },
   {
     id: 6,
     name: 'Dining Experiences',
     subtitle: '150+ experiences',
-    image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=400',
+    image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=800',
   },
   {
     id: 7,
     name: 'Festivals',
     subtitle: '25+ experiences',
-    image: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&q=80&w=400',
+    image: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&q=80&w=800',
   },
   {
     id: 8,
     name: 'Arabic Events',
     subtitle: '60+ experiences',
-    image: 'https://images.unsplash.com/photo-1528143358888-6d3c7f67bd5d?auto=format&fit=crop&q=80&w=400',
+    image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=800',
   },
   {
     id: 9,
     name: 'Exhibitions',
     subtitle: '50+ experiences',
-    image: 'https://images.unsplash.com/photo-1499781350541-7783f6c6a0c8?auto=format&fit=crop&q=80&w=400',
+    image: 'https://images.unsplash.com/photo-1536924940846-227afb31e2a5?auto=format&fit=crop&q=80&w=800',
   },
   {
     id: 10,
     name: 'Workshops',
     subtitle: '35+ experiences',
-    image: 'https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&q=80&w=400',
+    image: 'https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&q=80&w=800',
   },
 ];
 
@@ -137,11 +137,11 @@ const BrowseCategories = () => {
   };
 
   return (
-    <section className="bg-ivory py-24 px-6 md:px-12 flex justify-center items-center overflow-hidden">
+    <section className="bg-ticket-cream pt-12 pb-8 px-6 md:px-12 flex justify-center items-center overflow-hidden">
       <div className="max-w-7xl w-full mx-auto">
         
         {/* Header */}
-        <div className="flex items-end justify-between mb-12 border-b border-beige/40 pb-6">
+        <div className="flex items-end justify-between mb-12 border-b border-ticket-beige/40 pb-6">
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -149,17 +149,17 @@ const BrowseCategories = () => {
             transition={{ duration: prefersReducedMotion ? 0 : 0.8, ease: "easeOut" }}
             className="text-left"
           >
-            <span className="text-xs uppercase tracking-[0.25em] font-semibold text-champagne mb-2 block">
+            <span className="text-xs uppercase tracking-[0.25em] font-semibold text-ticket-burgundy mb-2 block">
               Discover
             </span>
-            <h2 className="font-playfair text-3xl md:text-4xl text-charcoal">
+            <h2 className="font-playfair text-3xl md:text-4xl text-ticket-charcoal">
               Browse by Category
             </h2>
           </motion.div>
 
           <Link
             to="/categories"
-            className="group flex items-center gap-1.5 text-sm font-medium text-charcoal/80 hover:text-champagne transition-colors duration-300"
+            className="group flex items-center gap-1.5 text-sm font-medium text-ticket-charcoal/80 hover:text-ticket-burgundy transition-colors duration-300"
           >
             <span>View All Categories</span>
             <motion.div
@@ -182,9 +182,9 @@ const BrowseCategories = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 onClick={() => handleScroll('prev')}
-                className="hidden md:flex absolute -left-6 top-[35%] -translate-y-1/2 items-center justify-center w-10 h-10 rounded-full bg-white border border-beige text-charcoal shadow-md hover:border-champagne hover:text-champagne hover:-translate-x-0.5 transition-all duration-300 z-30"
+                className="hidden md:flex absolute -left-5 top-1/2 -translate-y-1/2 items-center justify-center w-10 h-10 rounded-full bg-ticket-charcoal/80 text-white shadow-lg hover:bg-ticket-burgundy transition-all duration-300 z-30"
               >
-                <ArrowLeft size={16} />
+                <ArrowLeft size={18} />
               </motion.button>
             )}
           </AnimatePresence>
@@ -197,9 +197,9 @@ const BrowseCategories = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 onClick={() => handleScroll('next')}
-                className="hidden md:flex absolute -right-6 top-[35%] -translate-y-1/2 items-center justify-center w-10 h-10 rounded-full bg-white border border-beige text-charcoal shadow-md hover:border-champagne hover:text-champagne hover:translate-x-0.5 transition-all duration-300 z-30"
+                className="hidden md:flex absolute -right-5 top-1/2 -translate-y-1/2 items-center justify-center w-10 h-10 rounded-full bg-ticket-charcoal/80 text-white shadow-lg hover:bg-ticket-burgundy transition-all duration-300 z-30"
               >
-                <ArrowRight size={16} />
+                <ArrowRight size={18} />
               </motion.button>
             )}
           </AnimatePresence>
@@ -211,7 +211,7 @@ const BrowseCategories = () => {
             onMouseLeave={handleMouseLeaveOrUp}
             onMouseUp={handleMouseLeaveOrUp}
             onMouseMove={handleMouseMove}
-            className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-hide py-4 px-2 cursor-grab active:cursor-grabbing select-none"
+            className="flex gap-4 sm:gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-hide py-4 px-2 cursor-grab active:cursor-grabbing select-none"
           >
             {categories.map((cat, idx) => (
               <motion.div
@@ -220,39 +220,41 @@ const BrowseCategories = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{
-                  duration: prefersReducedMotion ? 0 : 0.8,
-                  delay: prefersReducedMotion ? 0 : idx * 0.08,
+                  duration: prefersReducedMotion ? 0 : 0.6,
+                  delay: prefersReducedMotion ? 0 : idx * 0.06,
                   ease: "easeOut",
                 }}
-                className="snap-start flex-shrink-0 w-[42%] sm:w-[22%] md:w-[18%] lg:w-[13.5%] flex flex-col items-center text-center group"
+                className="snap-start flex-shrink-0 w-44 h-44 sm:w-52 sm:h-52 md:w-60 md:h-60 lg:w-64 lg:h-64 group"
               >
                 <Link
                   to={`/category/${cat.name.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')}`}
-                  className="flex flex-col items-center focus:outline-none focus:ring-1 focus:ring-champagne/40 rounded-3xl p-1"
+                  className="relative block w-full h-full rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-ticket-burgundy"
                 >
-                  {/* Double Ring Circular Image Container */}
-                  <motion.div
-                    whileHover={{ y: -5 }}
-                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                    className="relative w-28 h-28 sm:w-32 sm:h-32 lg:w-36 lg:h-36 rounded-full border border-champagne/20 flex items-center justify-center p-1.5 transition-all duration-300 group-hover:border-champagne/55 group-hover:shadow-[0_8px_20px_rgba(214,179,123,0.12)] bg-white/20"
-                  >
-                    <div className="w-full h-full rounded-full border border-ivory overflow-hidden bg-ivory">
-                      <img
-                        src={cat.image}
-                        alt={cat.name}
-                        className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105 group-hover:brightness-[1.03]"
-                      />
-                    </div>
-                  </motion.div>
+                  {/* Background Image with Zoom on Hover */}
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
 
-                  {/* Titles */}
-                  <div className="mt-4">
-                    <h3 className="text-sm md:text-base font-medium text-charcoal group-hover:text-champagne transition-colors duration-300 line-clamp-2 min-h-[2.5rem] flex items-center justify-center">
-                      {cat.name}
-                    </h3>
-                    <p className="text-[10px] md:text-xs text-charcoal/45 font-light tracking-wide mt-1">
-                      {cat.subtitle}
-                    </p>
+                  {/* Gradient Overlay for Text Readability */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black/60 group-hover:from-black/60 group-hover:via-black/20 group-hover:to-black/50 transition-colors duration-300" />
+
+                  {/* Content Overlay inside Square Card (Top-Left aligned like reference image) */}
+                  <div className="relative z-10 p-4 sm:p-5 md:p-6 h-full flex flex-col justify-between">
+                    <div className="text-left">
+                      <h3 className="text-lg sm:text-xl md:text-2xl font-extrabold uppercase tracking-tight text-white leading-tight drop-shadow-md">
+                        {cat.name}
+                      </h3>
+                      <p className="text-xs sm:text-sm font-semibold text-white/90 tracking-wide mt-1.5 drop-shadow">
+                        {cat.subtitle}
+                      </p>
+                    </div>
+
+                    {/* Subtle bottom accent arrow on hover */}
+                    <div className="self-end opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white/90">
+                      <ArrowUpRight size={20} strokeWidth={2} />
+                    </div>
                   </div>
                 </Link>
               </motion.div>

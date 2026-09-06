@@ -49,20 +49,20 @@ const AdminUsers = () => {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="font-playfair text-3xl font-semibold text-charcoal tracking-wide mb-1">Customers Management</h1>
-        <p className="text-charcoal/60 text-sm">Review active profiles, transaction counts, and lifetime customer values.</p>
+        <h1 className="font-playfair text-3xl font-semibold text-ticket-charcoal tracking-wide mb-1">Customers Management</h1>
+        <p className="text-ticket-charcoal/60 text-sm">Review active profiles, transaction counts, and lifetime customer values.</p>
       </div>
 
       {/* Filter panel */}
-      <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-white p-4 border border-beige/60 rounded-3xl shadow-sm">
+      <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-ticket-white p-4 border border-ticket-beige/60 rounded-3xl shadow-sm">
         <div className="relative w-full md:max-w-md">
-          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-charcoal/40" />
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-ticket-charcoal/40" />
           <input
             type="text"
             placeholder="Search customers by name or email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-11 pr-4 py-2.5 bg-ivory border border-beige/60 rounded-full text-sm outline-none focus:border-champagne focus:bg-white transition-all placeholder:text-charcoal/30 text-charcoal"
+            className="w-full pl-11 pr-4 py-2.5 bg-ticket-ivory border border-ticket-beige/60 rounded-full text-sm outline-none focus:border-ticket-gold focus:bg-white transition-all placeholder:text-ticket-charcoal/30 text-ticket-charcoal"
           />
         </div>
       </div>
@@ -70,18 +70,18 @@ const AdminUsers = () => {
       {/* Data Table */}
       {loading ? (
         <div className="flex justify-center py-20">
-          <div className="w-8 h-8 border-2 border-champagne/30 border-t-champagne rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-ticket-gold/30 border-t-ticket-burgundy rounded-full animate-spin" />
         </div>
       ) : filteredUsers.length === 0 ? (
-        <div className="text-center py-20 bg-white border border-beige/60 rounded-3xl shadow-sm">
-          <p className="text-charcoal/60 text-sm">No customers found.</p>
+        <div className="text-center py-20 bg-ticket-white border border-ticket-beige/60 rounded-3xl shadow-sm">
+          <p className="text-ticket-charcoal/60 text-sm">No customers found.</p>
         </div>
       ) : (
-        <div className="bg-white border border-beige/60 rounded-3xl shadow-sm overflow-hidden">
+        <div className="bg-ticket-white border border-ticket-beige/60 rounded-3xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-beige/40 bg-ivory/30 text-charcoal/50 text-xs font-semibold uppercase tracking-wider">
+                <tr className="border-b border-ticket-beige/40 bg-ticket-ivory/30 text-ticket-charcoal/50 text-xs font-semibold uppercase tracking-wider">
                   <th className="px-6 py-4">Customer</th>
                   <th className="px-6 py-4">Contact</th>
                   <th className="px-6 py-4">Role</th>
@@ -99,20 +99,20 @@ const AdminUsers = () => {
 
                   return (
                     <tr key={u.id} className="hover:bg-ivory/10 transition-colors">
-                      <td className="px-6 py-4 font-semibold text-charcoal text-sm">
-                        <div className="font-semibold text-charcoal">
+                      <td className="px-6 py-4 font-semibold text-ticket-charcoal text-sm">
+                        <div className="font-semibold text-ticket-charcoal">
                           {u.first_name || '—'} {u.last_name || ''}
                         </div>
-                        <div className="text-xs text-charcoal/40 font-mono select-all">{u.id}</div>
+                        <div className="text-xs text-ticket-charcoal/40 font-mono select-all">{u.id}</div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center gap-2 text-sm text-charcoal/80">
-                          <Mail size={14} className="text-champagne shrink-0" />
+                        <div className="flex items-center gap-2 text-sm text-ticket-charcoal/80">
+                          <Mail size={14} className="text-ticket-burgundy shrink-0" />
                           <span>{u.email}</span>
                         </div>
                         {u.phone && (
-                          <div className="flex items-center gap-2 text-xs text-charcoal/50 mt-1">
-                            <Phone size={12} className="text-champagne shrink-0" />
+                          <div className="flex items-center gap-2 text-xs text-ticket-charcoal/50 mt-1">
+                            <Phone size={12} className="text-ticket-burgundy shrink-0" />
                             <span>{u.phone}</span>
                           </div>
                         )}
@@ -120,22 +120,22 @@ const AdminUsers = () => {
                       <td className="px-6 py-4 text-xs font-semibold">
                         <span className={`px-2.5 py-0.5 rounded-full border ${
                           u.role === 'admin' 
-                            ? 'bg-champagne/10 text-champagne border-champagne/30' 
-                            : 'bg-beige/20 text-charcoal/60 border-beige/40'
+                            ? 'bg-ticket-burgundy/10 text-ticket-burgundy border-ticket-gold/30' 
+                            : 'bg-beige/20 text-ticket-charcoal/60 border-ticket-beige/40'
                         }`}>
                           {u.role || 'user'}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-charcoal/80">
+                      <td className="px-6 py-4 text-sm text-ticket-charcoal/80">
                         {u.bookings?.length || 0}
                       </td>
-                      <td className="px-6 py-4 text-sm text-charcoal/80">
+                      <td className="px-6 py-4 text-sm text-ticket-charcoal/80">
                         {ticketsCount}
                       </td>
-                      <td className="px-6 py-4 text-sm font-semibold text-charcoal">
+                      <td className="px-6 py-4 text-sm font-semibold text-ticket-charcoal">
                         AED {totalSpend.toLocaleString()}
                       </td>
-                      <td className="px-6 py-4 text-sm text-charcoal/50">
+                      <td className="px-6 py-4 text-sm text-ticket-charcoal/50">
                         {u.created_at ? new Date(u.created_at).toLocaleDateString() : '—'}
                       </td>
                     </tr>

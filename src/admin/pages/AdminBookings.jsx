@@ -50,29 +50,29 @@ const AdminBookings = () => {
       case 'cancelled':
         return 'bg-red-50 text-red-700 border-red-200';
       case 'refunded':
-        return 'bg-gray-100 text-gray-600 border-gray-300';
+        return 'bg-ticket-cream text-ticket-muted border-gray-300';
       default:
-        return 'bg-beige/20 text-charcoal/60 border-beige/40';
+        return 'bg-beige/20 text-ticket-charcoal/60 border-ticket-beige/40';
     }
   };
 
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="font-playfair text-3xl font-semibold text-charcoal tracking-wide mb-1">Bookings Management</h1>
-        <p className="text-charcoal/60 text-sm">View, track, and manage all customer bookings and transaction states.</p>
+        <h1 className="font-playfair text-3xl font-semibold text-ticket-charcoal tracking-wide mb-1">Bookings Management</h1>
+        <p className="text-ticket-charcoal/60 text-sm">View, track, and manage all customer bookings and transaction states.</p>
       </div>
 
       {/* Filter panel */}
-      <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-white p-4 border border-beige/60 rounded-3xl shadow-sm">
+      <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-ticket-white p-4 border border-ticket-beige/60 rounded-3xl shadow-sm">
         <div className="relative w-full md:max-w-md">
-          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-charcoal/40" />
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-ticket-charcoal/40" />
           <input
             type="text"
             placeholder="Search booking #, customer, or event..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-11 pr-4 py-2.5 bg-ivory border border-beige/60 rounded-full text-sm outline-none focus:border-champagne focus:bg-white transition-all placeholder:text-charcoal/30 text-charcoal"
+            className="w-full pl-11 pr-4 py-2.5 bg-ticket-ivory border border-ticket-beige/60 rounded-full text-sm outline-none focus:border-ticket-gold focus:bg-white transition-all placeholder:text-ticket-charcoal/30 text-ticket-charcoal"
           />
         </div>
         <div className="flex gap-2 w-full md:w-auto overflow-x-auto py-1">
@@ -82,8 +82,8 @@ const AdminBookings = () => {
               onClick={() => setStatusFilter(status)}
               className={`px-4 py-2 rounded-full text-xs font-medium border capitalize whitespace-nowrap transition-all ${
                 statusFilter === status
-                  ? 'bg-champagne/10 text-champagne border-champagne/30'
-                  : 'bg-white text-charcoal/60 border-beige/60 hover:bg-ivory'
+                  ? 'bg-ticket-burgundy/10 text-ticket-burgundy border-ticket-gold/30'
+                  : 'bg-ticket-white text-ticket-charcoal/60 border-ticket-beige/60 hover:bg-ivory'
               }`}
             >
               {status}
@@ -95,18 +95,18 @@ const AdminBookings = () => {
       {/* Data Table */}
       {loading ? (
         <div className="flex justify-center py-20">
-          <div className="w-8 h-8 border-2 border-champagne/30 border-t-champagne rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-ticket-gold/30 border-t-ticket-burgundy rounded-full animate-spin" />
         </div>
       ) : filteredBookings.length === 0 ? (
-        <div className="text-center py-20 bg-white border border-beige/60 rounded-3xl shadow-sm">
-          <p className="text-charcoal/60 text-sm">No bookings found.</p>
+        <div className="text-center py-20 bg-ticket-white border border-ticket-beige/60 rounded-3xl shadow-sm">
+          <p className="text-ticket-charcoal/60 text-sm">No bookings found.</p>
         </div>
       ) : (
-        <div className="bg-white border border-beige/60 rounded-3xl shadow-sm overflow-hidden">
+        <div className="bg-ticket-white border border-ticket-beige/60 rounded-3xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-beige/40 bg-ivory/30 text-charcoal/50 text-xs font-semibold uppercase tracking-wider">
+                <tr className="border-b border-ticket-beige/40 bg-ticket-ivory/30 text-ticket-charcoal/50 text-xs font-semibold uppercase tracking-wider">
                   <th className="px-6 py-4">Booking Ref</th>
                   <th className="px-6 py-4">Customer</th>
                   <th className="px-6 py-4">Event</th>
@@ -120,22 +120,22 @@ const AdminBookings = () => {
               <tbody className="divide-y divide-beige/25">
                 {filteredBookings.map((b) => (
                   <tr key={b.id} className="hover:bg-ivory/10 transition-colors">
-                    <td className="px-6 py-4 font-semibold text-charcoal text-sm">
+                    <td className="px-6 py-4 font-semibold text-ticket-charcoal text-sm">
                       {b.booking_number}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm font-medium text-charcoal">
+                      <div className="text-sm font-medium text-ticket-charcoal">
                         {b.profiles?.first_name} {b.profiles?.last_name}
                       </div>
-                      <div className="text-xs text-charcoal/50">{b.profiles?.email}</div>
+                      <div className="text-xs text-ticket-charcoal/50">{b.profiles?.email}</div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-charcoal/80">
+                    <td className="px-6 py-4 text-sm text-ticket-charcoal/80">
                       {b.events?.event_name}
                     </td>
-                    <td className="px-6 py-4 text-sm text-charcoal/80">
+                    <td className="px-6 py-4 text-sm text-ticket-charcoal/80">
                       {b.ticket_quantity || 1}
                     </td>
-                    <td className="px-6 py-4 text-sm font-semibold text-charcoal">
+                    <td className="px-6 py-4 text-sm font-semibold text-ticket-charcoal">
                       AED {Number(b.total_amount).toLocaleString()}
                     </td>
                     <td className="px-6 py-4 text-xs font-semibold">
@@ -143,13 +143,13 @@ const AdminBookings = () => {
                         {b.booking_status || 'Pending'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-charcoal/50">
+                    <td className="px-6 py-4 text-sm text-ticket-charcoal/50">
                       {new Date(b.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <button
                         onClick={() => navigate(`/admin/bookings/${b.booking_number}`)}
-                        className="p-2 border border-beige hover:border-champagne hover:text-champagne text-charcoal/60 rounded-xl transition-all"
+                        className="p-2 border border-ticket-beige hover:border-ticket-burgundy hover:text-ticket-burgundy text-ticket-charcoal/60 rounded-xl transition-all"
                         title="View Details"
                       >
                         <Eye size={16} />

@@ -50,7 +50,7 @@ const BookingDetailsPage = () => {
   if (loading) {
     return (
       <div className="bg-premium-noise min-h-screen pt-32 px-6 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-champagne/30 border-t-champagne rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-ticket-gold/30 border-t-ticket-burgundy rounded-full animate-spin" />
       </div>
     );
   }
@@ -58,9 +58,9 @@ const BookingDetailsPage = () => {
   if (error || !booking) {
     return (
       <div className="bg-premium-noise min-h-screen pt-32 px-6 flex flex-col items-center justify-center text-center">
-        <h2 className="font-playfair text-2xl text-charcoal font-semibold mb-2">Booking Not Found</h2>
-        <p className="text-charcoal/60 mb-6">{error || 'This booking does not exist or you do not have access to it.'}</p>
-        <button onClick={() => navigate('/bookings')} className="px-6 py-2.5 bg-charcoal text-white rounded-full text-sm font-medium hover:bg-charcoal/90">
+        <h2 className="font-playfair text-2xl text-ticket-charcoal font-semibold mb-2">Booking Not Found</h2>
+        <p className="text-ticket-charcoal/60 mb-6">{error || 'This booking does not exist or you do not have access to it.'}</p>
+        <button onClick={() => navigate('/bookings')} className="px-6 py-2.5 bg-ticket-charcoal text-ticket-white rounded-full text-sm font-medium hover:bg-ticket-charcoal/90">
           Back to My Bookings
         </button>
       </div>
@@ -88,21 +88,21 @@ const BookingDetailsPage = () => {
   };
 
   return (
-    <div className="bg-premium-noise min-h-screen selection:bg-champagne/30 selection:text-charcoal pt-32 px-6 pb-24 font-sans">
+    <div className="bg-premium-noise min-h-screen selection:bg-ticket-burgundy/30 selection:text-charcoal pt-32 px-6 pb-24 font-sans">
       <Navbar />
       <div className="max-w-4xl mx-auto">
         
         {/* Header */}
         <div className="mb-8 flex flex-col gap-4">
-          <button onClick={() => navigate('/bookings')} className="flex items-center gap-2 text-sm text-charcoal/60 hover:text-champagne transition-colors w-fit">
+          <button onClick={() => navigate('/bookings')} className="flex items-center gap-2 text-sm text-ticket-charcoal/60 hover:text-ticket-burgundy transition-colors w-fit">
             <ArrowLeft size={16} /> Back to My Bookings
           </button>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 className="font-playfair text-3xl font-semibold text-charcoal tracking-wide">
+              <h1 className="font-playfair text-3xl font-semibold text-ticket-charcoal tracking-wide">
                 Booking <span className="font-mono text-2xl">{booking.booking_number}</span>
               </h1>
-              <p className="text-sm text-charcoal/50 mt-1 font-mono">
+              <p className="text-sm text-ticket-charcoal/50 mt-1 font-mono">
                 Booked on {new Date(booking.created_at).toLocaleString('en-US', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
               </p>
             </div>
@@ -119,18 +119,18 @@ const BookingDetailsPage = () => {
           <div className="md:col-span-2 flex flex-col gap-8">
             
             {/* Event Info */}
-            <div className="bg-white border border-beige rounded-3xl overflow-hidden shadow-sm">
-              <div className="h-48 w-full bg-beige/30">
+            <div className="bg-ticket-white border border-ticket-beige rounded-3xl overflow-hidden shadow-sm">
+              <div className="h-48 w-full bg-ticket-beige/30">
                 {event?.event_image && (
                   <img src={event.event_image} alt={event.event_name} className="w-full h-full object-cover" />
                 )}
               </div>
               <div className="p-6">
-                <h2 className="font-playfair text-2xl font-semibold text-charcoal mb-4">{event?.event_name}</h2>
-                <div className="flex flex-col gap-3 text-sm text-charcoal/70">
-                  <div className="flex items-center gap-3"><Calendar size={16} className="text-champagne" /> {formatDate(event?.event_date)}</div>
-                  <div className="flex items-center gap-3"><Clock size={16} className="text-champagne" /> {formatTime(event?.start_time)} {event?.end_time ? `– ${formatTime(event.end_time)}` : ''}</div>
-                  <div className="flex items-center gap-3"><MapPin size={16} className="text-champagne" /> {event?.venue_name}{event?.city ? `, ${event.city}` : ''}</div>
+                <h2 className="font-playfair text-2xl font-semibold text-ticket-charcoal mb-4">{event?.event_name}</h2>
+                <div className="flex flex-col gap-3 text-sm text-ticket-charcoal/70">
+                  <div className="flex items-center gap-3"><Calendar size={16} className="text-ticket-burgundy" /> {formatDate(event?.event_date)}</div>
+                  <div className="flex items-center gap-3"><Clock size={16} className="text-ticket-burgundy" /> {formatTime(event?.start_time)} {event?.end_time ? `– ${formatTime(event.end_time)}` : ''}</div>
+                  <div className="flex items-center gap-3"><MapPin size={16} className="text-ticket-burgundy" /> {event?.venue_name}{event?.city ? `, ${event.city}` : ''}</div>
                 </div>
               </div>
             </div>
@@ -139,13 +139,13 @@ const BookingDetailsPage = () => {
             <BookingTickets tickets={tickets} loading={ticketsLoading} />
 
             {/* Customer Info */}
-            <div className="bg-white border border-beige rounded-3xl p-6 shadow-sm">
-              <h3 className="font-playfair text-xl font-semibold text-charcoal mb-4">Customer Information</h3>
+            <div className="bg-ticket-white border border-ticket-beige rounded-3xl p-6 shadow-sm">
+              <h3 className="font-playfair text-xl font-semibold text-ticket-charcoal mb-4">Customer Information</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                <div className="flex items-center gap-3 text-charcoal/70"><User size={16} className="text-charcoal/40" /> <span className="font-medium text-charcoal">{getFullName()}</span></div>
-                <div className="flex items-center gap-3 text-charcoal/70"><Mail size={16} className="text-charcoal/40" /> <span>{user?.email}</span></div>
+                <div className="flex items-center gap-3 text-ticket-charcoal/70"><User size={16} className="text-ticket-charcoal/40" /> <span className="font-medium text-ticket-charcoal">{getFullName()}</span></div>
+                <div className="flex items-center gap-3 text-ticket-charcoal/70"><Mail size={16} className="text-ticket-charcoal/40" /> <span>{user?.email}</span></div>
                 {user?.user_metadata?.phone && (
-                  <div className="flex items-center gap-3 text-charcoal/70"><Phone size={16} className="text-charcoal/40" /> <span>{user.user_metadata.phone}</span></div>
+                  <div className="flex items-center gap-3 text-ticket-charcoal/70"><Phone size={16} className="text-ticket-charcoal/40" /> <span>{user.user_metadata.phone}</span></div>
                 )}
               </div>
             </div>
@@ -157,11 +157,11 @@ const BookingDetailsPage = () => {
             <PriceBreakdown booking={booking} />
             
             {/* Payment Info */}
-            <div className="bg-ivory border border-beige/60 rounded-2xl p-5 shadow-sm">
-              <h4 className="font-playfair text-lg text-charcoal font-semibold mb-3">Payment Info</h4>
-              <div className="flex flex-col gap-2 text-sm text-charcoal/70">
-                <div className="flex justify-between"><span>Method</span> <span className="font-medium text-charcoal">{booking.payment_provider || 'Credit Card'}</span></div>
-                <div className="flex justify-between"><span>Status</span> <span className="font-medium text-charcoal capitalize">{booking.payment_status}</span></div>
+            <div className="bg-ticket-ivory border border-ticket-beige/60 rounded-2xl p-5 shadow-sm">
+              <h4 className="font-playfair text-lg text-ticket-charcoal font-semibold mb-3">Payment Info</h4>
+              <div className="flex flex-col gap-2 text-sm text-ticket-charcoal/70">
+                <div className="flex justify-between"><span>Method</span> <span className="font-medium text-ticket-charcoal">{booking.payment_provider || 'Credit Card'}</span></div>
+                <div className="flex justify-between"><span>Status</span> <span className="font-medium text-ticket-charcoal capitalize">{booking.payment_status}</span></div>
                 {booking.payment_reference && (
                   <div className="flex justify-between"><span>Ref</span> <span className="font-mono text-xs">{booking.payment_reference}</span></div>
                 )}
@@ -169,7 +169,7 @@ const BookingDetailsPage = () => {
             </div>
 
             {/* Receipt Action */}
-            <button disabled className="w-full flex items-center justify-center gap-2 py-3 bg-white border border-beige rounded-2xl text-sm font-medium text-charcoal/50 hover:bg-ivory hover:text-charcoal transition-colors cursor-not-allowed" title="Coming soon">
+            <button disabled className="w-full flex items-center justify-center gap-2 py-3 bg-ticket-white border border-ticket-beige rounded-2xl text-sm font-medium text-ticket-charcoal/50 hover:bg-ivory hover:text-ticket-charcoal transition-colors cursor-not-allowed" title="Coming soon">
               <Download size={16} /> Download Receipt
             </button>
 

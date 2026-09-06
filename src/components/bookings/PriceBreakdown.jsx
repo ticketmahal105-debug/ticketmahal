@@ -21,19 +21,19 @@ const PriceBreakdown = ({ booking }) => {
   ].filter((r) => r.value !== null);
 
   return (
-    <div className="bg-white border border-beige rounded-2xl p-5 shadow-sm">
-      <h4 className="font-playfair text-lg text-charcoal font-semibold mb-4">Payment Summary</h4>
+    <div className="bg-ticket-white border border-ticket-beige rounded-2xl p-5 shadow-sm">
+      <h4 className="font-playfair text-lg text-ticket-charcoal font-semibold mb-4">Payment Summary</h4>
       <div className="flex flex-col gap-2.5">
         {rows.map(({ label, value }) => (
           <div key={label} className="flex justify-between text-sm">
-            <span className="text-charcoal/60">{label}</span>
-            <span className="text-charcoal font-medium">{value}</span>
+            <span className="text-ticket-charcoal/60">{label}</span>
+            <span className="text-ticket-charcoal font-medium">{value}</span>
           </div>
         ))}
-        <div className="border-t border-beige/60 my-1" />
+        <div className="border-t border-ticket-beige/60 my-1" />
         <div className="flex justify-between">
-          <span className="font-semibold text-charcoal">Total</span>
-          <span className="font-playfair text-lg font-semibold text-charcoal">
+          <span className="font-semibold text-ticket-charcoal">Total</span>
+          <span className="font-playfair text-lg font-semibold text-ticket-charcoal">
             {fmtTotal(booking.total_amount)}
           </span>
         </div>

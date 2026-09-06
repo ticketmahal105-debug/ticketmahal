@@ -3,6 +3,15 @@ import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import BrowseCategories from './components/BrowseCategories';
+import PromoBanner from './components/PromoBanner';
+import RecommendedShows from './components/RecommendedShows';
+import PremiereShows from './components/PremiereShows';
+import LiveInRhythm from './components/LiveInRhythm';
+import BeyondTheWalls from './components/BeyondTheWalls';
+import TheLaughLounge from './components/TheLaughLounge';
+import TheatreAndPlays from './components/TheatreAndPlays';
+import ExperiencesAndAttractions from './components/ExperiencesAndAttractions';
+import PopularEvents from './components/PopularEvents';
 import ResetPassword from './pages/ResetPassword';
 import AuthCallback from './pages/AuthCallback';
 import ProtectedRoute from './routes/ProtectedRoute';
@@ -24,11 +33,20 @@ import AdminUsers from './admin/pages/AdminUsers';
 
 function Home() {
   return (
-    <div className="bg-premium-noise min-h-screen selection:bg-champagne/30 selection:text-charcoal">
+    <div className="bg-premium-noise min-h-screen selection:bg-ticket-burgundy/30 selection:text-charcoal">
       <Navbar />
       <main>
         <Hero />
         <BrowseCategories />
+        <PromoBanner />
+        <RecommendedShows />
+        <PremiereShows />
+        <LiveInRhythm />
+        <BeyondTheWalls />
+        <TheLaughLounge />
+        <TheatreAndPlays />
+        <ExperiencesAndAttractions />
+        <PopularEvents />
       </main>
     </div>
   );

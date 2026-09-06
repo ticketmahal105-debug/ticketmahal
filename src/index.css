@@ -2,10 +2,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 
 @theme {
-  --color-ivory: #F8F5EF;
-  --color-beige: #EFE6DA;
-  --color-champagne: #D6B37B;
-  --color-charcoal: #2B2B2B;
+  --color-ticket-burgundy: #7A1F2B;
+  --color-ticket-burgundy-dark: #5F1821;
+  --color-ticket-gold: #F5A300;
+  --color-ticket-gold-light: #FFC043;
+  --color-ticket-ivory: #FFFDF8;
+  --color-ticket-cream: #FAF6EE;
+  --color-ticket-beige: #EDE3D5;
+  --color-ticket-charcoal: #292725;
+  --color-ticket-muted: #77736D;
+  --color-ticket-white: #FFFFFF;
+  --color-ticket-pale-burgundy: #FBF3F4;
+  --color-ticket-pale-gold: #FFF8E8;
+  --color-ivory: #FFFDF8;
+  --color-beige: #EDE3D5;
   
   --font-inter: "Inter", sans-serif;
   --font-playfair: "Playfair Display", serif;
@@ -13,7 +23,7 @@
 
 @layer base {
   body {
-    @apply bg-ivory text-charcoal font-inter antialiased overflow-x-hidden;
+    @apply bg-ticket-ivory text-ticket-charcoal font-inter antialiased overflow-x-hidden;
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -23,10 +33,10 @@
 
 /* Custom background for the entire page to give that premium quiet luxury feel */
 .bg-premium-noise {
-  background-color: #F8F5EF; /* Warm Ivory */
+  background-color: #FFFDF8; /* Main Ivory Background */
   background-image: 
-    radial-gradient(at 0% 0%, hsla(39, 39%, 90%, 1) 0px, transparent 60%),
-    radial-gradient(at 100% 100%, hsla(38, 25%, 85%, 1) 0px, transparent 60%);
+    radial-gradient(at 0% 0%, hsla(39, 40%, 99%, 1) 0px, transparent 60%),
+    radial-gradient(at 100% 100%, hsla(38, 30%, 97%, 1) 0px, transparent 60%);
   position: relative;
   min-height: 100vh;
 }

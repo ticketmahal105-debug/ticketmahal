@@ -49,7 +49,7 @@ const AuthModal = ({ isOpen, onClose, initialStep = 'select' }) => {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             onClick={onClose}
-            className="absolute inset-0 bg-charcoal/10 backdrop-blur-[4px]"
+            className="absolute inset-0 bg-ticket-charcoal/10 backdrop-blur-[4px]"
             aria-hidden="true"
           />
 
@@ -62,12 +62,12 @@ const AuthModal = ({ isOpen, onClose, initialStep = 'select' }) => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="relative w-full max-w-[440px] bg-white border border-beige rounded-[28px] p-8 shadow-2xl z-10 text-center flex flex-col max-h-[90vh] overflow-y-auto"
+            className="relative w-full max-w-[440px] bg-ticket-white border border-ticket-beige rounded-[28px] p-8 shadow-2xl z-10 text-center flex flex-col max-h-[90vh] overflow-y-auto"
           >
             <button
               onClick={onClose}
               aria-label="Close dialog"
-              className="absolute top-6 right-6 text-charcoal/40 hover:text-charcoal hover:bg-ivory p-2 rounded-full transition-colors z-20"
+              className="absolute top-6 right-6 text-ticket-charcoal/40 hover:text-ticket-charcoal hover:bg-ivory p-2 rounded-full transition-colors z-20"
             >
               <X size={20} />
             </button>
@@ -82,10 +82,10 @@ const AuthModal = ({ isOpen, onClose, initialStep = 'select' }) => {
                 className="flex flex-col h-full"
               >
                 <div className="mb-8 mt-2">
-                  <h3 id="auth-modal-title" className="font-playfair text-2xl font-semibold text-charcoal mb-3">
+                  <h3 id="auth-modal-title" className="font-playfair text-2xl font-semibold text-ticket-charcoal mb-3">
                     Welcome to Ticket Mahal
                   </h3>
-                  <p className="text-charcoal/60 text-sm leading-relaxed">
+                  <p className="text-ticket-charcoal/60 text-sm leading-relaxed">
                     Begin your journey to discovering unforgettable events in the Middle East.
                   </p>
                 </div>
@@ -93,13 +93,13 @@ const AuthModal = ({ isOpen, onClose, initialStep = 'select' }) => {
                 <div className="flex flex-col gap-3 mt-auto">
                   <button
                     onClick={() => setStep('signup')}
-                    className="w-full bg-champagne text-white font-medium py-3.5 rounded-full shadow-[0_4px_12px_rgba(214,179,123,0.2)] hover:shadow-[0_6px_18px_rgba(214,179,123,0.3)] hover:-translate-y-0.5 transition-all duration-300"
+                    className="w-full bg-ticket-burgundy text-ticket-white font-medium py-3.5 rounded-full shadow-[0_4px_12px_rgba(214,179,123,0.2)] hover:shadow-[0_6px_18px_rgba(214,179,123,0.3)] hover:-translate-y-0.5 transition-all duration-300"
                   >
                     Create an Account
                   </button>
                   <button
                     onClick={() => setStep('login')}
-                    className="w-full border border-charcoal/10 hover:border-champagne/40 text-charcoal/80 hover:text-charcoal font-medium py-3.5 rounded-full hover:bg-ivory/50 transition-all duration-300"
+                    className="w-full border border-ticket-charcoal/10 hover:border-ticket-gold/40 text-ticket-charcoal/80 hover:text-ticket-charcoal font-medium py-3.5 rounded-full hover:bg-ivory/50 transition-all duration-300"
                   >
                     Login to Your Account
                   </button>
@@ -116,7 +116,7 @@ const AuthModal = ({ isOpen, onClose, initialStep = 'select' }) => {
                 exit={{ opacity: 0, x: 20 }}
                 className="flex flex-col"
               >
-                <h3 id="auth-modal-title" className="font-playfair text-2xl font-semibold text-charcoal text-center mb-6">
+                <h3 id="auth-modal-title" className="font-playfair text-2xl font-semibold text-ticket-charcoal text-center mb-6">
                   Login
                 </h3>
                 <LoginForm 
@@ -136,7 +136,7 @@ const AuthModal = ({ isOpen, onClose, initialStep = 'select' }) => {
                 exit={{ opacity: 0, x: -20 }}
                 className="flex flex-col"
               >
-                <h3 id="auth-modal-title" className="font-playfair text-2xl font-semibold text-charcoal text-center mb-6">
+                <h3 id="auth-modal-title" className="font-playfair text-2xl font-semibold text-ticket-charcoal text-center mb-6">
                   Create Account
                 </h3>
                 <SignupForm onSwitchToLogin={() => setStep('login')} />
@@ -152,7 +152,7 @@ const AuthModal = ({ isOpen, onClose, initialStep = 'select' }) => {
                 exit={{ opacity: 0, y: -10 }}
                 className="flex flex-col"
               >
-                <h3 id="auth-modal-title" className="font-playfair text-2xl font-semibold text-charcoal text-center mb-6">
+                <h3 id="auth-modal-title" className="font-playfair text-2xl font-semibold text-ticket-charcoal text-center mb-6">
                   Reset Password
                 </h3>
                 <ForgotPasswordForm onBack={() => setStep('login')} />

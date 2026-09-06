@@ -58,27 +58,27 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={handleClose}
-            className="absolute inset-0 bg-charcoal/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-ticket-charcoal/40 backdrop-blur-sm"
           />
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            className="relative w-full max-w-md bg-ivory shadow-2xl rounded-3xl overflow-hidden border border-beige/40 p-8"
+            className="relative w-full max-w-md bg-ticket-ivory shadow-2xl rounded-3xl overflow-hidden border border-ticket-beige/40 p-8"
           >
             <button
               onClick={handleClose}
-              className="absolute top-6 right-6 text-charcoal/40 hover:text-charcoal transition-colors bg-white/50 p-2 rounded-full hover:bg-white"
+              className="absolute top-6 right-6 text-ticket-charcoal/40 hover:text-ticket-charcoal transition-colors bg-white/50 p-2 rounded-full hover:bg-white"
             >
               <X size={18} />
             </button>
 
             <div className="text-center mb-8">
-              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-4 border border-beige/40 shadow-sm">
-                <Lock className="text-champagne" size={20} />
+              <div className="w-12 h-12 bg-ticket-white rounded-full flex items-center justify-center mx-auto mb-4 border border-ticket-beige/40 shadow-sm">
+                <Lock className="text-ticket-burgundy" size={20} />
               </div>
-              <h2 className="font-playfair text-2xl font-semibold text-charcoal">Change Password</h2>
-              <p className="text-sm text-charcoal/60 mt-2">Enter a new secure password for your account.</p>
+              <h2 className="font-playfair text-2xl font-semibold text-ticket-charcoal">Change Password</h2>
+              <p className="text-sm text-ticket-charcoal/60 mt-2">Enter a new secure password for your account.</p>
             </div>
 
             {success ? (
@@ -90,31 +90,31 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
                 <div className="w-16 h-16 bg-green-50 border border-green-100 rounded-full flex items-center justify-center mb-4 text-green-600">
                   <Check size={32} />
                 </div>
-                <h3 className="text-lg font-medium text-charcoal mb-2">Password Updated!</h3>
-                <p className="text-sm text-charcoal/60">Your password has been changed successfully.</p>
+                <h3 className="text-lg font-medium text-ticket-charcoal mb-2">Password Updated!</h3>
+                <p className="text-sm text-ticket-charcoal/60">Your password has been changed successfully.</p>
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-charcoal/60 uppercase tracking-wider mb-1.5 ml-1">New Password</label>
+                  <label className="block text-xs font-semibold text-ticket-charcoal/60 uppercase tracking-wider mb-1.5 ml-1">New Password</label>
                   <input
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     required
-                    className="w-full px-4 py-3 rounded-2xl bg-white border border-beige/80 text-sm font-medium outline-none focus:border-champagne focus:ring-1 focus:ring-champagne/30 transition-all placeholder:text-charcoal/30"
+                    className="w-full px-4 py-3 rounded-2xl bg-ticket-white border border-ticket-beige/80 text-sm font-medium outline-none focus:border-ticket-gold focus:ring-1 focus:ring-ticket-gold/30 transition-all placeholder:text-ticket-charcoal/30"
                     placeholder="Min. 8 characters"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-xs font-semibold text-charcoal/60 uppercase tracking-wider mb-1.5 ml-1">Confirm New Password</label>
+                  <label className="block text-xs font-semibold text-ticket-charcoal/60 uppercase tracking-wider mb-1.5 ml-1">Confirm New Password</label>
                   <input
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
-                    className="w-full px-4 py-3 rounded-2xl bg-white border border-beige/80 text-sm font-medium outline-none focus:border-champagne focus:ring-1 focus:ring-champagne/30 transition-all placeholder:text-charcoal/30"
+                    className="w-full px-4 py-3 rounded-2xl bg-ticket-white border border-ticket-beige/80 text-sm font-medium outline-none focus:border-ticket-gold focus:ring-1 focus:ring-ticket-gold/30 transition-all placeholder:text-ticket-charcoal/30"
                     placeholder="Repeat password"
                   />
                 </div>
@@ -128,7 +128,7 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full mt-6 bg-charcoal text-white font-medium py-3.5 rounded-2xl hover:bg-charcoal/90 hover:shadow-lg transition-all duration-300 disabled:opacity-50 flex items-center justify-center"
+                  className="w-full mt-6 bg-ticket-charcoal text-ticket-white font-medium py-3.5 rounded-2xl hover:bg-ticket-charcoal/90 hover:shadow-lg transition-all duration-300 disabled:opacity-50 flex items-center justify-center"
                 >
                   {loading ? (
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

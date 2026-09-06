@@ -49,15 +49,15 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="bg-premium-noise min-h-screen selection:bg-champagne/30 selection:text-charcoal pt-32 px-6 pb-24 font-sans">
+    <div className="bg-premium-noise min-h-screen selection:bg-ticket-burgundy/30 selection:text-charcoal pt-32 px-6 pb-24 font-sans">
       <Navbar />
       
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="font-playfair text-3xl md:text-4xl text-charcoal font-semibold tracking-wide">
+          <h1 className="font-playfair text-3xl md:text-4xl text-ticket-charcoal font-semibold tracking-wide">
             My Profile
           </h1>
-          <p className="text-charcoal/60 mt-2">Manage your personal details and account information.</p>
+          <p className="text-ticket-charcoal/60 mt-2">Manage your personal details and account information.</p>
         </div>
 
         {loading ? (
@@ -67,7 +67,7 @@ const ProfilePage = () => {
             
             {/* Sidebar Navigation */}
             <div className="w-full md:w-[280px] shrink-0">
-              <div className="bg-white border border-beige rounded-3xl p-4 shadow-sm sticky top-32">
+              <div className="bg-ticket-white border border-ticket-beige rounded-3xl p-4 shadow-sm sticky top-32">
                 <ProfileSidebar />
               </div>
             </div>
@@ -87,10 +87,10 @@ const ProfilePage = () => {
               <SecuritySection />
 
               {/* My Tickets Preview */}
-              <div className="mt-4 text-center p-8 border border-dashed border-beige/80 rounded-2xl bg-ivory/50">
-                <p className="font-playfair text-xl text-charcoal font-semibold mb-2">No tickets yet</p>
-                <p className="text-charcoal/60 text-sm mb-6">Your booked event tickets will appear here.</p>
-                <a href="/" className="px-6 py-2.5 bg-champagne text-white text-sm font-medium rounded-full shadow-sm hover:bg-charcoal hover:text-white transition-all duration-300">
+              <div className="mt-4 text-center p-8 border border-dashed border-ticket-beige/80 rounded-2xl bg-ivory/50">
+                <p className="font-playfair text-xl text-ticket-charcoal font-semibold mb-2">No tickets yet</p>
+                <p className="text-ticket-charcoal/60 text-sm mb-6">Your booked event tickets will appear here.</p>
+                <a href="/" className="px-6 py-2.5 bg-ticket-burgundy text-ticket-white text-sm font-medium rounded-full shadow-sm hover:bg-ticket-charcoal hover:text-white transition-all duration-300">
                   Explore Events
                 </a>
               </div>
@@ -107,10 +107,10 @@ const ProfilePage = () => {
             initial={{ opacity: 0, y: 50, x: '-50%' }}
             animate={{ opacity: 1, y: 0, x: '-50%' }}
             exit={{ opacity: 0, y: 50, x: '-50%' }}
-            className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-white px-6 py-3 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-beige flex items-center gap-3 z-50"
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-ticket-white px-6 py-3 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-ticket-beige flex items-center gap-3 z-50"
           >
             <div className="w-2 h-2 bg-green-500 rounded-full" />
-            <span className="text-sm font-medium text-charcoal">{toastMessage}</span>
+            <span className="text-sm font-medium text-ticket-charcoal">{toastMessage}</span>
           </motion.div>
         )}
       </AnimatePresence>

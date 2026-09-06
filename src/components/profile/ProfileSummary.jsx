@@ -87,9 +87,9 @@ const ProfileSummary = ({ profile, user }) => {
   const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url;
 
   return (
-    <div className="bg-white border border-beige rounded-2xl p-6 shadow-sm flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
+    <div className="bg-ticket-white border border-ticket-beige rounded-2xl p-6 shadow-sm flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
       <div className="relative group">
-        <div className="w-24 h-24 rounded-full overflow-hidden bg-champagne text-white flex items-center justify-center text-3xl font-semibold shadow-sm border-4 border-ivory">
+        <div className="w-24 h-24 rounded-full overflow-hidden bg-ticket-burgundy text-ticket-white flex items-center justify-center text-3xl font-semibold shadow-sm border-4 border-ivory">
           {avatarUrl ? (
             <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
           ) : (
@@ -100,10 +100,10 @@ const ProfileSummary = ({ profile, user }) => {
         <button
           onClick={handleAvatarClick}
           disabled={uploading}
-          className="absolute bottom-0 right-0 w-8 h-8 bg-white border border-beige rounded-full flex items-center justify-center text-charcoal hover:text-champagne hover:border-champagne/40 transition-colors shadow-sm z-10"
+          className="absolute bottom-0 right-0 w-8 h-8 bg-ticket-white border border-ticket-beige rounded-full flex items-center justify-center text-ticket-charcoal hover:text-ticket-burgundy hover:border-ticket-gold/40 transition-colors shadow-sm z-10"
         >
           {uploading ? (
-            <div className="w-3 h-3 border-2 border-charcoal/30 border-t-charcoal rounded-full animate-spin" />
+            <div className="w-3 h-3 border-2 border-ticket-charcoal/30 border-t-charcoal rounded-full animate-spin" />
           ) : (
             <Camera size={14} />
           )}
@@ -118,14 +118,14 @@ const ProfileSummary = ({ profile, user }) => {
       </div>
 
       <div className="flex-1">
-        <h2 className="font-playfair text-2xl text-charcoal font-semibold tracking-wide">
+        <h2 className="font-playfair text-2xl text-ticket-charcoal font-semibold tracking-wide">
           {getFullName()}
         </h2>
-        <p className="text-charcoal/60 text-sm mt-1">{user?.email}</p>
+        <p className="text-ticket-charcoal/60 text-sm mt-1">{user?.email}</p>
         
-        <div className="inline-flex items-center gap-2 mt-3 px-3 py-1 bg-champagne/10 border border-champagne/20 rounded-full">
-          <span className="w-1.5 h-1.5 rounded-full bg-champagne"></span>
-          <span className="text-xs font-semibold text-charcoal tracking-wide uppercase">Ticket Mahal Member</span>
+        <div className="inline-flex items-center gap-2 mt-3 px-3 py-1 bg-ticket-burgundy/10 border border-ticket-gold/20 rounded-full">
+          <span className="w-1.5 h-1.5 rounded-full bg-ticket-burgundy"></span>
+          <span className="text-xs font-semibold text-ticket-charcoal tracking-wide uppercase">Ticket Mahal Member</span>
         </div>
       </div>
     </div>

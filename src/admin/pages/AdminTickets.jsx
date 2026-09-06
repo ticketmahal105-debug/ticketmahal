@@ -58,33 +58,33 @@ const AdminTickets = () => {
       case 'active':
         return 'bg-green-50 text-green-700 border-green-200';
       case 'used':
-        return 'bg-gray-100 text-gray-700 border-gray-300';
+        return 'bg-ticket-cream text-gray-700 border-gray-300';
       case 'cancelled':
         return 'bg-red-50 text-red-700 border-red-200';
       case 'expired':
         return 'bg-amber-50 text-amber-700 border-amber-200';
       default:
-        return 'bg-beige/20 text-charcoal/60 border-beige/40';
+        return 'bg-beige/20 text-ticket-charcoal/60 border-ticket-beige/40';
     }
   };
 
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="font-playfair text-3xl font-semibold text-charcoal tracking-wide mb-1">Tickets Inventory</h1>
-        <p className="text-charcoal/60 text-sm">Monitor all individual issued tickets, check-in states, and validation logs.</p>
+        <h1 className="font-playfair text-3xl font-semibold text-ticket-charcoal tracking-wide mb-1">Tickets Inventory</h1>
+        <p className="text-ticket-charcoal/60 text-sm">Monitor all individual issued tickets, check-in states, and validation logs.</p>
       </div>
 
       {/* Filter panel */}
-      <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-white p-4 border border-beige/60 rounded-3xl shadow-sm">
+      <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-ticket-white p-4 border border-ticket-beige/60 rounded-3xl shadow-sm">
         <div className="relative w-full md:max-w-md">
-          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-charcoal/40" />
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-ticket-charcoal/40" />
           <input
             type="text"
             placeholder="Search ticket #, customer, event..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-11 pr-4 py-2.5 bg-ivory border border-beige/60 rounded-full text-sm outline-none focus:border-champagne focus:bg-white transition-all placeholder:text-charcoal/30 text-charcoal"
+            className="w-full pl-11 pr-4 py-2.5 bg-ticket-ivory border border-ticket-beige/60 rounded-full text-sm outline-none focus:border-ticket-gold focus:bg-white transition-all placeholder:text-ticket-charcoal/30 text-ticket-charcoal"
           />
         </div>
         <div className="flex gap-2 w-full md:w-auto overflow-x-auto py-1">
@@ -94,8 +94,8 @@ const AdminTickets = () => {
               onClick={() => setStatusFilter(status)}
               className={`px-4 py-2 rounded-full text-xs font-medium border capitalize whitespace-nowrap transition-all ${
                 statusFilter === status
-                  ? 'bg-champagne/10 text-champagne border-champagne/30'
-                  : 'bg-white text-charcoal/60 border-beige/60 hover:bg-ivory'
+                  ? 'bg-ticket-burgundy/10 text-ticket-burgundy border-ticket-gold/30'
+                  : 'bg-ticket-white text-ticket-charcoal/60 border-ticket-beige/60 hover:bg-ivory'
               }`}
             >
               {status}
@@ -107,18 +107,18 @@ const AdminTickets = () => {
       {/* Data Table */}
       {loading ? (
         <div className="flex justify-center py-20">
-          <div className="w-8 h-8 border-2 border-champagne/30 border-t-champagne rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-ticket-gold/30 border-t-ticket-burgundy rounded-full animate-spin" />
         </div>
       ) : filteredTickets.length === 0 ? (
-        <div className="text-center py-20 bg-white border border-beige/60 rounded-3xl shadow-sm">
-          <p className="text-charcoal/60 text-sm">No tickets found.</p>
+        <div className="text-center py-20 bg-ticket-white border border-ticket-beige/60 rounded-3xl shadow-sm">
+          <p className="text-ticket-charcoal/60 text-sm">No tickets found.</p>
         </div>
       ) : (
-        <div className="bg-white border border-beige/60 rounded-3xl shadow-sm overflow-hidden">
+        <div className="bg-ticket-white border border-ticket-beige/60 rounded-3xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-beige/40 bg-ivory/30 text-charcoal/50 text-xs font-semibold uppercase tracking-wider">
+                <tr className="border-b border-ticket-beige/40 bg-ticket-ivory/30 text-ticket-charcoal/50 text-xs font-semibold uppercase tracking-wider">
                   <th className="px-6 py-4">Ticket Number</th>
                   <th className="px-6 py-4">Event</th>
                   <th className="px-6 py-4">Customer</th>
@@ -131,19 +131,19 @@ const AdminTickets = () => {
               <tbody className="divide-y divide-beige/25">
                 {filteredTickets.map((t) => (
                   <tr key={t.id} className="hover:bg-ivory/10 transition-colors">
-                    <td className="px-6 py-4 font-semibold text-charcoal text-sm">
+                    <td className="px-6 py-4 font-semibold text-ticket-charcoal text-sm">
                       {t.ticket_number}
                     </td>
-                    <td className="px-6 py-4 text-sm text-charcoal/80 font-playfair font-semibold">
+                    <td className="px-6 py-4 text-sm text-ticket-charcoal/80 font-playfair font-semibold">
                       {t.events?.event_name}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm font-medium text-charcoal">
+                      <div className="text-sm font-medium text-ticket-charcoal">
                         {t.profiles?.first_name} {t.profiles?.last_name}
                       </div>
-                      <div className="text-xs text-charcoal/50">{t.profiles?.email}</div>
+                      <div className="text-xs text-ticket-charcoal/50">{t.profiles?.email}</div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-charcoal/80 font-medium uppercase tracking-wider text-xs text-champagne">
+                    <td className="px-6 py-4 text-sm text-ticket-charcoal/80 font-medium uppercase tracking-wider text-xs text-ticket-burgundy">
                       {t.ticket_type || 'General'}
                     </td>
                     <td className="px-6 py-4 text-xs font-semibold">
@@ -151,17 +151,17 @@ const AdminTickets = () => {
                         {t.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-charcoal/50">
+                    <td className="px-6 py-4 text-sm text-ticket-charcoal/50">
                       {t.used_at ? new Date(t.used_at).toLocaleString() : '—'}
                     </td>
                     <td className="px-6 py-4 text-right">
                       {t.status !== 'cancelled' && (
                         <button
                           onClick={() => handleToggleUsed(t)}
-                          className={`p-2 border border-beige rounded-xl transition-all ${
+                          className={`p-2 border border-ticket-beige rounded-xl transition-all ${
                             t.status === 'used'
                               ? 'hover:border-green-500 hover:text-green-500 text-green-600'
-                              : 'hover:border-champagne hover:text-champagne text-charcoal/60'
+                              : 'hover:border-ticket-burgundy hover:text-ticket-burgundy text-ticket-charcoal/60'
                           }`}
                           title={t.status === 'used' ? 'Mark Active' : 'Mark Used / Check-in'}
                         >

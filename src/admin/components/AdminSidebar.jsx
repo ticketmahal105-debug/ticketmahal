@@ -27,11 +27,11 @@ const AdminSidebar = () => {
   ];
 
   return (
-    <aside className="w-64 bg-white border-r border-beige/60 flex flex-col h-full hidden md:flex shrink-0">
-      <div className="p-6 border-b border-beige/60">
-        <Link to="/admin" className="font-playfair text-2xl font-bold text-charcoal tracking-wide">
+    <aside className="w-64 bg-ticket-white border-r border-ticket-beige/60 flex flex-col h-full hidden md:flex shrink-0">
+      <div className="p-6 border-b border-ticket-beige/60">
+        <Link to="/admin" className="font-playfair text-2xl font-bold text-ticket-charcoal tracking-wide">
           Ticket Mahal
-          <span className="block text-xs font-sans font-semibold text-champagne uppercase tracking-[0.2em] mt-1">
+          <span className="block text-xs font-sans font-semibold text-ticket-burgundy uppercase tracking-[0.2em] mt-1">
             Admin Workspace
           </span>
         </Link>
@@ -46,11 +46,11 @@ const AdminSidebar = () => {
               to={item.path}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                 isActive
-                  ? 'bg-champagne/10 text-champagne border border-champagne/20'
-                  : 'text-charcoal/60 hover:bg-ivory hover:text-charcoal border border-transparent'
+                  ? 'bg-ticket-burgundy/10 text-ticket-burgundy border border-ticket-gold/20'
+                  : 'text-ticket-charcoal/60 hover:bg-ivory hover:text-ticket-charcoal border border-transparent'
               }`}
             >
-              <span className={isActive ? 'text-champagne' : 'text-charcoal/40'}>
+              <span className={isActive ? 'text-ticket-burgundy' : 'text-ticket-charcoal/40'}>
                 {item.icon}
               </span>
               {item.label}
@@ -59,12 +59,12 @@ const AdminSidebar = () => {
         })}
       </div>
 
-      <div className="p-4 border-t border-beige/60">
+      <div className="p-4 border-t border-ticket-beige/60">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-charcoal/60 hover:bg-red-50 hover:text-red-500 transition-colors"
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-ticket-charcoal/60 hover:bg-red-50 hover:text-red-500 transition-colors"
         >
-          <LogOut size={18} className="text-charcoal/40" />
+          <LogOut size={18} className="text-ticket-charcoal/40" />
           Logout
         </button>
       </div>

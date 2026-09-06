@@ -5,23 +5,18 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 const banners = [
   {
     id: 1,
-    url: 'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&q=80&w=1600',
-    alt: 'Luxury live orchestra concert experience',
+    url: 'https://res.cloudinary.com/tejjggbw/image/upload/ChatGPT_Image_Aug_22_2026_10_20_39_AM',
+    alt: 'Ticket Mahal Premium Event',
   },
   {
     id: 2,
-    url: 'https://images.unsplash.com/photo-1460723237483-7a6dc9d0b212?auto=format&fit=crop&q=80&w=1600',
-    alt: 'Premium theatre and cultural performance',
+    url: 'https://res.cloudinary.com/tejjggbw/image/upload/ChatGPT_Image_Aug_22_2026_10_20_31_AM',
+    alt: 'Ticket Mahal Luxury Experience',
   },
   {
     id: 3,
-    url: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&q=80&w=1600',
-    alt: 'Exclusive VIP sports event access',
-  },
-  {
-    id: 4,
-    url: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=1600',
-    alt: 'Fine dining and luxury culinary experience',
+    url: 'https://res.cloudinary.com/tejjggbw/image/upload/ChatGPT_Image_Aug_22_2026_10_20_36_AM',
+    alt: 'Ticket Mahal Exclusive Access',
   },
 ];
 
@@ -145,7 +140,7 @@ const Hero = () => {
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
-          className="relative w-full aspect-[4/3] sm:aspect-[16/8] md:aspect-[16/7] lg:aspect-[16/6] rounded-[24px] sm:rounded-[32px] overflow-hidden shadow-[0_12px_40px_rgba(0,0,0,0.04)] border border-beige/60 bg-beige/10"
+          className="relative w-full aspect-[4/3] sm:aspect-[16/8] md:aspect-[16/7] lg:aspect-[16/6] rounded-[24px] sm:rounded-[32px] overflow-hidden shadow-[0_12px_40px_rgba(0,0,0,0.04)] border border-ticket-beige/60 bg-beige/10"
         >
           <AnimatePresence initial={false} custom={direction} mode="popLayout">
             <motion.div
@@ -174,18 +169,18 @@ const Hero = () => {
           <button
             onClick={() => handleManualNavigation('prev')}
             aria-label="Previous slide"
-            className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/95 border border-beige text-charcoal shadow-lg hover:border-champagne hover:-translate-x-0.5 hover:-translate-y-[calc(50%+2px)] transition-all duration-300 z-20 group/btn"
+            className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/95 border border-ticket-beige text-ticket-charcoal shadow-lg hover:border-ticket-burgundy hover:-translate-x-0.5 hover:-translate-y-[calc(50%+2px)] transition-all duration-300 z-20 group/btn"
           >
-            <ChevronLeft size={20} className="group-hover/btn:text-champagne transition-colors" />
+            <ChevronLeft size={20} className="group-hover/btn:text-ticket-burgundy transition-colors" />
           </button>
 
           {/* Right Arrow */}
           <button
             onClick={() => handleManualNavigation('next')}
             aria-label="Next slide"
-            className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/95 border border-beige text-charcoal shadow-lg hover:border-champagne hover:translate-x-0.5 hover:-translate-y-[calc(50%+2px)] transition-all duration-300 z-20 group/btn"
+            className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/95 border border-ticket-beige text-ticket-charcoal shadow-lg hover:border-ticket-burgundy hover:translate-x-0.5 hover:-translate-y-[calc(50%+2px)] transition-all duration-300 z-20 group/btn"
           >
-            <ChevronRight size={20} className="group-hover/btn:text-champagne transition-colors" />
+            <ChevronRight size={20} className="group-hover/btn:text-ticket-burgundy transition-colors" />
           </button>
 
           {/* Slide Indicators */}
@@ -204,7 +199,7 @@ const Hero = () => {
                 <div
                   className={`h-1.5 rounded-full transition-all duration-500 ease-out ${
                     currentIndex === index
-                      ? 'w-8 bg-champagne shadow-[0_0_8px_rgba(214,179,123,0.4)]'
+                      ? 'w-8 bg-ticket-burgundy shadow-[0_0_8px_rgba(214,179,123,0.4)]'
                       : 'w-2 bg-beige/65 hover:bg-beige'
                   }`}
                 />

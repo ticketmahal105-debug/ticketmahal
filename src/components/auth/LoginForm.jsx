@@ -41,7 +41,7 @@ const LoginForm = ({ onSwitchToSignup, onSwitchToForgot, onSuccess }) => {
       
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-xs uppercase tracking-wider font-semibold text-charcoal/40 mb-1.5">
+          <label className="block text-xs uppercase tracking-wider font-semibold text-ticket-charcoal/40 mb-1.5">
             Email Address
           </label>
           <input 
@@ -51,7 +51,7 @@ const LoginForm = ({ onSwitchToSignup, onSwitchToForgot, onSuccess }) => {
             onChange={(e) => setEmail(e.target.value)}
             required
             autoComplete="email"
-            className="w-full px-4 py-3 bg-ivory border border-beige rounded-xl text-sm outline-none focus:border-champagne transition-colors" 
+            className="w-full px-4 py-3 bg-ticket-ivory border border-ticket-beige rounded-xl text-sm outline-none focus:border-ticket-gold transition-colors" 
           />
         </div>
         
@@ -62,13 +62,13 @@ const LoginForm = ({ onSwitchToSignup, onSwitchToForgot, onSuccess }) => {
         
         <div className="flex justify-between items-center px-1">
           <label className="flex items-center gap-2 cursor-pointer group">
-            <input type="checkbox" className="w-4 h-4 rounded border-beige text-champagne focus:ring-champagne focus:ring-offset-0 cursor-pointer" />
-            <span className="text-xs text-charcoal/70 group-hover:text-charcoal transition-colors">Remember me</span>
+            <input type="checkbox" className="w-4 h-4 rounded border-ticket-beige text-ticket-burgundy focus:ring-ticket-gold focus:ring-offset-0 cursor-pointer" />
+            <span className="text-xs text-ticket-charcoal/70 group-hover:text-ticket-charcoal transition-colors">Remember me</span>
           </label>
           <button 
             type="button" 
             onClick={onSwitchToForgot}
-            className="text-xs font-semibold text-champagne hover:underline"
+            className="text-xs font-semibold text-ticket-burgundy hover:underline"
           >
             Forgot password?
           </button>
@@ -77,7 +77,7 @@ const LoginForm = ({ onSwitchToSignup, onSwitchToForgot, onSuccess }) => {
         <button 
           type="submit" 
           disabled={loading}
-          className="w-full bg-charcoal text-white py-3 rounded-full font-medium hover:bg-charcoal/90 transition-colors mt-6 disabled:opacity-70 flex justify-center items-center h-12"
+          className="w-full bg-ticket-charcoal text-ticket-white py-3 rounded-full font-medium hover:bg-ticket-charcoal/90 transition-colors mt-6 disabled:opacity-70 flex justify-center items-center h-12"
         >
           {loading ? (
             <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -87,9 +87,9 @@ const LoginForm = ({ onSwitchToSignup, onSwitchToForgot, onSuccess }) => {
         </button>
       </form>
       
-      <p className="text-center text-xs text-charcoal/50 mt-6">
+      <p className="text-center text-xs text-ticket-charcoal/50 mt-6">
         Don't have an account?{' '}
-        <button onClick={onSwitchToSignup} className="text-champagne font-semibold hover:underline">
+        <button onClick={onSwitchToSignup} className="text-ticket-burgundy font-semibold hover:underline">
           Sign up
         </button>
       </p>

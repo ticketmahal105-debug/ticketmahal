@@ -99,16 +99,16 @@ const PersonalInformation = ({ profile, user, onProfileUpdate }) => {
     }
   };
 
-  const inputClasses = `w-full px-4 py-2.5 bg-white border rounded-xl text-sm font-medium text-charcoal outline-none transition-all duration-300 ${
+  const inputClasses = `w-full px-4 py-2.5 bg-ticket-white border rounded-xl text-sm font-medium text-ticket-charcoal outline-none transition-all duration-300 ${
     isEditing 
-      ? 'border-beige focus:border-champagne focus:ring-1 focus:ring-champagne/30' 
+      ? 'border-ticket-beige focus:border-ticket-gold focus:ring-1 focus:ring-ticket-gold/30' 
       : 'border-transparent bg-transparent px-0 cursor-default pointer-events-none'
   }`;
 
   return (
-    <div className="bg-white border border-beige rounded-2xl p-6 shadow-sm overflow-hidden relative">
+    <div className="bg-ticket-white border border-ticket-beige rounded-2xl p-6 shadow-sm overflow-hidden relative">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="font-playfair text-xl text-charcoal font-semibold tracking-wide">
+        <h3 className="font-playfair text-xl text-ticket-charcoal font-semibold tracking-wide">
           Personal Information
         </h3>
         
@@ -120,7 +120,7 @@ const PersonalInformation = ({ profile, user, onProfileUpdate }) => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               onClick={() => setIsEditing(true)}
-              className="flex items-center gap-2 text-sm font-medium text-charcoal/60 hover:text-champagne transition-colors"
+              className="flex items-center gap-2 text-sm font-medium text-ticket-charcoal/60 hover:text-ticket-burgundy transition-colors"
             >
               <Edit2 size={16} />
               Edit Profile
@@ -136,14 +136,14 @@ const PersonalInformation = ({ profile, user, onProfileUpdate }) => {
               <button
                 onClick={handleCancel}
                 disabled={isSaving}
-                className="text-xs font-medium text-charcoal/60 hover:text-charcoal px-3 py-1.5 transition-colors"
+                className="text-xs font-medium text-ticket-charcoal/60 hover:text-ticket-charcoal px-3 py-1.5 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSave}
                 disabled={isSaving}
-                className="flex items-center gap-1.5 text-xs font-medium bg-charcoal text-white px-4 py-1.5 rounded-full hover:bg-charcoal/90 transition-colors disabled:opacity-50"
+                className="flex items-center gap-1.5 text-xs font-medium bg-ticket-charcoal text-ticket-white px-4 py-1.5 rounded-full hover:bg-ticket-charcoal/90 transition-colors disabled:opacity-50"
               >
                 {isSaving ? (
                   <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -159,7 +159,7 @@ const PersonalInformation = ({ profile, user, onProfileUpdate }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
         <div>
-          <label className="block text-xs uppercase tracking-wider text-charcoal/40 font-semibold mb-1">
+          <label className="block text-xs uppercase tracking-wider text-ticket-charcoal/40 font-semibold mb-1">
             First Name
           </label>
           <input
@@ -173,7 +173,7 @@ const PersonalInformation = ({ profile, user, onProfileUpdate }) => {
         </div>
 
         <div>
-          <label className="block text-xs uppercase tracking-wider text-charcoal/40 font-semibold mb-1">
+          <label className="block text-xs uppercase tracking-wider text-ticket-charcoal/40 font-semibold mb-1">
             Last Name
           </label>
           <input
@@ -187,22 +187,22 @@ const PersonalInformation = ({ profile, user, onProfileUpdate }) => {
         </div>
 
         <div>
-          <label className="block text-xs uppercase tracking-wider text-charcoal/40 font-semibold mb-1">
+          <label className="block text-xs uppercase tracking-wider text-ticket-charcoal/40 font-semibold mb-1">
             Email Address
           </label>
           <input
             type="email"
             value={user?.email || ''}
             readOnly
-            className="w-full px-4 py-2.5 bg-transparent border-transparent text-sm font-medium text-charcoal/70 outline-none cursor-default px-0 pointer-events-none"
+            className="w-full px-4 py-2.5 bg-transparent border-transparent text-sm font-medium text-ticket-charcoal/70 outline-none cursor-default px-0 pointer-events-none"
           />
           {isEditing && (
-             <p className="text-[10px] text-charcoal/40 mt-1">Email cannot be changed here directly.</p>
+             <p className="text-[10px] text-ticket-charcoal/40 mt-1">Email cannot be changed here directly.</p>
           )}
         </div>
 
         <div>
-          <label className="block text-xs uppercase tracking-wider text-charcoal/40 font-semibold mb-1">
+          <label className="block text-xs uppercase tracking-wider text-ticket-charcoal/40 font-semibold mb-1">
             Phone Number
           </label>
           <input

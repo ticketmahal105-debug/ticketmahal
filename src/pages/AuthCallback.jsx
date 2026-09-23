@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { AlertCircle, Mail, ArrowRight, Clock } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { supabase, initialAuthCallbackState } from '../lib/supabase';
 import Navbar from '../components/Navbar';
 
 const AuthCallback = () => {
@@ -32,20 +32,36 @@ const AuthCallback = () => {
   }, [resendCooldown]);
 
   useEffect(() => {
+    // Read any persisted attempt from sessionStorage (survives redirects from / to /auth/callback)
+    let storedAttempt = null;
+    try {
+      const raw = sessionStorage.getItem('tm_auth_verification_attempt');
+      if (raw) {
+        storedAttempt = JSON.parse(raw);
+        // Only accept attempts within last 5 minutes
+        if (Date.now() - storedAttempt.timestamp > 5 * 60 * 1000) {
+          storedAttempt = null;
+          sessionStorage.removeItem('tm_auth_verification_attempt');
+        }
+      }
+    } catch {
+      // Ignore sessionStorage exceptions
+    }
+
     const searchParams = new URLSearchParams(window.location.search);
     const hash = window.location.hash.startsWith('#')
       ? window.location.hash.substring(1)
       : window.location.hash;
     const hashParams = new URLSearchParams(hash);
 
-    const code = searchParams.get('code');
-    const tokenHash = searchParams.get('token_hash');
-    const type = searchParams.get('type') || hashParams.get('type');
-    const accessToken = hashParams.get('access_token');
-    const refreshToken = hashParams.get('refresh_token');
-    const errorCode = searchParams.get('error_code') || hashParams.get('error_code');
-    const errorDesc = searchParams.get('error_description') || hashParams.get('error_description');
-    const errorParam = searchParams.get('error') || hashParams.get('error');
+    const code = searchParams.get('code') || initialAuthCallbackState.code || storedAttempt?.code;
+    const tokenHash = searchParams.get('token_hash') || initialAuthCallbackState.tokenHash || storedAttempt?.tokenHash;
+    const type = searchParams.get('type') || hashParams.get('type') || initialAuthCallbackState.type || storedAttempt?.type;
+    const accessToken = hashParams.get('access_token') || initialAuthCallbackState.accessToken;
+    const refreshToken = hashParams.get('refresh_token') || initialAuthCallbackState.refreshToken;
+    const errorCode = searchParams.get('error_code') || hashParams.get('error_code') || initialAuthCallbackState.errorCode || storedAttempt?.errorCode;
+    const errorDesc = searchParams.get('error_description') || hashParams.get('error_description') || initialAuthCallbackState.errorDescription || storedAttempt?.errorDescription;
+    const errorParam = searchParams.get('error') || hashParams.get('error') || initialAuthCallbackState.error || storedAttempt?.error;
 
     const isVerificationAttempt = Boolean(
       code ||
@@ -53,17 +69,29 @@ const AuthCallback = () => {
       accessToken ||
       errorCode ||
       errorParam ||
+      errorDesc ||
+      initialAuthCallbackState.hasAuthParams ||
+      storedAttempt ||
       (type && type !== 'recovery')
     );
 
-    // Subscribe to auth state changes to catch asynchronous/background completion by Supabase
+    const checkAndCompleteSuccess = (user) => {
+      if (user?.email) {
+        setResendEmail(user.email);
+      }
+      try {
+        sessionStorage.removeItem('tm_auth_verification_attempt');
+      } catch {
+        // Ignore sessionStorage exceptions
+      }
+      window.history.replaceState({}, document.title, window.location.pathname);
+      setStatus('success');
+    };
+
+    // Catch asynchronous / background session updates from Supabase detectSessionInUrl
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if ((event === 'SIGNED_IN' || event === 'USER_UPDATED') && session?.user && isVerificationAttempt) {
-        if (session.user.email) {
-          setResendEmail(session.user.email);
-        }
-        window.history.replaceState({}, document.title, window.location.pathname);
-        setStatus('success');
+        checkAndCompleteSuccess(session.user);
       }
     });
 
@@ -75,7 +103,7 @@ const AuthCallback = () => {
 
     const handleAuthCallback = async () => {
       try {
-        // If not a verification callback attempt, do not show success screen
+        // If no verification parameters and no verification attempt was detected
         if (!isVerificationAttempt) {
           setStatus('no_token');
           return;
@@ -95,42 +123,35 @@ const AuthCallback = () => {
               ? decodeURIComponent(errorDesc.replace(/\+/g, ' '))
               : 'This verification link is invalid or has already been used.'
           );
+          try {
+            sessionStorage.removeItem('tm_auth_verification_attempt');
+          } catch {
+            // Ignore
+          }
           setStatus('error');
           return;
         }
 
-        // Check if Supabase already processed the callback automatically on page load
+        // 1. Check if Supabase already processed the callback automatically on page load
         const { data: initialSessionData } = await supabase.auth.getSession();
         if (initialSessionData?.session?.user) {
-          if (initialSessionData.session.user.email) {
-            setResendEmail(initialSessionData.session.user.email);
-          }
-          window.history.replaceState({}, document.title, window.location.pathname);
-          setStatus('success');
+          checkAndCompleteSuccess(initialSessionData.session.user);
           return;
         }
 
-        // Case 1: PKCE Code Flow (?code=...)
+        // 2. Case: PKCE Code Flow (?code=...)
         if (code) {
           const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
           if (!error && (data?.session || data?.user)) {
-            if (data?.user?.email) {
-              setResendEmail(data.user.email);
-            }
-            window.history.replaceState({}, document.title, window.location.pathname);
-            setStatus('success');
+            checkAndCompleteSuccess(data.user || data.session?.user);
             return;
           }
 
           // In case Supabase's automatic exchange completed concurrently
           const { data: retrySessionData } = await supabase.auth.getSession();
           if (retrySessionData?.session?.user) {
-            if (retrySessionData.session.user.email) {
-              setResendEmail(retrySessionData.session.user.email);
-            }
-            window.history.replaceState({}, document.title, window.location.pathname);
-            setStatus('success');
+            checkAndCompleteSuccess(retrySessionData.session.user);
             return;
           }
 
@@ -146,12 +167,17 @@ const AuthCallback = () => {
                 ? 'This verification link has expired or has already been used. Please request a fresh link below.'
                 : error.message || 'Unable to verify email.'
             );
+            try {
+              sessionStorage.removeItem('tm_auth_verification_attempt');
+            } catch {
+              // Ignore
+            }
             setStatus('error');
             return;
           }
         }
 
-        // Case 2: Token Hash OTP Flow (?token_hash=...&type=...)
+        // 3. Case: Token Hash OTP Flow (?token_hash=...&type=...)
         if (tokenHash) {
           const { data, error } = await supabase.auth.verifyOtp({
             token_hash: tokenHash,
@@ -159,11 +185,7 @@ const AuthCallback = () => {
           });
 
           if (!error && (data?.session || data?.user)) {
-            if (data?.user?.email) {
-              setResendEmail(data.user.email);
-            }
-            window.history.replaceState({}, document.title, window.location.pathname);
-            setStatus('success');
+            checkAndCompleteSuccess(data.user || data.session?.user);
             return;
           }
 
@@ -178,12 +200,17 @@ const AuthCallback = () => {
                 ? 'This verification link has expired or has already been used. Please request a fresh link below.'
                 : error.message || 'Unable to verify email.'
             );
+            try {
+              sessionStorage.removeItem('tm_auth_verification_attempt');
+            } catch {
+              // Ignore
+            }
             setStatus('error');
             return;
           }
         }
 
-        // Case 3: Implicit Hash Fragment Flow (#access_token=...&refresh_token=...)
+        // 4. Case: Implicit Hash Fragment Flow (#access_token=...&refresh_token=...)
         if (accessToken && refreshToken) {
           const { data, error } = await supabase.auth.setSession({
             access_token: accessToken,
@@ -191,32 +218,36 @@ const AuthCallback = () => {
           });
 
           if (!error && (data?.session || data?.user)) {
-            if (data?.user?.email) {
-              setResendEmail(data.user.email);
-            }
-            window.history.replaceState({}, document.title, window.location.pathname);
-            setStatus('success');
+            checkAndCompleteSuccess(data.user || data.session?.user);
             return;
           }
 
           const { data: fallbackSession } = await supabase.auth.getSession();
           if (fallbackSession?.session?.user) {
-            if (fallbackSession.session.user.email) {
-              setResendEmail(fallbackSession.session.user.email);
-            }
-            window.history.replaceState({}, document.title, window.location.pathname);
-            setStatus('success');
+            checkAndCompleteSuccess(fallbackSession.session.user);
             return;
           }
 
           if (error) {
             setErrorMessage('Failed to establish verification session. Please try again.');
+            try {
+              sessionStorage.removeItem('tm_auth_verification_attempt');
+            } catch {
+              // Ignore
+            }
             setStatus('error');
             return;
           }
         }
 
-        // If no explicit tokens or session was confirmed, mark as no_token
+        // 5. Final check before declaring no_token
+        const { data: finalSessionData } = await supabase.auth.getSession();
+        if (finalSessionData?.session?.user && isVerificationAttempt) {
+          checkAndCompleteSuccess(finalSessionData.session.user);
+          return;
+        }
+
+        // No verification tokens found
         setStatus('no_token');
       } catch {
         setErrorMessage('An unexpected error occurred during email verification.');

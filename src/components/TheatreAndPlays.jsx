@@ -3,185 +3,22 @@ import { motion } from 'framer-motion';
 import { ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import WishlistButton from './wishlist/WishlistButton';
+import { dummyMovies } from '../data/dummyMovies';
 
-const theatrePlays = [
-  {
-    id: "theatre-01",
-    title: "The Final Act",
-    slug: "the-final-act",
-    image: "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&q=80&w=1200",
-    category: "Theatre",
-    genre: "Drama",
-    language: "English",
-    languageCode: "EN",
-    venue: "Dubai Opera",
-    city: "Dubai",
-    startDate: "12 SEP",
-    endDate: "18 SEP",
-    fullDate: "12–18 SEP",
-    dateStubMonth: "SEP 12",
-    time: "8:00 PM",
-    startingPrice: 180,
-    currency: "AED",
-    status: "Now Playing",
-    actNumber: "ACT 01",
-    showsCount: "8 SHOWS"
-  },
-  {
-    id: "theatre-02",
-    title: "A Midsummer Evening",
-    slug: "a-midsummer-evening",
-    image: "https://images.unsplash.com/photo-1469488865564-c2de10f69f96?auto=format&fit=crop&q=80&w=800",
-    category: "Theatre",
-    genre: "Classical",
-    language: "English",
-    languageCode: "EN",
-    venue: "The Theatre · Dubai",
-    city: "Dubai",
-    startDate: "14 SEP",
-    endDate: "20 SEP",
-    fullDate: "14 SEP — 20 SEP",
-    dateStubMonth: "SEP 14",
-    time: "8:00 PM",
-    startingPrice: 145,
-    currency: "AED",
-    status: "Opening Soon",
-    badge: "✦ OPENING NIGHT",
-    actNumber: "ACT 02",
-    showsCount: "6 PERFORMANCES"
-  },
-  {
-    id: "theatre-03",
-    title: "Letters from the Stage",
-    slug: "letters-from-the-stage",
-    image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&q=80&w=800",
-    category: "Theatre",
-    genre: "Drama",
-    language: "English",
-    languageCode: "EN",
-    venue: "Zabeel Theatre",
-    city: "Dubai",
-    startDate: "22 SEP",
-    endDate: "28 SEP",
-    fullDate: "22 SEP — 28 SEP",
-    dateStubMonth: "SEP 22",
-    time: "7:30 PM",
-    startingPrice: 160,
-    currency: "AED",
-    status: "Final Week",
-    actNumber: "ACT 03",
-    showsCount: "5 PERFORMANCES"
-  },
-  {
-    id: "theatre-04",
-    title: "The Palace of Dreams",
-    slug: "the-palace-of-dreams",
-    image: "https://images.unsplash.com/photo-1514306191717-452ec28c7814?auto=format&fit=crop&q=80&w=800",
-    category: "Theatre",
-    genre: "Musical",
-    language: "Arabic",
-    languageCode: "AR",
-    venue: "Dubai Opera Studio",
-    city: "Dubai",
-    startDate: "01 OCT",
-    endDate: "07 OCT",
-    fullDate: "01 OCT — 07 OCT",
-    dateStubMonth: "OCT 01",
-    time: "8:30 PM",
-    startingPrice: 220,
-    currency: "AED",
-    status: "Limited Run",
-    actNumber: "ACT 04",
-    showsCount: "10 SHOWS"
-  },
-  {
-    id: "theatre-05",
-    title: "Between Two Curtains",
-    slug: "between-two-curtains",
-    image: "https://images.unsplash.com/photo-1460723237483-7a6dc9d0b212?auto=format&fit=crop&q=80&w=800",
-    category: "Theatre",
-    genre: "Experimental",
-    language: "English",
-    languageCode: "EN",
-    venue: "Alserkal Avenue Studio",
-    city: "Dubai",
-    startDate: "10 OCT",
-    endDate: "12 OCT",
-    fullDate: "10 OCT — 12 OCT",
-    dateStubMonth: "OCT 10",
-    time: "9:00 PM",
-    startingPrice: 135,
-    currency: "AED",
-    status: "One Night Only",
-    actNumber: "ACT 05",
-    showsCount: "3 PERFORMANCES"
-  },
-  {
-    id: "theatre-06",
-    title: "The Last Monologue",
-    slug: "the-last-monologue",
-    image: "https://images.unsplash.com/photo-1503095396549-807759245b35?auto=format&fit=crop&q=80&w=800",
-    category: "Theatre",
-    genre: "Drama",
-    language: "Hindi",
-    languageCode: "HI",
-    venue: "JWR Arts Centre",
-    city: "Dubai",
-    startDate: "15 OCT",
-    endDate: "19 OCT",
-    fullDate: "15 OCT — 19 OCT",
-    dateStubMonth: "OCT 15",
-    time: "8:00 PM",
-    startingPrice: 150,
-    currency: "AED",
-    status: "Opening Soon",
-    actNumber: "ACT 06",
-    showsCount: "5 SHOWS"
-  },
-  {
-    id: "theatre-07",
-    title: "Arabian Tales",
-    slug: "arabian-tales",
-    image: "https://images.unsplash.com/photo-1518834107812-67b0b7c58434?auto=format&fit=crop&q=80&w=800",
-    category: "Theatre",
-    genre: "Arabic Theatre",
-    language: "Arabic",
-    languageCode: "AR",
-    venue: "Cultural Foundation",
-    city: "Abu Dhabi",
-    startDate: "24 OCT",
-    endDate: "30 OCT",
-    fullDate: "24 OCT — 30 OCT",
-    dateStubMonth: "OCT 24",
-    time: "7:00 PM",
-    startingPrice: 175,
-    currency: "AED",
-    actNumber: "ACT 07",
-    showsCount: "7 PERFORMANCES"
-  },
-  {
-    id: "theatre-08",
-    title: "The Grand Musical",
-    slug: "the-grand-musical",
-    image: "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&q=80&w=800",
-    category: "Theatre",
-    genre: "Musical",
-    language: "English",
-    languageCode: "EN",
-    venue: "Etihad Arena",
-    city: "Abu Dhabi",
-    startDate: "05 NOV",
-    endDate: "12 NOV",
-    fullDate: "05 NOV — 12 NOV",
-    dateStubMonth: "NOV 05",
-    time: "8:00 PM",
-    startingPrice: 250,
-    currency: "AED",
-    status: "Now Playing",
-    actNumber: "ACT 08",
-    showsCount: "12 SHOWS"
-  }
-];
+const theatrePlays = dummyMovies.map((m, idx) => ({
+  ...m,
+  genre: m.genre.split(',')[0],
+  language: m.language.split(',')[0],
+  languageCode: "EN",
+  startDate: m.releaseDate.substring(0, 6).toUpperCase(),
+  endDate: "LIMITED RUN",
+  fullDate: m.releaseDate,
+  dateStubMonth: m.releaseDate.substring(0, 6).toUpperCase(),
+  time: "8:00 PM",
+  status: "Premiering Soon",
+  actNumber: `ACT 0${idx + 1}`,
+  showsCount: "DAILY SHOWTIMES"
+}));
 
 export default function TheatreAndPlays() {
   const scrollRef = useRef(null);
@@ -332,14 +169,19 @@ export default function TheatreAndPlays() {
                 transition={{ duration: 0.3, ease: "easeOut" }}
                 className="bg-white rounded-[24px] border border-[#EDE3D5]/80 p-3.5 shadow-xs hover:shadow-md transition-all duration-300"
               >
-                {/* Image Container with Fixed Equal Aspect Ratio */}
-                <div className="relative h-[280px] sm:h-[300px] w-full rounded-[18px] overflow-hidden bg-gray-100 mb-3">
+                {/* Poster Container - 3:4 Ratio with Uncropped Fit */}
+                <div className="relative aspect-[3/4] w-full rounded-[18px] overflow-hidden bg-neutral-900/90 mb-3">
+                  <img
+                    src={play.image}
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover blur-xl scale-110 opacity-40 pointer-events-none select-none"
+                  />
                   <motion.img
                     src={play.image}
                     alt={play.title}
-                    className="absolute inset-0 w-full h-full object-cover"
-                    whileHover={{ scale: 1.03 }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="relative z-0 w-full h-full object-contain"
+                    whileHover={{ scale: 1.04 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
                   />
 
                   {/* Act Number Badge */}

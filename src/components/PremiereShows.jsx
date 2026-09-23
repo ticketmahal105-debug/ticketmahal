@@ -3,99 +3,15 @@ import { motion } from 'framer-motion';
 import { ArrowUpRight, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import WishlistButton from './wishlist/WishlistButton';
+import { dummyMovies } from '../data/dummyMovies';
 
-const premiereExperiences = [
-  {
-    id: "premiere-01",
-    title: "Cirque Nocturne",
-    slug: "cirque-nocturne",
-    image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=800",
-    category: "Live Performance",
-    venue: "Dubai Opera",
-    city: "Dubai",
-    premiereDate: "2024-09-28",
-    time: "20:00",
-    startingPrice: 195,
-    currency: "AED",
-    status: "FIRST ACCESS",
-    badge: "Premiere",
-  },
-  {
-    id: "premiere-02",
-    title: "The Royal Symphony",
-    slug: "the-royal-symphony",
-    image: "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&q=80&w=800",
-    category: "Classical",
-    venue: "Dubai Opera",
-    city: "Dubai",
-    premiereDate: "2024-10-02",
-    time: "19:30",
-    startingPrice: 220,
-    currency: "AED",
-    status: "JUST ANNOUNCED",
-    badge: "Premiere",
-  },
-  {
-    id: "premiere-03",
-    title: "Arabian Nights Reimagined",
-    slug: "arabian-nights-reimagined",
-    image: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&q=80&w=800",
-    category: "Musical",
-    venue: "Coca-Cola Arena",
-    city: "Dubai",
-    premiereDate: "2024-10-15",
-    time: "20:30",
-    startingPrice: 180,
-    currency: "AED",
-    status: "OPENING WEEK",
-    badge: "Premiere",
-  },
-  {
-    id: "premiere-04",
-    title: "Velvet Curtain",
-    slug: "velvet-curtain",
-    image: "/images/categories/theatre.jpg",
-    category: "Theatre",
-    venue: "Zabeel Theatre",
-    city: "Dubai",
-    premiereDate: "2024-10-22",
-    time: "21:00",
-    startingPrice: 210,
-    currency: "AED",
-    status: "FIRST ACCESS",
-    badge: "Premiere",
-  },
-  {
-    id: "premiere-05",
-    title: "Beyond Illusion",
-    slug: "beyond-illusion",
-    image: "https://images.unsplash.com/photo-1508807526345-15e9b5f4eaff?auto=format&fit=crop&q=80&w=800",
-    category: "Magic & Mystery",
-    venue: "The Agenda",
-    city: "Dubai",
-    premiereDate: "2024-11-05",
-    time: "19:00",
-    startingPrice: 250,
-    currency: "AED",
-    status: "JUST ANNOUNCED",
-    badge: "Premiere",
-  },
-  {
-    id: "premiere-06",
-    title: "Echoes of Arabia",
-    slug: "echoes-of-arabia",
-    image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80&w=800",
-    category: "Orchestra",
-    venue: "Emirates Palace Auditorium",
-    city: "Abu Dhabi",
-    premiereDate: "2024-11-12",
-    time: "20:00",
-    startingPrice: 175,
-    currency: "AED",
-    status: "NEW",
-    badge: "Premiere",
-  }
-];
+const premiereExperiences = dummyMovies.map(m => ({
+  ...m,
+  premiereDate: "2026-07-31",
+  time: "20:00",
+  status: "COMING SOON",
+  badge: "Premiere"
+}));
 
 const formatPremiereDate = (dateString) => {
   const date = new Date(dateString);
@@ -246,14 +162,19 @@ const PremiereShows = () => {
                 transition={{ duration: 0.3, ease: "easeOut" }}
                 className="bg-white rounded-[24px] border border-[#EDE3D5]/80 p-3.5 shadow-xs hover:shadow-md transition-all duration-300"
               >
-                {/* Image Container with Fixed Equal Aspect Ratio */}
-                <div className="relative h-[280px] sm:h-[300px] w-full rounded-[18px] overflow-hidden bg-gray-100 mb-3">
+                {/* Poster Container - 3:4 Ratio with Uncropped Fit */}
+                <div className="relative aspect-[3/4] w-full rounded-[18px] overflow-hidden bg-neutral-900/90 mb-3">
+                  <img
+                    src={item.image}
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover blur-xl scale-110 opacity-40 pointer-events-none select-none"
+                  />
                   <motion.img
                     src={item.image}
                     alt={item.title}
-                    className="absolute inset-0 w-full h-full object-cover"
-                    whileHover={{ scale: 1.03 }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="relative z-0 w-full h-full object-contain"
+                    whileHover={{ scale: 1.04 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
                   />
                   
                   {/* Status Badge */}

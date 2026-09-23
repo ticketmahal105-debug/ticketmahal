@@ -3,157 +3,21 @@ import { motion } from 'framer-motion';
 import { ArrowUpRight, ChevronLeft, ChevronRight, MapPin, Ticket } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import WishlistButton from './wishlist/WishlistButton';
+import { dummyMovies } from '../data/dummyMovies';
 
-const experiencesData = [
-  {
-    id: "exp-01",
-    title: "Aqua Adventure Day",
-    slug: "aqua-adventure-day",
-    image: "https://images.unsplash.com/photo-1582650625119-3a31f8fa2699?auto=format&fit=crop&q=80&w=1200",
-    category: "WATERPARK",
-    filterCategory: "WATER",
-    location: "Palm Jumeirah",
-    city: "Dubai",
-    fullLocation: "Palm Jumeirah · Dubai",
-    startingPrice: 195,
-    currency: "AED",
-    duration: "Full Day",
-    environment: "Outdoor",
-    audience: "Great for Families",
-    availabilityType: "Open Daily",
-    offer: "FAMILY PASS",
-    quickFact: "30+ Slides & Wave Pools"
-  },
-  {
-    id: "exp-02",
-    title: "Snow Escape Dubai",
-    slug: "snow-escape-dubai",
-    image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&q=80&w=800",
-    category: "SNOW PARK",
-    filterCategory: "INDOOR",
-    location: "Mall of the Emirates",
-    city: "Dubai",
-    fullLocation: "Mall of the Emirates · Dubai",
-    startingPrice: 220,
-    currency: "AED",
-    duration: "3–4 hrs",
-    environment: "Indoor",
-    audience: "All Ages",
-    availabilityType: "Open Daily",
-    offer: "SAVE 15%",
-    quickFact: "Real Snow & Ski Slope"
-  },
-  {
-    id: "exp-03",
-    title: "The Illusion Rooms",
-    slug: "the-illusion-rooms",
-    image: "https://images.unsplash.com/photo-1518998053901-5348d3961a04?auto=format&fit=crop&q=80&w=800",
-    category: "MUSEUM",
-    filterCategory: "CULTURE",
-    location: "Al Seef",
-    city: "Dubai",
-    fullLocation: "Al Seef · Dubai",
-    startingPrice: 85,
-    currency: "AED",
-    duration: "2–3 hrs",
-    environment: "Indoor",
-    audience: "Couples Pick",
-    availabilityType: "Open Daily",
-    quickFact: "Interactive 3D Art"
-  },
-  {
-    id: "exp-04",
-    title: "Skyline Observatory",
-    slug: "skyline-observatory",
-    image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=800",
-    category: "OBSERVATION",
-    filterCategory: "CULTURE",
-    location: "Downtown",
-    city: "Dubai",
-    fullLocation: "Downtown · Dubai",
-    startingPrice: 140,
-    currency: "AED",
-    duration: "1–2 hrs",
-    environment: "Indoor / Outdoor",
-    audience: "Adventure Pick",
-    availabilityType: "Open Daily",
-    quickFact: "360° Panoramic Views"
-  },
-  {
-    id: "exp-05",
-    title: "Wonderland Family Park",
-    slug: "wonderland-family-park",
-    image: "https://images.unsplash.com/photo-1513889961551-628c1e5e2ee9?auto=format&fit=crop&q=80&w=800",
-    category: "THEME PARK",
-    filterCategory: "FAMILY",
-    location: "Dubai Parks",
-    city: "Dubai",
-    fullLocation: "Dubai Parks · Dubai",
-    startingPrice: 245,
-    currency: "AED",
-    duration: "Full Day",
-    environment: "Outdoor",
-    audience: "Great for Families",
-    availabilityType: "Open Daily",
-    offer: "BUY 3 GET 1",
-    quickFact: "40+ Rollercoasters"
-  },
-  {
-    id: "exp-06",
-    title: "Desert Adventure Safari",
-    slug: "desert-adventure-safari",
-    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800",
-    category: "ADVENTURE",
-    filterCategory: "ADVENTURE",
-    location: "Lahbab Dunes",
-    city: "Dubai",
-    fullLocation: "Lahbab Dunes · Dubai",
-    startingPrice: 280,
-    currency: "AED",
-    duration: "5–6 hrs",
-    environment: "Outdoor",
-    audience: "Adventure Pick",
-    availabilityType: "Daily Depatures",
-    quickFact: "Dune Bashing & Camp"
-  },
-  {
-    id: "exp-07",
-    title: "Ocean World Aquarium",
-    slug: "ocean-world-aquarium",
-    image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&q=80&w=800",
-    category: "AQUARIUM",
-    filterCategory: "FAMILY",
-    location: "Dubai Mall",
-    city: "Dubai",
-    fullLocation: "Dubai Mall · Dubai",
-    startingPrice: 130,
-    currency: "AED",
-    duration: "2–3 hrs",
-    environment: "Indoor",
-    audience: "All Ages",
-    availabilityType: "Open Daily",
-    quickFact: "33,000+ Aquatic Animals"
-  },
-  {
-    id: "exp-08",
-    title: "The Immersive Gallery",
-    slug: "the-immersive-gallery",
-    image: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80&w=800",
-    category: "IMMERSIVE",
-    filterCategory: "INDOOR",
-    location: "Souk Madinat",
-    city: "Dubai",
-    fullLocation: "Souk Madinat · Dubai",
-    startingPrice: 110,
-    currency: "AED",
-    duration: "2 hrs",
-    environment: "Indoor",
-    audience: "Couples Pick",
-    availabilityType: "Open Daily",
-    offer: "SAVE 20%",
-    quickFact: "360° Digital Projection"
-  }
-];
+const experiencesData = dummyMovies.map(m => ({
+  ...m,
+  category: "CINEMA EXPERIENCE",
+  filterCategory: "INDOOR",
+  location: m.venue,
+  city: "Dubai",
+  fullLocation: `${m.venue} · Dubai`,
+  duration: m.runtime,
+  environment: "Indoor Cinema",
+  audience: "All Ages",
+  availabilityType: "Daily Showtimes",
+  quickFact: `IMDb ${m.imdbRating} • ${m.certificate}`
+}));
 
 const filterCategories = [
   { id: "ALL", label: "ALL EXPERIENCES" },
@@ -326,14 +190,19 @@ export default function ExperiencesAndAttractions() {
                 transition={{ duration: 0.3, ease: "easeOut" }}
                 className="bg-white rounded-[24px] border border-[#EDE3D5]/80 p-3.5 shadow-xs hover:shadow-md transition-all duration-300"
               >
-                {/* Image Container with Fixed Equal Aspect Ratio */}
-                <div className="relative h-[280px] sm:h-[300px] w-full rounded-[18px] overflow-hidden bg-gray-100 mb-3">
+                {/* Poster Container - 3:4 Ratio with Uncropped Fit */}
+                <div className="relative aspect-[3/4] w-full rounded-[18px] overflow-hidden bg-neutral-900/90 mb-3">
+                  <img
+                    src={exp.image}
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover blur-xl scale-110 opacity-40 pointer-events-none select-none"
+                  />
                   <motion.img
                     src={exp.image}
                     alt={exp.title}
-                    className="absolute inset-0 w-full h-full object-cover"
-                    whileHover={{ scale: 1.03 }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="relative z-0 w-full h-full object-contain"
+                    whileHover={{ scale: 1.04 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
                   />
 
                   {/* Category Pill */}

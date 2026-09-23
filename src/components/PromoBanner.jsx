@@ -20,17 +20,13 @@ const PromoBanner = () => {
             }}
           />
 
-          {/* Left Side: Ticket Mahal Logo Badge (Matching reference image style) */}
-          <div className="flex items-center gap-3 z-10 flex-shrink-0">
-            <div className="flex flex-col items-start leading-none">
-              <div className="flex items-center gap-1">
-                <span className="text-[11px] sm:text-xs font-semibold text-slate-300 tracking-wider">ticket</span>
-                <span className="bg-ticket-burgundy text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">mahal</span>
-              </div>
-              <span className="text-xl sm:text-2xl font-black text-white tracking-widest font-sans uppercase mt-1">
-                LIVE
-              </span>
-            </div>
+          {/* Left Side: Ticket Mahal Official Logo */}
+          <div className="flex items-center z-10 flex-shrink-0">
+            <img
+              src="https://res.cloudinary.com/tejjggbw/image/upload/Untitled_design_-_2026-08-21T182953.259"
+              alt="Ticket Mahal Logo"
+              className="h-16 sm:h-20 md:h-24 w-auto object-contain"
+            />
           </div>
 
           {/* Center Text Slogan (Rephrased for Ticket Mahal) */}

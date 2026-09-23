@@ -3,99 +3,15 @@ import { motion } from 'framer-motion';
 import { ArrowUpRight, ChevronLeft, ChevronRight, MapPin, Sun } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import WishlistButton from './wishlist/WishlistButton';
+import { dummyMovies } from '../data/dummyMovies';
 
-const outdoorEvents = [
-  {
-    id: "outdoor-01",
-    title: "Desert Soundscape",
-    slug: "desert-soundscape",
-    image: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&q=80&w=1000",
-    category: "FESTIVAL",
-    venue: "Al Marmoom Desert Reserve",
-    city: "Dubai",
-    dateTag: "SAT • 24 OCT",
-    time: "18:00",
-    startingPrice: 180,
-    currency: "AED",
-    badge: "WEEKEND PICK",
-    locationPin: "Al Marmoom, Dubai",
-  },
-  {
-    id: "outdoor-02",
-    title: "Sunset Sessions",
-    slug: "sunset-sessions",
-    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=800",
-    category: "BEACH",
-    venue: "JBR Beach",
-    city: "Dubai",
-    dateTag: "FRI • 30 OCT",
-    time: "17:30",
-    startingPrice: 150,
-    currency: "AED",
-    badge: "SUNSET EVENT",
-    locationPin: "JBR Beach, Dubai",
-  },
-  {
-    id: "outdoor-03",
-    title: "Open Air Cinema Nights",
-    slug: "open-air-cinema-nights",
-    image: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&q=80&w=800",
-    category: "OPEN AIR",
-    venue: "Expo City Dome Plaza",
-    city: "Dubai",
-    dateTag: "SAT • 07 NOV",
-    time: "19:00",
-    startingPrice: 95,
-    currency: "AED",
-    badge: "OUTDOOR",
-    locationPin: "Expo City, Dubai",
-  },
-  {
-    id: "outdoor-04",
-    title: "Dubai Beach Festival",
-    slug: "dubai-beach-festival",
-    image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&q=80&w=800",
-    category: "FESTIVAL",
-    venue: "Nikki Beach Resort",
-    city: "Dubai",
-    dateTag: "FRI • 13 NOV",
-    time: "16:00",
-    startingPrice: 220,
-    currency: "AED",
-    badge: "SELLING FAST",
-    locationPin: "Nikki Beach, Dubai",
-  },
-  {
-    id: "outdoor-05",
-    title: "Rhythm in the Dunes",
-    slug: "rhythm-in-the-dunes",
-    image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=800",
-    category: "DESERT",
-    venue: "Bab Al Shams Arena",
-    city: "Dubai",
-    dateTag: "FRI • 27 NOV",
-    time: "18:30",
-    startingPrice: 200,
-    currency: "AED",
-    badge: "DESERT SAFARI",
-    locationPin: "Bab Al Shams, Dubai",
-  },
-  {
-    id: "outdoor-06",
-    title: "Moonlight Theatre",
-    slug: "moonlight-theatre",
-    image: "/images/categories/theatre.jpg",
-    category: "ROOFTOP",
-    venue: "Al Wasl Plaza Rooftop",
-    city: "Dubai",
-    dateTag: "SAT • 05 DEC",
-    time: "20:00",
-    startingPrice: 175,
-    currency: "AED",
-    badge: "ROOFTOP SHOW",
-    locationPin: "Al Wasl, Dubai",
-  }
-];
+const outdoorEvents = dummyMovies.map(m => ({
+  ...m,
+  dateTag: `OUTDOOR • ${m.releaseDate}`,
+  time: "20:00",
+  category: "CINEMA OPEN AIR",
+  locationPin: m.venue
+}));
 
 const BeyondTheWalls = () => {
   const scrollRef = useRef(null);
@@ -227,14 +143,19 @@ const BeyondTheWalls = () => {
                 transition={{ duration: 0.3, ease: "easeOut" }}
                 className="bg-white rounded-[24px] border border-[#EDE3D5]/80 p-3.5 shadow-xs hover:shadow-md transition-all duration-300"
               >
-                {/* Image Container with Fixed Equal Aspect Ratio */}
-                <div className="relative h-[280px] sm:h-[300px] w-full rounded-[18px] overflow-hidden bg-gray-100 mb-3">
+                {/* Poster Container - 3:4 Ratio with Uncropped Fit */}
+                <div className="relative aspect-[3/4] w-full rounded-[18px] overflow-hidden bg-neutral-900/90 mb-3">
+                  <img
+                    src={item.image}
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover blur-xl scale-110 opacity-40 pointer-events-none select-none"
+                  />
                   <motion.img
                     src={item.image}
                     alt={item.title}
-                    className="absolute inset-0 w-full h-full object-cover"
-                    whileHover={{ scale: 1.03 }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="relative z-0 w-full h-full object-contain"
+                    whileHover={{ scale: 1.04 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
                   />
 
                   {/* Location Pin Pill */}

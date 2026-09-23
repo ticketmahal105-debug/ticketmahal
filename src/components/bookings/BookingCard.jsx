@@ -44,9 +44,12 @@ const BookingCard = ({ booking }) => {
       className="bg-ticket-white border border-ticket-beige/60 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col md:flex-row"
     >
       {/* Event Image */}
-      <div className="w-full md:w-[200px] h-48 md:h-auto shrink-0 overflow-hidden bg-ticket-beige/30">
+      <div className="relative w-full md:w-[180px] aspect-[3/4] shrink-0 overflow-hidden bg-neutral-900">
         {event?.event_image ? (
-          <img src={event.event_image} alt={event.event_name} className="w-full h-full object-cover" />
+          <>
+            <img src={event.event_image} alt="" className="absolute inset-0 w-full h-full object-cover blur-xl scale-110 opacity-40 pointer-events-none select-none" />
+            <img src={event.event_image} alt={event.event_name} className="relative z-0 w-full h-full object-contain" />
+          </>
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-ticket-burgundy/10 to-beige/30">
             <span className="font-playfair text-4xl text-ticket-burgundy/40 font-semibold select-none">

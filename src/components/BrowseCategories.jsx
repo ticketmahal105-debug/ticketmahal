@@ -5,6 +5,12 @@ import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
 
 const categories = [
   {
+    id: 0,
+    name: 'Movies & Cinema',
+    subtitle: '5 New Releases',
+    image: 'https://images.unsplash.com/photo-1635805737707-575885ab0820?auto=format&fit=crop&q=80&w=800',
+  },
+  {
     id: 1,
     name: 'Concerts',
     subtitle: '120+ experiences',

@@ -12,6 +12,7 @@ import TheLaughLounge from './components/TheLaughLounge';
 import TheatreAndPlays from './components/TheatreAndPlays';
 import ExperiencesAndAttractions from './components/ExperiencesAndAttractions';
 import PopularEvents from './components/PopularEvents';
+import Footer from './components/Footer';
 import ResetPassword from './pages/ResetPassword';
 import AuthCallback from './pages/AuthCallback';
 import ProtectedRoute from './routes/ProtectedRoute';
@@ -20,6 +21,8 @@ import MyTicketsPage from './pages/MyTicketsPage';
 import MyBookingsPage from './pages/MyBookingsPage';
 import BookingDetailsPage from './pages/BookingDetailsPage';
 import WishlistPage from './pages/WishlistPage';
+import EventDetailsPage from './pages/EventDetailsPage';
+import CategoryPage from './pages/CategoryPage';
 import { WishlistProvider } from './context/WishlistContext';
 import AdminRoute from './routes/AdminRoute';
 import AdminLayout from './admin/layouts/AdminLayout';
@@ -33,9 +36,9 @@ import AdminUsers from './admin/pages/AdminUsers';
 
 function Home() {
   return (
-    <div className="bg-premium-noise min-h-screen selection:bg-ticket-burgundy/30 selection:text-charcoal">
+    <div className="bg-premium-noise min-h-screen selection:bg-ticket-burgundy/30 selection:text-charcoal flex flex-col justify-between">
       <Navbar />
-      <main>
+      <main className="flex-1">
         <Hero />
         <BrowseCategories />
         <PromoBanner />
@@ -48,6 +51,7 @@ function Home() {
         <ExperiencesAndAttractions />
         <PopularEvents />
       </main>
+      <Footer />
     </div>
   );
 }
@@ -60,6 +64,9 @@ function App() {
         <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/events/:slug" element={<EventDetailsPage />} />
+          <Route path="/category/:categorySlug" element={<CategoryPage />} />
+          <Route path="/categories" element={<CategoryPage />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           

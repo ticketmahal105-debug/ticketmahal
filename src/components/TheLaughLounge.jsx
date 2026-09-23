@@ -3,99 +3,15 @@ import { motion } from 'framer-motion';
 import { ArrowUpRight, ChevronLeft, ChevronRight, Mic, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import WishlistButton from './wishlist/WishlistButton';
+import { dummyMovies } from '../data/dummyMovies';
 
-const comedyShows = [
-  {
-    id: "comedy-01",
-    title: "Laugh After Hours",
-    slug: "laugh-after-hours",
-    image: "/images/categories/comedy.jpg",
-    category: "STAND-UP",
-    language: "EN",
-    venue: "The Theatre, Mall of the Emirates",
-    city: "Dubai",
-    date: "FRI • 25 SEP",
-    time: "8:30 PM",
-    startingPrice: 120,
-    currency: "AED",
-    badge: "TONIGHT'S HEADLINER",
-  },
-  {
-    id: "comedy-02",
-    title: "Punchline Society",
-    slug: "punchline-society",
-    image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=600",
-    category: "STAND-UP",
-    language: "EN",
-    venue: "Comedy Club Dubai",
-    city: "Dubai",
-    date: "SAT • 26 SEP",
-    time: "9:00 PM",
-    startingPrice: 95,
-    currency: "AED",
-    badge: "SPECIAL GUEST",
-  },
-  {
-    id: "comedy-03",
-    title: "The Late Show",
-    slug: "the-late-show",
-    image: "/images/categories/comedy.jpg",
-    category: "IMPROV",
-    language: "EN",
-    venue: "The Agenda",
-    city: "Dubai",
-    date: "FRI • 02 OCT",
-    time: "10:30 PM",
-    startingPrice: 110,
-    currency: "AED",
-    badge: "SELLING FAST",
-  },
-  {
-    id: "comedy-04",
-    title: "No Filter",
-    slug: "no-filter",
-    image: "https://images.unsplash.com/photo-1543807535-eceef0bc6599?auto=format&fit=crop&q=80&w=600",
-    category: "ARABIC COMEDY",
-    language: "AR",
-    venue: "Dubai Opera Studio",
-    city: "Dubai",
-    date: "SAT • 10 OCT",
-    time: "8:00 PM",
-    startingPrice: 130,
-    currency: "AED",
-    badge: "NEW MATERIAL",
-  },
-  {
-    id: "comedy-05",
-    title: "Straight Face",
-    slug: "straight-face",
-    image: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&q=80&w=600",
-    category: "STAND-UP",
-    language: "EN",
-    venue: "Zabeel Theatre",
-    city: "Dubai",
-    date: "FRI • 16 OCT",
-    time: "9:30 PM",
-    startingPrice: 140,
-    currency: "AED",
-    badge: "ONE NIGHT ONLY",
-  },
-  {
-    id: "comedy-06",
-    title: "Comedy Under the Lights",
-    slug: "comedy-under-the-lights",
-    image: "https://images.unsplash.com/photo-1585699324551-f6c309eed262?auto=format&fit=crop&q=80&w=600",
-    category: "STAND-UP",
-    language: "EN",
-    venue: "Coca-Cola Arena Studio",
-    city: "Dubai",
-    date: "SAT • 24 OCT",
-    time: "8:30 PM",
-    startingPrice: 150,
-    currency: "AED",
-    badge: "FEATURED ACT",
-  }
-];
+const comedyShows = dummyMovies.map(m => ({
+  ...m,
+  date: `RELEASE • ${m.releaseDate}`,
+  time: "8:30 PM",
+  category: "MOVIE / COMEDY",
+  language: "EN"
+}));
 
 const TheLaughLounge = () => {
   const scrollRef = useRef(null);
@@ -227,14 +143,19 @@ const TheLaughLounge = () => {
                 transition={{ duration: 0.3, ease: "easeOut" }}
                 className="bg-white rounded-[24px] border border-[#EDE3D5]/80 p-3.5 shadow-xs hover:shadow-md transition-all duration-300"
               >
-                {/* Image Container with Fixed Equal Aspect Ratio */}
-                <div className="relative h-[280px] sm:h-[300px] w-full rounded-[18px] overflow-hidden bg-gray-100 mb-3">
+                {/* Poster Container - 3:4 Ratio with Uncropped Fit */}
+                <div className="relative aspect-[3/4] w-full rounded-[18px] overflow-hidden bg-neutral-900/90 mb-3">
+                  <img
+                    src={item.image}
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover blur-xl scale-110 opacity-40 pointer-events-none select-none"
+                  />
                   <motion.img
                     src={item.image}
                     alt={item.title}
-                    className="absolute inset-0 w-full h-full object-cover"
-                    whileHover={{ scale: 1.03 }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="relative z-0 w-full h-full object-contain"
+                    whileHover={{ scale: 1.04 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
                   />
 
                   {/* Language Badge */}

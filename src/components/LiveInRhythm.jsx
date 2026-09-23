@@ -3,107 +3,14 @@ import { motion } from 'framer-motion';
 import { ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import WishlistButton from './wishlist/WishlistButton';
+import { dummyMovies } from '../data/dummyMovies';
 
-const musicEvents = [
-  {
-    id: "music-01",
-    title: "Candlelight Symphony",
-    slug: "candlelight-symphony",
-    image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80&w=800",
-    category: "ORCHESTRA",
-    venue: "Dubai Opera",
-    city: "Dubai",
-    date: "2024-09-24",
-    time: "20:00",
-    startingPrice: 195,
-    currency: "AED",
-    badge: "SELLING FAST",
-  },
-  {
-    id: "music-02",
-    title: "Echoes of Arabia",
-    slug: "echoes-of-arabia",
-    image: "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&q=80&w=800",
-    category: "ARABIC MUSIC",
-    venue: "Emirates Palace",
-    city: "Abu Dhabi",
-    date: "2024-09-29",
-    time: "21:00",
-    startingPrice: 220,
-    currency: "AED",
-    badge: "JUST ANNOUNCED",
-  },
-  {
-    id: "music-03",
-    title: "Midnight Sessions",
-    slug: "midnight-sessions",
-    image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&q=80&w=800",
-    category: "DJ NIGHT",
-    venue: "Coca-Cola Arena",
-    city: "Dubai",
-    date: "2024-10-04",
-    time: "22:30",
-    startingPrice: 150,
-    currency: "AED",
-    badge: "POPULAR",
-  },
-  {
-    id: "music-04",
-    title: "The Royal Orchestra",
-    slug: "the-royal-orchestra",
-    image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=800",
-    category: "LIVE CONCERT",
-    venue: "Dubai World Trade Centre",
-    city: "Dubai",
-    date: "2024-10-12",
-    time: "19:30",
-    startingPrice: 280,
-    currency: "AED",
-    badge: "EXCLUSIVE",
-  },
-  {
-    id: "music-05",
-    title: "Desert Beats Live",
-    slug: "desert-beats-live",
-    image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&q=80&w=800",
-    category: "FESTIVAL",
-    venue: "Bab Al Shams Arena",
-    city: "Dubai",
-    date: "2024-10-18",
-    time: "18:00",
-    startingPrice: 160,
-    currency: "AED",
-    badge: "SELLING FAST",
-  },
-  {
-    id: "music-06",
-    title: "Acoustic Afterglow",
-    slug: "acoustic-afterglow",
-    image: "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?auto=format&fit=crop&q=80&w=800",
-    category: "ACOUSTIC",
-    venue: "Zabeel Theatre",
-    city: "Dubai",
-    date: "2024-10-25",
-    time: "20:00",
-    startingPrice: 140,
-    currency: "AED",
-    badge: "NEW",
-  },
-  {
-    id: "music-07",
-    title: "Dubai Jazz Evening",
-    slug: "dubai-jazz-evening",
-    image: "https://images.unsplash.com/photo-1525994886773-080587e161c2?auto=format&fit=crop&q=80&w=800",
-    category: "LIVE CONCERT",
-    venue: "The Agenda",
-    city: "Dubai",
-    date: "2024-11-02",
-    time: "20:30",
-    startingPrice: 210,
-    currency: "AED",
-    badge: "RECOMMENDED",
-  }
-];
+const musicEvents = dummyMovies.map(m => ({
+  ...m,
+  date: "2026-07-31",
+  time: "20:00",
+  category: "CINEMA CONCERT"
+}));
 
 const formatDateParts = (dateString) => {
   const date = new Date(dateString);
@@ -256,14 +163,19 @@ const LiveInRhythm = () => {
                 transition={{ duration: 0.3, ease: "easeOut" }}
                 className="bg-white rounded-[24px] border border-[#EDE3D5]/80 p-3.5 shadow-xs hover:shadow-md transition-all duration-300"
               >
-                {/* Image Container with Fixed Equal Aspect Ratio */}
-                <div className="relative h-[280px] sm:h-[300px] w-full rounded-[18px] overflow-hidden bg-gray-100 mb-3">
+                {/* Poster Container - 3:4 Ratio with Uncropped Fit */}
+                <div className="relative aspect-[3/4] w-full rounded-[18px] overflow-hidden bg-neutral-900/90 mb-3">
+                  <img
+                    src={item.image}
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover blur-xl scale-110 opacity-40 pointer-events-none select-none"
+                  />
                   <motion.img
                     src={item.image}
                     alt={item.title}
-                    className="absolute inset-0 w-full h-full object-cover"
-                    whileHover={{ scale: 1.03 }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="relative z-0 w-full h-full object-contain"
+                    whileHover={{ scale: 1.04 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
                   />
                   
                   {/* Date Badge */}

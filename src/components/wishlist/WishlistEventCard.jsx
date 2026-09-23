@@ -45,9 +45,12 @@ const WishlistEventCard = ({ event }) => {
         <X size={16} />
       </button>
 
-      <div className="h-48 w-full bg-ticket-beige/30 relative overflow-hidden shrink-0">
+      <div className="relative aspect-[3/4] w-full bg-neutral-900 overflow-hidden shrink-0">
         {event.event_image ? (
-          <img src={event.event_image} alt={event.event_name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+          <>
+            <img src={event.event_image} alt="" className="absolute inset-0 w-full h-full object-cover blur-xl scale-110 opacity-40 pointer-events-none select-none" />
+            <img src={event.event_image} alt={event.event_name} className="relative z-0 w-full h-full object-contain group-hover:scale-105 transition-transform duration-700" />
+          </>
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-ticket-burgundy/10 to-beige/30">
             <span className="font-playfair text-4xl text-ticket-burgundy/40 font-semibold select-none">{event.event_name?.charAt(0)}</span>

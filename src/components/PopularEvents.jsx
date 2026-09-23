@@ -3,121 +3,15 @@ import { motion } from 'framer-motion';
 import { ArrowUpRight, ChevronLeft, ChevronRight, Crown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import WishlistButton from './wishlist/WishlistButton';
+import { dummyMovies } from '../data/dummyMovies';
 
-const popularEventsList = [
-  {
-    id: "popular-01",
-    rank: "01",
-    title: "Midnight Symphony",
-    slug: "midnight-symphony",
-    image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80&w=800",
-    category: "LIVE MUSIC",
-    venue: "Dubai Opera",
-    city: "Dubai",
-    dateLine: "26 SEP • 8:00 PM",
-    startingPrice: 240,
-    currency: "AED",
-    demandStatus: "MOST BOOKED",
-  },
-  {
-    id: "popular-02",
-    rank: "02",
-    title: "The Grand Illusion",
-    slug: "the-grand-illusion",
-    image: "https://images.unsplash.com/photo-1508807526345-15e9b5f4eaff?auto=format&fit=crop&q=80&w=800",
-    category: "MAGIC & SHOWS",
-    venue: "Coca-Cola Arena",
-    city: "Dubai",
-    dateLine: "02 OCT • 9:00 PM",
-    startingPrice: 195,
-    currency: "AED",
-    demandStatus: "SELLING FAST",
-  },
-  {
-    id: "popular-03",
-    rank: "03",
-    title: "Desert Nights Live",
-    slug: "desert-nights-live",
-    image: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&q=80&w=800",
-    category: "FESTIVAL",
-    venue: "Expo City",
-    city: "Dubai",
-    dateLine: "09 OCT • 7:30 PM",
-    startingPrice: 175,
-    currency: "AED",
-    demandStatus: "HIGH DEMAND",
-  },
-  {
-    id: "popular-04",
-    rank: "04",
-    title: "Laugh After Hours",
-    slug: "laugh-after-hours",
-    image: "/images/categories/comedy.jpg",
-    category: "COMEDY",
-    venue: "The Theatre",
-    city: "Dubai",
-    dateLine: "16 OCT • 8:30 PM",
-    startingPrice: 120,
-    currency: "AED",
-    demandStatus: "TRENDING",
-  },
-  {
-    id: "popular-05",
-    rank: "05",
-    title: "Rhythm Under the Stars",
-    slug: "rhythm-under-the-stars",
-    image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&q=80&w=800",
-    category: "CONCERT",
-    venue: "Zabeel Park",
-    city: "Dubai",
-    dateLine: "23 OCT • 8:00 PM",
-    startingPrice: 160,
-    currency: "AED",
-    demandStatus: "MOST BOOKED",
-  },
-  {
-    id: "popular-06",
-    rank: "06",
-    title: "Arabian Nights Reimagined",
-    slug: "arabian-nights-reimagined",
-    image: "https://images.unsplash.com/photo-1518834107812-67b0b7c58434?auto=format&fit=crop&q=80&w=800",
-    category: "MUSICAL",
-    venue: "Dubai Opera",
-    city: "Dubai",
-    dateLine: "30 OCT • 8:00 PM",
-    startingPrice: 210,
-    currency: "AED",
-    demandStatus: "SELLING FAST",
-  },
-  {
-    id: "popular-07",
-    rank: "07",
-    title: "Candlelight Sessions",
-    slug: "candlelight-sessions",
-    image: "https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?auto=format&fit=crop&q=80&w=800",
-    category: "CLASSICAL",
-    venue: "Emirates Palace",
-    city: "Abu Dhabi",
-    dateLine: "06 NOV • 7:00 PM",
-    startingPrice: 185,
-    currency: "AED",
-    demandStatus: "HIGH DEMAND",
-  },
-  {
-    id: "popular-08",
-    rank: "08",
-    title: "The Royal Stage",
-    slug: "the-royal-stage",
-    image: "/images/categories/theatre.jpg",
-    category: "THEATRE",
-    venue: "Dubai World Trade Centre",
-    city: "Dubai",
-    dateLine: "13 NOV • 8:30 PM",
-    startingPrice: 220,
-    currency: "AED",
-    demandStatus: "TRENDING",
-  }
-];
+const popularEventsList = dummyMovies.map((m, idx) => ({
+  ...m,
+  rank: (idx + 1).toString().padStart(2, '0'),
+  category: "MOVIES",
+  dateLine: `${m.releaseDate} • 7:30 PM`,
+  demandStatus: m.demandStatus || "HIGH DEMAND"
+}));
 
 const PopularEvents = () => {
   const scrollRef = useRef(null);
@@ -249,14 +143,19 @@ const PopularEvents = () => {
                 transition={{ duration: 0.3, ease: "easeOut" }}
                 className="bg-white rounded-[24px] border border-[#EDE3D5]/80 p-3.5 shadow-xs hover:shadow-md transition-all duration-300"
               >
-                {/* Image Container with Fixed Equal Aspect Ratio */}
-                <div className="relative h-[280px] sm:h-[300px] w-full rounded-[18px] overflow-hidden bg-gray-100 mb-3">
+                {/* Poster Container - 3:4 Ratio with Uncropped Fit */}
+                <div className="relative aspect-[3/4] w-full rounded-[18px] overflow-hidden bg-neutral-900/90 mb-3">
+                  <img
+                    src={item.image}
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover blur-xl scale-110 opacity-40 pointer-events-none select-none"
+                  />
                   <motion.img
                     src={item.image}
                     alt={item.title}
-                    className="absolute inset-0 w-full h-full object-cover"
-                    whileHover={{ scale: 1.03 }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="relative z-0 w-full h-full object-contain"
+                    whileHover={{ scale: 1.04 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
                   />
 
                   {/* Rank Number Tag */}

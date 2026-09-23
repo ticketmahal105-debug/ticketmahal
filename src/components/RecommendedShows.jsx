@@ -3,93 +3,13 @@ import { motion } from 'framer-motion';
 import { ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import WishlistButton from './wishlist/WishlistButton';
+import { dummyMovies } from '../data/dummyMovies';
 
-const recommendedShows = [
-  {
-    id: "1",
-    title: "The Phantom of the Opera",
-    slug: "phantom-of-the-opera",
-    image: "/images/categories/theatre.jpg",
-    category: "Theatre",
-    venue: "Dubai Opera",
-    city: "Dubai",
-    date: "2024-09-24",
-    time: "20:00",
-    startingPrice: 250,
-    currency: "AED",
-    badge: "EDITOR'S PICK",
-  },
-  {
-    id: "2",
-    title: "Candlelight Symphony",
-    slug: "candlelight-symphony",
-    image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=800",
-    category: "Music",
-    venue: "Coca-Cola Arena",
-    city: "Dubai",
-    date: "2024-09-18",
-    time: "19:30",
-    startingPrice: 150,
-    currency: "AED",
-    badge: "SELLING FAST",
-  },
-  {
-    id: "3",
-    title: "Laugh Out Loud Dubai",
-    slug: "laugh-out-loud-dubai",
-    image: "/images/categories/comedy.jpg",
-    category: "Comedy",
-    venue: "The Agenda",
-    city: "Dubai",
-    date: "2024-09-20",
-    time: "21:00",
-    startingPrice: 195,
-    currency: "AED",
-    badge: "POPULAR",
-  },
-  {
-    id: "4",
-    title: "Arabian Nights Live",
-    slug: "arabian-nights-live",
-    image: "https://images.unsplash.com/photo-1518834107812-67b0b7c58434?auto=format&fit=crop&q=80&w=800",
-    category: "Cultural",
-    venue: "Dubai World Trade Centre",
-    city: "Dubai",
-    date: "2024-10-05",
-    time: "18:00",
-    startingPrice: 120,
-    currency: "AED",
-    badge: "NEW",
-  },
-  {
-    id: "5",
-    title: "Broadway Under the Stars",
-    slug: "broadway-under-the-stars",
-    image: "https://images.unsplash.com/photo-1469488865564-c2de10f69f96?auto=format&fit=crop&q=80&w=800",
-    category: "Musical",
-    venue: "Zabeel Park",
-    city: "Dubai",
-    date: "2024-10-12",
-    time: "19:00",
-    startingPrice: 85,
-    currency: "AED",
-    badge: "OUTDOOR",
-  },
-  {
-    id: "6",
-    title: "The Illusionist",
-    slug: "the-illusionist",
-    image: "https://images.unsplash.com/photo-1514306191717-452ec28c7814?auto=format&fit=crop&q=80&w=800",
-    category: "Magic",
-    venue: "Dubai Opera",
-    city: "Dubai",
-    date: "2024-10-25",
-    time: "20:30",
-    startingPrice: 300,
-    currency: "AED",
-    badge: "MUST SEE",
-  }
-];
+const recommendedShows = dummyMovies.map(m => ({
+  ...m,
+  date: "2026-07-31",
+  time: "19:00"
+}));
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -230,14 +150,19 @@ const RecommendedShows = () => {
                 transition={{ duration: 0.3, ease: "easeOut" }}
                 className="bg-white rounded-[24px] border border-[#EDE3D5]/80 p-3.5 shadow-xs hover:shadow-md transition-all duration-300"
               >
-                {/* Image Container with Fixed Equal Aspect Ratio */}
-                <div className="relative h-[280px] sm:h-[300px] w-full rounded-[18px] overflow-hidden bg-gray-100 mb-3">
+                {/* Poster Container - 3:4 Ratio with Uncropped Fit */}
+                <div className="relative aspect-[3/4] w-full rounded-[18px] overflow-hidden bg-neutral-900/90 mb-3">
+                  <img
+                    src={show.image}
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover blur-xl scale-110 opacity-40 pointer-events-none select-none"
+                  />
                   <motion.img
                     src={show.image}
                     alt={show.title}
-                    className="absolute inset-0 w-full h-full object-cover"
-                    whileHover={{ scale: 1.03 }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="relative z-0 w-full h-full object-contain"
+                    whileHover={{ scale: 1.04 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
                   />
                   
                   {/* Date Badge */}

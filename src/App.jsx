@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -57,12 +58,65 @@ function Home() {
 }
 
 
+function AuthCallbackHandler() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // If already on /auth/callback or /reset-password, do nothing
+    if (location.pathname === '/auth/callback' || location.pathname === '/reset-password') {
+      return;
+    }
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const rawHash = window.location.hash.startsWith('#')
+      ? window.location.hash.substring(1)
+      : window.location.hash;
+    const hashParams = new URLSearchParams(rawHash);
+
+    const type = searchParams.get('type') || hashParams.get('type');
+
+    // If password recovery link, route to /reset-password
+    if (type === 'recovery') {
+      navigate('/reset-password' + window.location.search + window.location.hash, { replace: true });
+      return;
+    }
+
+    // Check for email verification / auth callback indicators
+    const hasCode = searchParams.has('code');
+    const hasTokenHash = searchParams.has('token_hash');
+    const hasSignupType =
+      type === 'signup' ||
+      type === 'email_verification' ||
+      type === 'email_change' ||
+      type === 'invite';
+    const hasAccessToken = hashParams.has('access_token');
+    const hasAuthError =
+      searchParams.has('error_code') ||
+      hashParams.has('error_code') ||
+      searchParams.has('error') ||
+      hashParams.has('error');
+
+    if (
+      hasCode ||
+      hasTokenHash ||
+      (hasAccessToken && (hasSignupType || !type)) ||
+      hasAuthError
+    ) {
+      navigate('/auth/callback' + window.location.search + window.location.hash, { replace: true });
+    }
+  }, [location, navigate]);
+
+  return null;
+}
+
 function App() {
   return (
     <AuthProvider>
       <WishlistProvider>
         <BrowserRouter>
-        <Routes>
+          <AuthCallbackHandler />
+          <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/events/:slug" element={<EventDetailsPage />} />
           <Route path="/category/:categorySlug" element={<CategoryPage />} />

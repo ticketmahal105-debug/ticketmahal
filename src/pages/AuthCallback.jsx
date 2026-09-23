@@ -32,26 +32,56 @@ const AuthCallback = () => {
   }, [resendCooldown]);
 
   useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const hash = window.location.hash.startsWith('#')
+      ? window.location.hash.substring(1)
+      : window.location.hash;
+    const hashParams = new URLSearchParams(hash);
+
+    const code = searchParams.get('code');
+    const tokenHash = searchParams.get('token_hash');
+    const type = searchParams.get('type') || hashParams.get('type');
+    const accessToken = hashParams.get('access_token');
+    const refreshToken = hashParams.get('refresh_token');
+    const errorCode = searchParams.get('error_code') || hashParams.get('error_code');
+    const errorDesc = searchParams.get('error_description') || hashParams.get('error_description');
+    const errorParam = searchParams.get('error') || hashParams.get('error');
+
+    const isVerificationAttempt = Boolean(
+      code ||
+      tokenHash ||
+      accessToken ||
+      errorCode ||
+      errorParam ||
+      (type && type !== 'recovery')
+    );
+
+    // Subscribe to auth state changes to catch asynchronous/background completion by Supabase
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'USER_UPDATED') && session?.user && isVerificationAttempt) {
+        if (session.user.email) {
+          setResendEmail(session.user.email);
+        }
+        window.history.replaceState({}, document.title, window.location.pathname);
+        setStatus('success');
+      }
+    });
+
     // Prevent duplicate processing in React StrictMode
-    if (processingRef.current) return;
+    if (processingRef.current) {
+      return () => subscription.unsubscribe();
+    }
     processingRef.current = true;
 
     const handleAuthCallback = async () => {
       try {
-        const searchParams = new URLSearchParams(window.location.search);
-        const hash = window.location.hash.startsWith('#')
-          ? window.location.hash.substring(1)
-          : window.location.hash;
-        const hashParams = new URLSearchParams(hash);
+        // If not a verification callback attempt, do not show success screen
+        if (!isVerificationAttempt) {
+          setStatus('no_token');
+          return;
+        }
 
-        const code = searchParams.get('code');
-        const tokenHash = searchParams.get('token_hash');
-        const type = searchParams.get('type') || hashParams.get('type');
-        const errorCode = searchParams.get('error_code') || hashParams.get('error_code');
-        const errorDesc = searchParams.get('error_description') || hashParams.get('error_description');
-        const errorParam = searchParams.get('error') || hashParams.get('error');
-
-        // Check if Supabase redirected with an explicit error
+        // Check if Supabase redirected with an explicit error in query or hash
         if (errorCode || errorParam || errorDesc) {
           const isLinkExpired =
             errorCode === 'otp_expired' ||
@@ -69,9 +99,40 @@ const AuthCallback = () => {
           return;
         }
 
+        // Check if Supabase already processed the callback automatically on page load
+        const { data: initialSessionData } = await supabase.auth.getSession();
+        if (initialSessionData?.session?.user) {
+          if (initialSessionData.session.user.email) {
+            setResendEmail(initialSessionData.session.user.email);
+          }
+          window.history.replaceState({}, document.title, window.location.pathname);
+          setStatus('success');
+          return;
+        }
+
         // Case 1: PKCE Code Flow (?code=...)
         if (code) {
           const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+
+          if (!error && (data?.session || data?.user)) {
+            if (data?.user?.email) {
+              setResendEmail(data.user.email);
+            }
+            window.history.replaceState({}, document.title, window.location.pathname);
+            setStatus('success');
+            return;
+          }
+
+          // In case Supabase's automatic exchange completed concurrently
+          const { data: retrySessionData } = await supabase.auth.getSession();
+          if (retrySessionData?.session?.user) {
+            if (retrySessionData.session.user.email) {
+              setResendEmail(retrySessionData.session.user.email);
+            }
+            window.history.replaceState({}, document.title, window.location.pathname);
+            setStatus('success');
+            return;
+          }
 
           if (error) {
             const isCodeExpired =
@@ -88,16 +149,6 @@ const AuthCallback = () => {
             setStatus('error');
             return;
           }
-
-          if (data?.session || data?.user) {
-            if (data?.user?.email) {
-              setResendEmail(data.user.email);
-            }
-            // Clear credentials from URL bar for clean UX and security
-            window.history.replaceState({}, document.title, window.location.pathname);
-            setStatus('success');
-            return;
-          }
         }
 
         // Case 2: Token Hash OTP Flow (?token_hash=...&type=...)
@@ -106,6 +157,15 @@ const AuthCallback = () => {
             token_hash: tokenHash,
             type: type || 'signup',
           });
+
+          if (!error && (data?.session || data?.user)) {
+            if (data?.user?.email) {
+              setResendEmail(data.user.email);
+            }
+            window.history.replaceState({}, document.title, window.location.pathname);
+            setStatus('success');
+            return;
+          }
 
           if (error) {
             const isOtpExpired =
@@ -121,8 +181,16 @@ const AuthCallback = () => {
             setStatus('error');
             return;
           }
+        }
 
-          if (data?.session || data?.user) {
+        // Case 3: Implicit Hash Fragment Flow (#access_token=...&refresh_token=...)
+        if (accessToken && refreshToken) {
+          const { data, error } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+          });
+
+          if (!error && (data?.session || data?.user)) {
             if (data?.user?.email) {
               setResendEmail(data.user.email);
             }
@@ -130,38 +198,25 @@ const AuthCallback = () => {
             setStatus('success');
             return;
           }
-        }
 
-        // Case 3: Implicit Hash Fragment Flow (#access_token=...&refresh_token=...)
-        if (hashParams.has('access_token')) {
-          const accessToken = hashParams.get('access_token');
-          const refreshToken = hashParams.get('refresh_token');
-
-          if (accessToken && refreshToken) {
-            const { data, error } = await supabase.auth.setSession({
-              access_token: accessToken,
-              refresh_token: refreshToken,
-            });
-
-            if (error) {
-              setErrorMessage('Failed to establish verification session. Please try again.');
-              setStatus('error');
-              return;
+          const { data: fallbackSession } = await supabase.auth.getSession();
+          if (fallbackSession?.session?.user) {
+            if (fallbackSession.session.user.email) {
+              setResendEmail(fallbackSession.session.user.email);
             }
+            window.history.replaceState({}, document.title, window.location.pathname);
+            setStatus('success');
+            return;
+          }
 
-            if (data?.session || data?.user) {
-              if (data?.user?.email) {
-                setResendEmail(data.user.email);
-              }
-              window.history.replaceState({}, document.title, window.location.pathname);
-              setStatus('success');
-              return;
-            }
+          if (error) {
+            setErrorMessage('Failed to establish verification session. Please try again.');
+            setStatus('error');
+            return;
           }
         }
 
-        // Case 4: No verification parameters in URL
-        // Do not display success merely because /auth/callback was visited directly.
+        // If no explicit tokens or session was confirmed, mark as no_token
         setStatus('no_token');
       } catch {
         setErrorMessage('An unexpected error occurred during email verification.');
@@ -170,6 +225,10 @@ const AuthCallback = () => {
     };
 
     handleAuthCallback();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [location]);
 
   // Handle request for a new verification link
@@ -185,11 +244,21 @@ const AuthCallback = () => {
     setResendSuccess(false);
 
     try {
+      const isLocalhost =
+        typeof window !== 'undefined' &&
+        (window.location.hostname === 'localhost' ||
+         window.location.hostname === '127.0.0.1' ||
+         window.location.hostname.endsWith('.local'));
+
+      const emailRedirectTo = isLocalhost
+        ? `${window.location.origin}/auth/callback`
+        : 'https://ticketmahal.ae/auth/callback';
+
       const { error } = await supabase.auth.resend({
         type: 'signup',
         email: resendEmail.trim(),
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo,
         },
       });
 
@@ -250,13 +319,18 @@ const AuthCallback = () => {
             </h1>
 
             {/* Supporting text */}
-            <p className="font-inter text-sm sm:text-base text-[#292725]/85 font-medium leading-relaxed max-w-sm mx-auto mb-2">
-              Your email has been successfully verified. Welcome to Ticket Mahal!
-            </p>
+            <div className="space-y-1 mb-3">
+              <p className="font-inter text-sm sm:text-base text-[#292725]/85 font-medium leading-relaxed max-w-sm mx-auto">
+                Your email has been successfully verified.
+              </p>
+              <p className="font-inter text-sm sm:text-base text-[#292725]/85 font-medium leading-relaxed max-w-sm mx-auto">
+                Welcome to Ticket Mahal!
+              </p>
+            </div>
 
             {/* Additional message */}
             <p className="font-inter text-xs sm:text-sm text-[#77736D] leading-relaxed max-w-sm mx-auto mb-8">
-              Your account is ready. Discover unforgettable experiences, book events and manage your tickets in one place.
+              Your account is ready to explore. Discover unforgettable experiences, book events and manage your tickets in one place.
             </p>
 
             {/* Primary Action Button */}

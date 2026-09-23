@@ -45,11 +45,22 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const signUp = async (email, password, metadata) => {
+    const isLocalhost =
+      typeof window !== 'undefined' &&
+      (window.location.hostname === 'localhost' ||
+       window.location.hostname === '127.0.0.1' ||
+       window.location.hostname.endsWith('.local'));
+
+    const emailRedirectTo = isLocalhost
+      ? `${window.location.origin}/auth/callback`
+      : 'https://ticketmahal.ae/auth/callback';
+
     return await supabase.auth.signUp({
       email,
       password,
       options: {
         data: metadata,
+        emailRedirectTo,
       },
     });
   };

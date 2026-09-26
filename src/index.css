@@ -38,7 +38,6 @@
     radial-gradient(at 0% 0%, hsla(39, 40%, 99%, 1) 0px, transparent 60%),
     radial-gradient(at 100% 100%, hsla(38, 30%, 97%, 1) 0px, transparent 60%);
   position: relative;
-  min-height: 100vh;
 }
 
 /* Subtle noise overlay */

@@ -130,7 +130,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative w-full pt-32 pb-16 px-6 bg-premium-noise flex justify-center items-center">
+    <section className="relative w-full pt-[196px] sm:pt-28 md:pt-32 pb-2 sm:pb-12 md:pb-16 px-2.5 sm:px-6">
       <div className="max-w-7xl w-full mx-auto relative group">
         
         {/* Banner Area */}
@@ -140,7 +140,7 @@ const Hero = () => {
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
-          className="relative w-full aspect-[4/3] sm:aspect-[16/8] md:aspect-[16/7] lg:aspect-[16/6] rounded-[24px] sm:rounded-[32px] overflow-hidden shadow-[0_12px_40px_rgba(0,0,0,0.04)] border border-ticket-beige/60 bg-beige/10"
+          className="relative w-full aspect-[2/1] sm:aspect-[16/8] md:aspect-[16/7] lg:aspect-[16/6] rounded-2xl sm:rounded-[32px] overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.06)] border border-ticket-beige/60 bg-beige/10"
         >
           <AnimatePresence initial={false} custom={direction} mode="popLayout">
             <motion.div
@@ -169,22 +169,22 @@ const Hero = () => {
           <button
             onClick={() => handleManualNavigation('prev')}
             aria-label="Previous slide"
-            className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/95 border border-ticket-beige text-ticket-charcoal shadow-lg hover:border-ticket-burgundy hover:-translate-x-0.5 hover:-translate-y-[calc(50%+2px)] transition-all duration-300 z-20 group/btn"
+            className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-white/85 sm:bg-white/95 backdrop-blur-xs sm:backdrop-blur-none border border-ticket-beige text-ticket-charcoal shadow-md sm:shadow-lg hover:border-ticket-burgundy transition-all duration-300 z-20 group/btn"
           >
-            <ChevronLeft size={20} className="group-hover/btn:text-ticket-burgundy transition-colors" />
+            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 group-hover/btn:text-ticket-burgundy transition-colors" />
           </button>
 
           {/* Right Arrow */}
           <button
             onClick={() => handleManualNavigation('next')}
             aria-label="Next slide"
-            className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/95 border border-ticket-beige text-ticket-charcoal shadow-lg hover:border-ticket-burgundy hover:translate-x-0.5 hover:-translate-y-[calc(50%+2px)] transition-all duration-300 z-20 group/btn"
+            className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-white/85 sm:bg-white/95 backdrop-blur-xs sm:backdrop-blur-none border border-ticket-beige text-ticket-charcoal shadow-md sm:shadow-lg hover:border-ticket-burgundy transition-all duration-300 z-20 group/btn"
           >
-            <ChevronRight size={20} className="group-hover/btn:text-ticket-burgundy transition-colors" />
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover/btn:text-ticket-burgundy transition-colors" />
           </button>
 
           {/* Slide Indicators */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2.5 z-20">
+          <div className="absolute bottom-2.5 sm:bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-1.5 sm:gap-2.5 z-20">
             {banners.map((_, index) => (
               <button
                 key={index}
@@ -194,13 +194,13 @@ const Hero = () => {
                   startTimer();
                 }}
                 aria-label={`Go to slide ${index + 1}`}
-                className="group py-2 px-1 focus:outline-none"
+                className="group py-1 sm:py-2 px-0.5 sm:px-1 focus:outline-none"
               >
                 <div
-                  className={`h-1.5 rounded-full transition-all duration-500 ease-out ${
+                  className={`h-1 sm:h-1.5 rounded-full transition-all duration-500 ease-out ${
                     currentIndex === index
-                      ? 'w-8 bg-ticket-burgundy shadow-[0_0_8px_rgba(214,179,123,0.4)]'
-                      : 'w-2 bg-beige/65 hover:bg-beige'
+                      ? 'w-6 sm:w-8 bg-ticket-burgundy shadow-[0_0_8px_rgba(214,179,123,0.4)]'
+                      : 'w-1.5 sm:w-2 bg-beige/65 hover:bg-beige'
                   }`}
                 />
               </button>

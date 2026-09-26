@@ -143,11 +143,11 @@ const BrowseCategories = () => {
   };
 
   return (
-    <section className="bg-ticket-cream pt-12 pb-8 px-6 md:px-12 flex justify-center items-center overflow-hidden">
+    <section className="bg-ticket-cream pt-5 sm:pt-12 pb-8 px-4 sm:px-6 md:px-12 flex justify-center items-center overflow-hidden">
       <div className="max-w-7xl w-full mx-auto">
         
         {/* Header */}
-        <div className="flex items-end justify-between mb-12 border-b border-ticket-beige/40 pb-6">
+        <div className="flex items-end justify-between mb-6 sm:mb-12 border-b border-ticket-beige/40 pb-4 sm:pb-6">
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}

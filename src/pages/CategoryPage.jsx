@@ -122,7 +122,7 @@ export default function CategoryPage() {
 
                 {/* Wishlist Button */}
                 <div className="absolute top-3 right-3">
-                  <WishlistButton event={movie} className="bg-black/40 text-white p-2 rounded-full hover:bg-black/60" />
+                  <WishlistButton eventId={movie.id} className="bg-black/40 text-white p-2 rounded-full hover:bg-black/60" />
                 </div>
 
                 {/* Rating */}

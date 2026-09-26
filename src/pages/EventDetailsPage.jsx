@@ -49,10 +49,13 @@ export default function EventDetailsPage() {
     <div className="bg-ticket-ivory min-h-screen text-ticket-charcoal flex flex-col justify-between selection:bg-ticket-burgundy/20 selection:text-ticket-burgundy">
       <Navbar />
 
-      <main className="flex-1 pt-24 pb-16">
+      <main className="flex-1 pt-36 sm:pt-40 md:pt-44 lg:pt-36 pb-16">
         {/* Breadcrumb Header */}
-        <div className="max-w-7xl mx-auto px-6 mb-6">
-          <Link to="/" className="inline-flex items-center gap-2 text-xs font-semibold tracking-wider uppercase text-ticket-charcoal/60 hover:text-ticket-burgundy transition-colors">
+        <div className="max-w-7xl mx-auto px-6 mb-6 relative z-10">
+          <Link 
+            to="/" 
+            className="inline-flex items-center gap-2 px-4 py-2 bg-ticket-white/90 backdrop-blur-sm border border-ticket-beige rounded-full text-xs font-bold tracking-wider uppercase text-ticket-charcoal/80 hover:text-ticket-burgundy hover:bg-white hover:border-ticket-gold/50 shadow-xs transition-all duration-300"
+          >
             <ChevronLeft size={16} /> Back to Browse
           </Link>
         </div>
@@ -172,7 +175,7 @@ export default function EventDetailsPage() {
                 </button>
 
                 <WishlistButton 
-                  event={movie}
+                  eventId={event?.id || movie?.id}
                   className="bg-white/10 text-white hover:bg-white/20 p-3 rounded-xl border border-white/10"
                 />
               </div>

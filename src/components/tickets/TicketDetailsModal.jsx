@@ -1,9 +1,10 @@
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, MapPin, Calendar, Clock, User, Download } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 
 const TicketDetailsModal = ({ ticket, user, onClose }) => {
-  if (!ticket) return null;
+  if (!ticket || typeof document === 'undefined') return null;
 
   const event = ticket.events;
 
@@ -33,7 +34,7 @@ const TicketDetailsModal = ({ ticket, user, onClose }) => {
 
   const isCancelled = ticket.status === 'cancelled';
 
-  return (
+  return createPortal(
     <AnimatePresence>
       <div
         className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -196,7 +197,8 @@ const TicketDetailsModal = ({ ticket, user, onClose }) => {
           </div>
         </motion.div>
       </div>
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 };
 

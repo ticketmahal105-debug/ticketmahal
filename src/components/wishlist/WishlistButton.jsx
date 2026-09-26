@@ -5,16 +5,18 @@ import { useAuth } from '../../hooks/useAuth';
 import { useWishlist } from '../../hooks/useWishlist';
 import AuthModal from '../auth/AuthModal';
 
-const WishlistButton = ({ eventId, className = '' }) => {
+const WishlistButton = ({ eventId, event, className = '' }) => {
   const { user } = useAuth();
   const { isWishlisted, toggleWishlist } = useWishlist();
   const [authOpen, setAuthOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  // If context is not available (e.g. not wrapped), fail gracefully
-  if (isWishlisted === undefined) return null;
+  const targetId = eventId || (typeof event === 'object' ? event?.id : event);
 
-  const saved = isWishlisted(eventId);
+  // If context is not available (e.g. not wrapped) or no id, fail gracefully
+  if (isWishlisted === undefined || !targetId) return null;
+
+  const saved = isWishlisted(targetId);
 
   const handleClick = async (e) => {
     e.preventDefault();
@@ -26,7 +28,7 @@ const WishlistButton = ({ eventId, className = '' }) => {
     }
 
     setIsAnimating(true);
-    await toggleWishlist(eventId);
+    await toggleWishlist(targetId);
     
     // Reset animation state after a short delay
     setTimeout(() => setIsAnimating(false), 300);

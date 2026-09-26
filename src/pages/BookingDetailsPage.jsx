@@ -88,7 +88,7 @@ const BookingDetailsPage = () => {
   };
 
   return (
-    <div className="bg-premium-noise min-h-screen selection:bg-ticket-burgundy/30 selection:text-charcoal pt-32 px-6 pb-24 font-sans">
+    <div className="bg-premium-noise min-h-screen selection:bg-ticket-burgundy/30 selection:text-charcoal pt-36 sm:pt-40 md:pt-44 px-6 pb-24 font-sans">
       <Navbar />
       <div className="max-w-4xl mx-auto">
         

@@ -1,0 +1,88 @@
+{
+  "bookings": [
+    {
+      "booking_number": "TM-276970",
+      "access_token": "DIWxc4dGT14Vx8hAa8wndjadP4tGS1mlQewddApnlqc",
+      "access_token_hash": "0c7cbbc1bc350cd6cdb09233f32bf1e3590dffd10b466877afb052ba7b0d5db1",
+      "user_id": null,
+      "event_id": "movie-spiderman-brand-new-day",
+      "showtime": "08:30 PM",
+      "quantity": 2,
+      "seats": "G10, G11",
+      "ticket_category": "Premium",
+      "total_price": 462,
+      "total_amount": 462,
+      "currency": "AED",
+      "booking_status": "confirmed",
+      "payment_provider": "demo",
+      "payment_mode": "demo",
+      "payment_status": "demo_paid",
+      "payment_method": "Ticket Mahal Demo Checkout",
+      "payment_ref": "DEMO-TM-710623E4",
+      "customer_name": "Rayaan Rafique",
+      "customer_email": "rayaanrafique12@gmail.com",
+      "customer_phone": "+971501234567",
+      "created_at": "2026-10-30T14:09:50.059Z",
+      "confirmed_at": "2026-10-30T14:09:50.059Z"
+    }
+  ],
+  "tickets": [
+    {
+      "ticket_number": "TM-57J2EH",
+      "booking_id": "TM-276970",
+      "booking_reference": "TM-276970",
+      "user_id": null,
+      "event_id": "movie-spiderman-brand-new-day",
+      "ticket_type": "Premium",
+      "seat": "G11",
+      "row": "G",
+      "seat_number": "11",
+      "quantity": 1,
+      "price": 220,
+      "qr_token": "https://ticketmahal.ae/verify-ticket/NyAhI3F2YMOgfomL03mQn15i9wf7FGeR",
+      "qr_token_hash": "5861b0450a31da086ff45a4a8ba8977384931242baef276fe60a2e5215ac49d6",
+      "status": "valid",
+      "checked_in_at": null,
+      "created_at": "2026-10-30T14:09:50.059Z",
+      "events": {
+        "id": "movie-spiderman-brand-new-day",
+        "event_name": "Spider-Man: Brand New Day",
+        "event_image": "https://res.cloudinary.com/tejjggbw/image/upload/1.png",
+        "venue_name": "Vox Cinemas, Mall of the Emirates",
+        "city": "Dubai",
+        "event_date": "31 July 2026",
+        "start_time": "08:30 PM",
+        "category": "Movies"
+      }
+    },
+    {
+      "ticket_number": "TM-LUMBK2",
+      "booking_id": "TM-276970",
+      "booking_reference": "TM-276970",
+      "user_id": null,
+      "event_id": "movie-spiderman-brand-new-day",
+      "ticket_type": "Premium",
+      "seat": "G10",
+      "row": "G",
+      "seat_number": "10",
+      "quantity": 1,
+      "price": 220,
+      "qr_token": "https://ticketmahal.ae/verify-ticket/Fg5Cpj8lxXE3kjtQCtRA8qvQQcoU_HZT",
+      "qr_token_hash": "cecd3c5a5fd98f73cfd16dd199d4243c2fdcfc0384d59c0ef30040130feccbde",
+      "status": "valid",
+      "checked_in_at": null,
+      "created_at": "2026-10-30T14:09:50.059Z",
+      "events": {
+        "id": "movie-spiderman-brand-new-day",
+        "event_name": "Spider-Man: Brand New Day",
+        "event_image": "https://res.cloudinary.com/tejjggbw/image/upload/1.png",
+        "venue_name": "Vox Cinemas, Mall of the Emirates",
+        "city": "Dubai",
+        "event_date": "31 July 2026",
+        "start_time": "08:30 PM",
+        "category": "Movies"
+      }
+    }
+  ],
+  "activities": []
+}

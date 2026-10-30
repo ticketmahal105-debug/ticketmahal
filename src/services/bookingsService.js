@@ -110,18 +110,57 @@ export const getBookingByNumber = async (bookingNumber, userId) => {
  * @param {string} bookingId
  */
 export const getBookingTickets = async (bookingId) => {
-  const { data, error } = await supabase
-    .from('tickets')
-    .select('id, ticket_number, ticket_type, status, quantity')
-    .eq('booking_id', bookingId);
+  try {
+    const { data, error } = await supabase
+      .from('tickets')
+      .select('id, ticket_number, ticket_type, status, quantity, seat, row')
+      .or(`booking_id.eq.${bookingId},booking_reference.eq.${bookingId}`);
 
-  return { data, error };
+    if (!error && data && data.length > 0) return { data, error: null };
+  } catch (e) {}
+
+  // Check authoritative server API
+  try {
+    const res = await fetch('/api/admin-bookings');
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success && Array.isArray(json.tickets)) {
+        const found = json.tickets.filter(t => t.booking_id === bookingId || t.booking_reference === bookingId);
+        if (found.length > 0) return { data: found, error: null };
+      }
+    }
+  } catch (_) {}
+
+  // Local fallback
+  if (typeof window !== 'undefined') {
+    try {
+      const local = JSON.parse(localStorage.getItem('tm_local_tickets') || '[]');
+      const found = local.filter(t => t.booking_id === bookingId || t.booking_reference === bookingId);
+      if (found.length > 0) return { data: found, error: null };
+    } catch (_) {}
+  }
+
+  return { data: [], error: null };
 };
 
 /**
  * Admins only: fetches all bookings in the system.
+ * Authoritative: combines server persistence, real API data, and Supabase.
  */
 export const getAllBookingsAdmin = async () => {
+  let serverBookings = [];
+  try {
+    const res = await fetch('/api/admin-bookings');
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success && Array.isArray(json.bookings)) {
+        serverBookings = json.bookings;
+      }
+    }
+  } catch (err) {
+    console.warn('[getAllBookingsAdmin] Server API notice:', err.message);
+  }
+
   let dbBookings = [];
   try {
     const { data, error } = await supabase
@@ -155,7 +194,7 @@ export const getAllBookingsAdmin = async () => {
   }
 
   const map = new Map();
-  [...localBookings, ...dbBookings].forEach(b => {
+  [...serverBookings, ...localBookings, ...dbBookings].forEach(b => {
     const k = b.booking_number || b.id;
     if (k) {
       const existing = map.get(k) || {};
@@ -210,6 +249,18 @@ export const getAdminBookingDetails = async (bookingNumber) => {
 
     if (!error && data) return { data, error: null };
   } catch (e) {}
+
+  // Check authoritative server API
+  try {
+    const res = await fetch('/api/admin-bookings');
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success && Array.isArray(json.bookings)) {
+        const found = json.bookings.find(b => b.booking_number === bookingNumber || b.id === bookingNumber);
+        if (found) return { data: found, error: null };
+      }
+    }
+  } catch (_) {}
 
   if (typeof window !== 'undefined') {
     try {

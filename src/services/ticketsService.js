@@ -79,8 +79,23 @@ export const getUserTickets = async (userId) => {
 
 /**
  * Admins only: fetches all tickets in the system.
+ * Authoritative: combines server persistence, real API data, and Supabase.
  */
 export const getAllTicketsAdmin = async () => {
+  let serverTickets = [];
+  try {
+    const res = await fetch('/api/admin-bookings');
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success && Array.isArray(json.tickets)) {
+        serverTickets = json.tickets;
+      }
+    }
+  } catch (err) {
+    console.warn('[getAllTicketsAdmin] Server API notice:', err.message);
+  }
+
+  let dbTickets = [];
   try {
     const { data, error } = await supabase
       .from('tickets')
@@ -109,10 +124,25 @@ export const getAllTicketsAdmin = async () => {
       `)
       .order('created_at', { ascending: false });
 
-    if (!error && data) return { data, error: null };
+    if (!error && data) dbTickets = data;
   } catch (e) {}
 
-  // Local fallback
-  const local = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('tm_local_tickets') || '[]') : [];
-  return { data: local, error: null };
+  let localTickets = [];
+  if (typeof window !== 'undefined') {
+    try {
+      localTickets = JSON.parse(localStorage.getItem('tm_local_tickets') || '[]');
+    } catch (_) {}
+  }
+
+  const map = new Map();
+  [...serverTickets, ...localTickets, ...dbTickets].forEach(t => {
+    const key = t.ticket_number || t.id;
+    if (key) map.set(key, { ...map.get(key), ...t });
+  });
+
+  const merged = Array.from(map.values()).sort(
+    (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0)
+  );
+
+  return { data: merged, error: null };
 };

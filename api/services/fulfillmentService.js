@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
 import { dummyMovies } from '../../src/data/dummyMovies.js';
 import { logActivity, sendOwnerBookingNotification } from './activityService.js';
+import { saveBookingToStore } from './persistenceService.js';
 
 export function getSupabaseClient() {
   const url = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
@@ -434,13 +435,14 @@ export async function fulfillConfirmedOrder({
     serverTicketRegistry.set(rawQrSecret, ticketRecord);
   }
 
-  // Register booking and tickets in authoritative server registry
+  // Register booking and tickets in authoritative server registry and persistent store
   serverBookingRegistry.set(bookingNumber, insertedBooking);
   serverBookingRegistry.set(guestAccessToken, insertedBooking);
   serverBookingRegistry.set(guestTokenHash, insertedBooking);
   serverBookingTicketsMap.set(bookingNumber, generatedTickets);
   serverBookingTicketsMap.set(guestAccessToken, generatedTickets);
   serverBookingTicketsMap.set(guestTokenHash, generatedTickets);
+  saveBookingToStore(insertedBooking, generatedTickets);
 
   // Insert individual tickets into Supabase
   if (supabase) {

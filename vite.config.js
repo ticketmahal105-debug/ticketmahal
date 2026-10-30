@@ -9,6 +9,7 @@ import seatHoldHandler from './api/seat-hold.js';
 import exportReportHandler from './api/export-report.js';
 import verifyTicketHandler from './api/verify-ticket.js';
 import ticketAccessHandler from './api/ticket-access.js';
+import adminBookingsHandler from './api/admin-bookings.js';
 
 function adaptServerlessHandler(handler) {
   return async (req, res) => {
@@ -78,6 +79,7 @@ export default defineConfig(({ mode }) => {
           server.middlewares.use('/api/export-report', adaptServerlessHandler(exportReportHandler));
           server.middlewares.use('/api/verify-ticket', adaptServerlessHandler(verifyTicketHandler));
           server.middlewares.use('/api/ticket-access', adaptServerlessHandler(ticketAccessHandler));
+          server.middlewares.use('/api/admin-bookings', adaptServerlessHandler(adminBookingsHandler));
         }
       }
     ],

@@ -9,14 +9,17 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { dummyMovies, getMovieBySlug } from '../data/dummyMovies';
 import WishlistButton from '../components/wishlist/WishlistButton';
+import { useAuth } from '../hooks/useAuth';
+import UnifiedBookingModal from '../components/booking/UnifiedBookingModal';
 
 export default function EventDetailsPage() {
   const { slug } = useParams();
+  const { user } = useAuth();
   const [movie, setMovie] = useState(null);
   const [selectedShowtime, setSelectedShowtime] = useState('07:30 PM');
   const [ticketQuantity, setTicketQuantity] = useState(2);
   const [showTrailerModal, setShowTrailerModal] = useState(false);
-  const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -39,10 +42,7 @@ export default function EventDetailsPage() {
   const showtimes = ['04:15 PM', '07:30 PM', '09:45 PM', '11:15 PM'];
 
   const handleBookTickets = () => {
-    setBookingSuccess(true);
-    setTimeout(() => {
-      setBookingSuccess(false);
-    }, 4000);
+    setIsCheckoutOpen(true);
   };
 
   return (
@@ -347,26 +347,10 @@ export default function EventDetailsPage() {
               {/* Book Button */}
               <button
                 onClick={handleBookTickets}
-                className="w-full py-4 bg-ticket-burgundy text-white font-bold rounded-2xl shadow-lg hover:bg-ticket-burgundy/90 transition-all duration-300 flex items-center justify-center gap-2 text-base tracking-wide"
+                className="w-full py-4 bg-ticket-burgundy text-white font-bold rounded-2xl shadow-lg hover:bg-ticket-burgundy/90 transition-all duration-300 flex items-center justify-center gap-2 text-base tracking-wide uppercase"
               >
-                <Ticket size={20} /> Reserve Tickets Now
+                <Ticket size={20} /> SELECT TICKETS
               </button>
-
-              {/* Success Alert */}
-              <AnimatePresence>
-                {bookingSuccess && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl text-xs font-semibold flex items-center gap-2"
-                  >
-                    <CheckCircle2 size={18} className="text-emerald-600 flex-shrink-0" />
-                    Seats selected! {ticketQuantity} tickets reserved for {selectedShowtime}.
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
             </div>
           </div>
 
@@ -409,6 +393,15 @@ export default function EventDetailsPage() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* UNIFIED DYNAMIC BOOKING & SEAT SELECTION MODAL */}
+      <UnifiedBookingModal
+        isOpen={isCheckoutOpen}
+        onClose={() => setIsCheckoutOpen(false)}
+        movie={movie}
+        selectedShowtime={selectedShowtime}
+        user={user}
+      />
 
       <Footer />
     </div>

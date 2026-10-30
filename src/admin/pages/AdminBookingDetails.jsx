@@ -97,9 +97,20 @@ const AdminBookingDetails = () => {
           <ArrowLeft size={16} />
         </button>
         <div>
-          <h1 className="font-playfair text-3xl font-semibold text-ticket-charcoal tracking-wide mb-1">
-            Booking #{booking.booking_number}
-          </h1>
+          <div className="flex items-center gap-3">
+            <h1 className="font-playfair text-3xl font-semibold text-ticket-charcoal tracking-wide mb-1">
+              Booking #{booking.booking_number}
+            </h1>
+            {(booking.payment_status === 'demo_paid' || booking.payment_provider === 'demo' || booking.payment_mode === 'demo') ? (
+              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-300">
+                DEMO BOOKING
+              </span>
+            ) : booking.payment_status === 'paid' ? (
+              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300">
+                REAL PAID BOOKING
+              </span>
+            ) : null}
+          </div>
           <p className="text-ticket-charcoal/60 text-sm">Review transaction details, manage states, and view ticket barcodes.</p>
         </div>
       </div>

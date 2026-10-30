@@ -94,10 +94,17 @@ const TicketCard = ({ ticket, onView }) => {
             <span className="uppercase tracking-wide text-ticket-charcoal/30 mr-1">Type:</span>
             {ticket.ticket_type || 'General'}
           </span>
-          <span>
-            <span className="uppercase tracking-wide text-ticket-charcoal/30 mr-1">Qty:</span>
-            {ticket.quantity || 1}
-          </span>
+          {ticket.seat ? (
+            <span className="font-semibold text-ticket-burgundy">
+              <span className="uppercase tracking-wide text-ticket-charcoal/30 mr-1 font-sans font-normal">Seat:</span>
+              {ticket.seat}
+            </span>
+          ) : (
+            <span>
+              <span className="uppercase tracking-wide text-ticket-charcoal/30 mr-1">Qty:</span>
+              {ticket.quantity || 1}
+            </span>
+          )}
           <span className="font-mono">
             <span className="uppercase tracking-wide text-ticket-charcoal/30 mr-1 font-sans">Ticket:</span>
             {ticket.ticket_number}

@@ -1,34 +1,59 @@
 import { useState, useEffect } from 'react';
-import { DollarSign, Receipt, Ticket, Users, Calendar, AlertCircle } from 'lucide-react';
+import { DollarSign, Receipt, Ticket, Users, Calendar, AlertCircle, ShieldCheck, FileSpreadsheet } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { getAllBookingsAdmin } from '../../services/bookingsService';
+import { getAdminEvents } from '../../services/eventsService';
+import { exportTicketMahalFullReport } from '../../utils/excelReportGenerator';
 import StatCard from '../components/StatCard';
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState({
     revenue: 0,
     bookings: 0,
+    demoBookings: 0,
     tickets: 0,
     users: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
+  const [rawBookings, setRawBookings] = useState([]);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        // Fetch basic counts
-        const [bookingsRes, ticketsRes, profilesRes] = await Promise.all([
-          supabase.from('bookings').select('id, total_amount', { count: 'exact' }),
-          supabase.from('tickets').select('id', { count: 'exact' }),
-          supabase.from('profiles').select('id', { count: 'exact' })
-        ]);
+        const { data: allBookings } = await getAllBookingsAdmin();
+        const list = allBookings || [];
 
-        const totalRevenue = bookingsRes.data?.reduce((sum, b) => sum + Number(b.total_amount || 0), 0) || 0;
+        // STRICT SEPARATION: Demo transactions are NEVER counted in real revenue
+        const realPaid = list.filter(b => 
+          (b.payment_status === 'paid' || b.booking_status === 'completed') && 
+          b.payment_provider !== 'demo' && 
+          b.payment_mode !== 'demo' &&
+          b.payment_status !== 'demo_paid'
+        );
 
+        const demoPaid = list.filter(b => 
+          b.payment_status === 'demo_paid' || 
+          b.payment_provider === 'demo' || 
+          b.payment_mode === 'demo'
+        );
+
+        const totalRealRevenue = realPaid.reduce((sum, b) => sum + Number(b.total_amount || b.total_price || 0), 0);
+        const totalTicketsSold = list.reduce((sum, b) => sum + Number(b.quantity || b.ticket_quantity || 1), 0);
+
+        let userCount = 0;
+        try {
+          const { count } = await supabase.from('profiles').select('id', { count: 'exact' });
+          userCount = count || 0;
+        } catch (_) {}
+
+        setRawBookings(list);
         setStats({
-          revenue: totalRevenue,
-          bookings: bookingsRes.count || 0,
-          tickets: ticketsRes.count || 0,
-          users: profilesRes.count || 0,
+          revenue: totalRealRevenue,
+          bookings: list.length,
+          demoBookings: demoPaid.length,
+          tickets: totalTicketsSold,
+          users: userCount,
         });
       } catch (error) {
         console.error('Error fetching dashboard stats:', error);
@@ -39,6 +64,38 @@ const AdminDashboard = () => {
 
     fetchStats();
   }, []);
+
+  const handleExportExcel = async () => {
+    setExporting(true);
+    try {
+      const { data: allEvents } = await getAdminEvents();
+      let allTickets = [];
+      try {
+        const { data: tData } = await supabase.from('tickets').select('*');
+        if (tData) allTickets = tData;
+      } catch (_) {}
+
+      if (typeof window !== 'undefined') {
+        try {
+          const localT = JSON.parse(localStorage.getItem('tm_local_tickets') || '[]');
+          allTickets = [...allTickets, ...localT];
+        } catch (_) {}
+      }
+
+      exportTicketMahalFullReport({
+        bookings: rawBookings,
+        tickets: allTickets,
+        customers: [],
+        events: allEvents || [],
+        activities: []
+      });
+    } catch (err) {
+      console.error('Export error:', err);
+      alert('Could not generate Excel report: ' + err.message);
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const formatCurrency = (val) => {
     return `AED ${Number(val).toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
@@ -54,9 +111,19 @@ const AdminDashboard = () => {
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="font-playfair text-3xl font-semibold text-ticket-charcoal tracking-wide mb-2">Dashboard Overview</h1>
-        <p className="text-ticket-charcoal/60 text-sm">Welcome back. Here's what's happening today.</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="font-playfair text-3xl font-semibold text-ticket-charcoal tracking-wide mb-1">Dashboard Overview</h1>
+          <p className="text-ticket-charcoal/60 text-sm">Welcome back. Here's what's happening today.</p>
+        </div>
+        <button
+          onClick={handleExportExcel}
+          disabled={exporting}
+          className="px-5 py-2.5 bg-ticket-burgundy text-white hover:bg-[#601822] font-bold rounded-2xl shadow-sm text-xs uppercase tracking-wider flex items-center gap-2 self-start sm:self-auto transition-all"
+        >
+          <FileSpreadsheet size={16} />
+          {exporting ? 'Exporting...' : 'Download Full Excel Report (.xlsx)'}
+        </button>
       </div>
 
       {/* KPI Cards */}

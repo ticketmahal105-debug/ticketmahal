@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { RefreshCw } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
@@ -14,6 +15,7 @@ const FILTERS = ['all', 'upcoming', 'past', 'cancelled'];
 
 const MyTicketsPage = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -54,22 +56,27 @@ const MyTicketsPage = () => {
     switch (filter) {
       case 'upcoming':
         return tickets.filter((t) => {
-          if (t.status !== 'active') return false;
-          const eventDate = t.events?.event_date;
-          if (!eventDate) return false;
+          if (t.status !== 'active' && t.status !== 'valid') return false;
+          const eventDate = t.events?.event_date || t.events?.releaseDate;
+          if (!eventDate || isNaN(new Date(eventDate).getTime())) return true; // Default to upcoming
           return new Date(eventDate) >= now;
-        }).sort((a, b) => new Date(a.events?.event_date) - new Date(b.events?.event_date));
+        }).sort((a, b) => {
+          const dA = new Date(a.events?.event_date || a.created_at || 0);
+          const dB = new Date(b.events?.event_date || b.created_at || 0);
+          return dB - dA;
+        });
 
       case 'past':
         return tickets.filter((t) => {
           if (t.status === 'cancelled') return false;
+          if (t.status === 'used' || t.status === 'expired') return true;
           const eventDate = t.events?.event_date;
-          if (!eventDate) return t.status === 'used' || t.status === 'expired';
-          return new Date(eventDate) < now || t.status === 'used' || t.status === 'expired';
-        }).sort((a, b) => new Date(b.events?.event_date) - new Date(a.events?.event_date));
+          if (!eventDate || isNaN(new Date(eventDate).getTime())) return false;
+          return new Date(eventDate) < now;
+        });
 
       case 'cancelled':
-        return tickets.filter((t) => t.status === 'cancelled');
+        return tickets.filter((t) => t.status === 'cancelled' || t.status === 'refunded');
 
       default:
         return tickets;
@@ -147,7 +154,13 @@ const MyTicketsPage = () => {
                   <TicketCard
                     key={ticket.id}
                     ticket={ticket}
-                    onView={(t) => setSelectedTicket(t)}
+                    onView={(t) => {
+                      if (t.booking_reference || t.ticket_number) {
+                        navigate(`/view-ticket/${t.booking_reference || t.ticket_number}`);
+                      } else {
+                        setSelectedTicket(t);
+                      }
+                    }}
                   />
                 ))}
               </div>

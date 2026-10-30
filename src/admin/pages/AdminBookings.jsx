@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Eye, Filter } from 'lucide-react';
+import { Search, Eye, Filter, FileSpreadsheet } from 'lucide-react';
 import { getAllBookingsAdmin } from '../../services/bookingsService';
+import { getAdminEvents } from '../../services/eventsService';
+import { exportTicketMahalFullReport } from '../../utils/excelReportGenerator';
 
 const AdminBookings = () => {
   const navigate = useNavigate();
@@ -35,12 +37,25 @@ const AdminBookings = () => {
                           eventName.includes(query) || 
                           bookingNum.includes(query);
                           
-    const matchesStatus = statusFilter === 'all' ? true : b.booking_status?.toLowerCase() === statusFilter.toLowerCase();
+    const matchesStatus = statusFilter === 'all' 
+      ? true 
+      : statusFilter === 'demo' 
+        ? (b.payment_status === 'demo_paid' || b.payment_provider === 'demo' || b.payment_mode === 'demo')
+        : statusFilter === 'real_paid'
+          ? (b.payment_status === 'paid' && b.payment_provider !== 'demo' && b.payment_mode !== 'demo')
+          : b.booking_status?.toLowerCase() === statusFilter.toLowerCase();
     
     return matchesSearch && matchesStatus;
   });
 
-  const getStatusBadge = (status) => {
+  const isDemoBooking = (b) => {
+    return b.payment_status === 'demo_paid' || b.payment_provider === 'demo' || b.payment_mode === 'demo';
+  };
+
+  const getStatusBadge = (status, b) => {
+    if (isDemoBooking(b)) {
+      return 'bg-amber-50 text-amber-800 border-amber-300';
+    }
     switch (status?.toLowerCase()) {
       case 'confirmed':
       case 'completed':
@@ -48,6 +63,8 @@ const AdminBookings = () => {
       case 'pending':
         return 'bg-amber-50 text-amber-700 border-amber-200';
       case 'cancelled':
+      case 'payment_failed':
+      case 'failed':
         return 'bg-red-50 text-red-700 border-red-200';
       case 'refunded':
         return 'bg-ticket-cream text-ticket-muted border-gray-300';
@@ -56,11 +73,38 @@ const AdminBookings = () => {
     }
   };
 
+  const handleExportExcel = async () => {
+    const { data: allEvents } = await getAdminEvents();
+    let allTickets = [];
+    if (typeof window !== 'undefined') {
+      try {
+        allTickets = JSON.parse(localStorage.getItem('tm_local_tickets') || '[]');
+      } catch (_) {}
+    }
+
+    exportTicketMahalFullReport({
+      bookings: bookings || [],
+      tickets: allTickets,
+      customers: [],
+      events: allEvents || [],
+      activities: []
+    });
+  };
+
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="font-playfair text-3xl font-semibold text-ticket-charcoal tracking-wide mb-1">Bookings Management</h1>
-        <p className="text-ticket-charcoal/60 text-sm">View, track, and manage all customer bookings and transaction states.</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="font-playfair text-3xl font-semibold text-ticket-charcoal tracking-wide mb-1">Bookings Management</h1>
+          <p className="text-ticket-charcoal/60 text-sm">View, track, and manage all customer bookings and transaction states.</p>
+        </div>
+        <button
+          onClick={handleExportExcel}
+          className="px-5 py-2.5 bg-ticket-burgundy text-white hover:bg-[#601822] font-bold rounded-2xl shadow-sm text-xs uppercase tracking-wider flex items-center gap-2 self-start sm:self-auto transition-all"
+        >
+          <FileSpreadsheet size={16} />
+          Export to Excel (.xlsx)
+        </button>
       </div>
 
       {/* Filter panel */}
@@ -76,17 +120,24 @@ const AdminBookings = () => {
           />
         </div>
         <div className="flex gap-2 w-full md:w-auto overflow-x-auto py-1">
-          {['all', 'confirmed', 'pending', 'cancelled', 'refunded'].map((status) => (
+          {[
+            { id: 'all', label: 'All' },
+            { id: 'real_paid', label: 'Real Paid' },
+            { id: 'demo', label: 'DEMO' },
+            { id: 'pending', label: 'Pending' },
+            { id: 'cancelled', label: 'Cancelled' },
+            { id: 'refunded', label: 'Refunded' }
+          ].map((tab) => (
             <button
-              key={status}
-              onClick={() => setStatusFilter(status)}
-              className={`px-4 py-2 rounded-full text-xs font-medium border capitalize whitespace-nowrap transition-all ${
-                statusFilter === status
-                  ? 'bg-ticket-burgundy/10 text-ticket-burgundy border-ticket-gold/30'
-                  : 'bg-ticket-white text-ticket-charcoal/60 border-ticket-beige/60 hover:bg-ivory'
+              key={tab.id}
+              onClick={() => setStatusFilter(tab.id)}
+              className={`px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider border whitespace-nowrap transition-all ${
+                statusFilter === tab.id
+                  ? 'bg-ticket-burgundy text-white border-ticket-burgundy shadow-sm'
+                  : 'bg-ticket-white text-ticket-charcoal/60 border-ticket-beige/60 hover:bg-ticket-ivory'
               }`}
             >
-              {status}
+              {tab.label}
             </button>
           ))}
         </div>
@@ -121,7 +172,23 @@ const AdminBookings = () => {
                 {filteredBookings.map((b) => (
                   <tr key={b.id} className="hover:bg-ivory/10 transition-colors">
                     <td className="px-6 py-4 font-semibold text-ticket-charcoal text-sm">
-                      {b.booking_number}
+                      <div className="flex items-center gap-2">
+                        <span>{b.booking_number}</span>
+                        {isDemoBooking(b) ? (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-300">
+                            DEMO
+                          </span>
+                        ) : b.payment_status === 'paid' ? (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300">
+                            REAL PAID
+                          </span>
+                        ) : null}
+                      </div>
+                      {b.payment_ref && (
+                        <div className="text-[11px] font-mono text-ticket-charcoal/40 font-normal">
+                          {b.payment_ref}
+                        </div>
+                      )}
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-sm font-medium text-ticket-charcoal">
@@ -133,14 +200,14 @@ const AdminBookings = () => {
                       {b.events?.event_name}
                     </td>
                     <td className="px-6 py-4 text-sm text-ticket-charcoal/80">
-                      {b.ticket_quantity || 1}
+                      {b.ticket_quantity || b.quantity || 1}
                     </td>
                     <td className="px-6 py-4 text-sm font-semibold text-ticket-charcoal">
-                      AED {Number(b.total_amount).toLocaleString()}
+                      AED {Number(b.total_amount || b.total_price || 0).toLocaleString()}
                     </td>
                     <td className="px-6 py-4 text-xs font-semibold">
-                      <span className={`px-2.5 py-1 rounded-full border ${getStatusBadge(b.booking_status)}`}>
-                        {b.booking_status || 'Pending'}
+                      <span className={`px-2.5 py-1 rounded-full border ${getStatusBadge(b.booking_status, b)}`}>
+                        {isDemoBooking(b) ? 'Demo Booking' : (b.booking_status || 'Pending')}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm text-ticket-charcoal/50">

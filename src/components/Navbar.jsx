@@ -13,6 +13,7 @@ const Navbar = () => {
   const [selectedLocation, setSelectedLocation] = useState('Dubai');
   const [authOpen, setAuthOpen] = useState(false);
   const [burgerOpen, setBurgerOpen] = useState(false);
+  const [returnPath, setReturnPath] = useState(null);
 
   const { user, loading } = useAuth();
   const location = useLocation();
@@ -29,14 +30,26 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Handle auto-open auth modal from protected routes
+  // Handle auto-open auth modal from protected routes and preserve return path
   useEffect(() => {
     if (location.state?.openAuth && !user && !loading) {
+      if (location.state?.from?.pathname) {
+        setReturnPath(location.state.from.pathname + (location.state.from.search || ''));
+      }
       setAuthOpen(true);
       // Clear the state so it doesn't reopen on refresh
       navigate(location.pathname, { replace: true, state: {} });
     }
   }, [location, user, loading, navigate]);
+
+  // Once authenticated, redirect back to the intended ticket/destination route
+  useEffect(() => {
+    if (user && returnPath) {
+      const destination = returnPath;
+      setReturnPath(null);
+      navigate(destination, { replace: true });
+    }
+  }, [user, returnPath, navigate]);
 
   // Close dropdowns on click outside
   useEffect(() => {

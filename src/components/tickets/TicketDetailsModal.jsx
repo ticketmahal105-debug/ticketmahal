@@ -1,7 +1,8 @@
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, MapPin, Calendar, Clock, User, Download } from 'lucide-react';
+import { X, MapPin, Calendar, Clock, User, Download, ShieldCheck } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
+import { downloadTicketPdf } from '../../utils/ticketPdfGenerator';
 
 const TicketDetailsModal = ({ ticket, user, onClose }) => {
   if (!ticket || typeof document === 'undefined') return null;
@@ -33,6 +34,7 @@ const TicketDetailsModal = ({ ticket, user, onClose }) => {
   };
 
   const isCancelled = ticket.status === 'cancelled';
+  const isDemo = ticket.payment_mode === 'demo' || ticket.booking_reference?.startsWith('DEMO') || ticket.status === 'demo_valid';
 
   return createPortal(
     <AnimatePresence>
@@ -97,11 +99,18 @@ const TicketDetailsModal = ({ ticket, user, onClose }) => {
           <div className="px-6 pt-5 pb-6 flex flex-col gap-5">
             {/* Event title */}
             <div>
-              <h2 className="font-playfair text-2xl font-semibold text-ticket-charcoal">
-                {event?.event_name || 'Event'}
-              </h2>
+              <div className="flex items-center justify-between gap-2">
+                <h2 className="font-playfair text-2xl font-semibold text-ticket-charcoal">
+                  {event?.event_name || 'Event'}
+                </h2>
+                {isDemo && (
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300 shrink-0">
+                    DEMO BOOKING
+                  </span>
+                )}
+              </div>
               {event?.category && (
-                <span className="text-xs font-medium text-ticket-burgundy uppercase tracking-wider">
+                <span className="text-xs font-medium text-ticket-burgundy uppercase tracking-wider block mt-0.5">
                   {event.category}
                 </span>
               )}
@@ -143,15 +152,22 @@ const TicketDetailsModal = ({ ticket, user, onClose }) => {
             {/* Ticket meta */}
             <div className="flex justify-between text-xs text-ticket-charcoal/50 font-medium">
               <div>
-                <p className="uppercase tracking-wider mb-0.5 text-ticket-charcoal/30">Type</p>
+                <p className="uppercase tracking-wider mb-0.5 text-ticket-charcoal/30">Category</p>
                 <p className="text-ticket-charcoal font-semibold">{ticket.ticket_type || 'General'}</p>
               </div>
-              <div>
-                <p className="uppercase tracking-wider mb-0.5 text-ticket-charcoal/30">Qty</p>
-                <p className="text-ticket-charcoal font-semibold">{ticket.quantity || 1}</p>
-              </div>
+              {ticket.seat ? (
+                <div className="text-center">
+                  <p className="uppercase tracking-wider mb-0.5 text-ticket-charcoal/30">Seat</p>
+                  <p className="text-ticket-burgundy font-bold text-sm">{ticket.seat}</p>
+                </div>
+              ) : (
+                <div className="text-center">
+                  <p className="uppercase tracking-wider mb-0.5 text-ticket-charcoal/30">Qty</p>
+                  <p className="text-ticket-charcoal font-semibold">{ticket.quantity || 1}</p>
+                </div>
+              )}
               <div className="text-right">
-                <p className="uppercase tracking-wider mb-0.5 text-ticket-charcoal/30">Ticket No.</p>
+                <p className="uppercase tracking-wider mb-0.5 text-ticket-charcoal/30">Ticket ID</p>
                 <p className="text-ticket-charcoal font-semibold font-mono">{ticket.ticket_number}</p>
               </div>
             </div>
@@ -185,14 +201,14 @@ const TicketDetailsModal = ({ ticket, user, onClose }) => {
               </p>
             )}
 
-            {/* Download button — prepared UI, no PDF yet */}
+            {/* Download button — Active PDF ticket generation */}
             <button
-              disabled
-              title="PDF download coming soon"
-              className="w-full flex items-center justify-center gap-2 py-3 border border-ticket-beige rounded-2xl text-sm font-medium text-ticket-charcoal/40 cursor-not-allowed transition-all"
+              onClick={() => downloadTicketPdf({ ticket, user })}
+              title="Download your official Ticket Mahal pass"
+              className="w-full flex items-center justify-center gap-2 py-3 bg-ticket-burgundy text-white rounded-2xl text-sm font-semibold hover:bg-ticket-burgundy/90 shadow-md transition-all cursor-pointer"
             >
               <Download size={15} />
-              Download Ticket (Coming Soon)
+              Download Ticket (PDF)
             </button>
           </div>
         </motion.div>

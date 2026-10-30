@@ -25,6 +25,9 @@ import BookingDetailsPage from './pages/BookingDetailsPage';
 import WishlistPage from './pages/WishlistPage';
 import EventDetailsPage from './pages/EventDetailsPage';
 import CategoryPage from './pages/CategoryPage';
+import PaymentCallbackPage from './pages/PaymentCallbackPage';
+import ViewTicketPage from './pages/ViewTicketPage';
+import TicketVerificationPage from './pages/TicketVerificationPage';
 import { WishlistProvider } from './context/WishlistContext';
 import AdminRoute from './routes/AdminRoute';
 import AdminLayout from './admin/layouts/AdminLayout';
@@ -122,6 +125,7 @@ function App() {
           <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/events/:slug" element={<EventDetailsPage />} />
+          <Route path="/payment/callback" element={<PaymentCallbackPage />} />
           <Route path="/category/:categorySlug" element={<CategoryPage />} />
           <Route path="/categories" element={<CategoryPage />} />
           <Route path="/reset-password" element={<ResetPassword />} />
@@ -143,6 +147,26 @@ function App() {
                 <MyTicketsPage />
               </ProtectedRoute>
             } 
+          />
+          <Route 
+            path="/my-tickets/:bookingNumber" 
+            element={
+              <ProtectedRoute>
+                <ViewTicketPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/tickets/access/:token" 
+            element={<ViewTicketPage />} 
+          />
+          <Route 
+            path="/view-ticket/:bookingOrTicketId" 
+            element={<ViewTicketPage />} 
+          />
+          <Route 
+            path="/verify-ticket/:token" 
+            element={<TicketVerificationPage />} 
           />
           <Route 
             path="/my-bookings" 

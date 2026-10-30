@@ -1,4 +1,8 @@
 const STATUS_CONFIG = {
+  valid: {
+    label: 'Valid',
+    classes: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+  },
   active: {
     label: 'Active',
     classes: 'bg-ticket-burgundy/10 text-ticket-burgundy border border-ticket-gold/25',

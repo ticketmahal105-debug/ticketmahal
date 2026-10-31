@@ -27,9 +27,13 @@ export const createDemoBooking = async ({
   showtime,
   ticketQuantity,
   ticketType = 'Standard Admission',
+  ticketTier,
+  seats,
+  holdReference,
   customerInfo,
   userId,
-  idempotencyKey
+  idempotencyKey,
+  promoCode
 }) => {
   try {
     const response = await fetch('/api/create-demo-booking', {
@@ -43,9 +47,13 @@ export const createDemoBooking = async ({
         showtime,
         ticketQuantity,
         ticketType,
+        ticketTier: ticketTier || ticketType,
+        seats,
+        holdReference,
         customerInfo,
         userId,
-        idempotencyKey
+        idempotencyKey,
+        promoCode
       })
     });
 

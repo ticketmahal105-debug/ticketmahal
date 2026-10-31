@@ -23,16 +23,29 @@ const AdminTickets = () => {
   };
 
   const handleToggleUsed = async (ticket) => {
-    const newStatus = ticket.status === 'used' ? 'active' : 'used';
-    const usedAt = newStatus === 'used' ? new Date().toISOString() : null;
-    
-    const { error } = await supabase
-      .from('tickets')
-      .update({ status: newStatus, used_at: usedAt })
-      .eq('id', ticket.id);
+    const action = ticket.status === 'used' ? 'reactivate' : 'check_in';
+    const newStatus = action === 'check_in' ? 'used' : 'valid';
+    const usedAt = action === 'check_in' ? new Date().toISOString() : null;
 
-    if (!error) {
-      setTickets(prev => prev.map(t => t.id === ticket.id ? { ...t, status: newStatus, used_at: usedAt } : t));
+    try {
+      const res = await fetch('/api/admin-tickets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ticket_number: ticket.ticket_number || ticket.id,
+          action
+        })
+      });
+      const json = await res.json();
+      if (json.success) {
+        setTickets(prev => prev.map(t => 
+          (t.ticket_number === ticket.ticket_number || t.id === ticket.id) 
+            ? { ...t, status: newStatus, used_at: usedAt, checked_in_at: usedAt } 
+            : t
+        ));
+      }
+    } catch (err) {
+      console.error('Error toggling ticket check-in:', err);
     }
   };
 

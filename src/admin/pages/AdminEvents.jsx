@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Edit, Eye, EyeOff, Archive, Trash2, Search, Calendar, MapPin } from 'lucide-react';
-import { getAdminEvents, updateEvent } from '../../services/eventsService';
+import { Plus, Edit, Eye, EyeOff, Archive, Trash2, Search, Calendar, MapPin, Copy, ExternalLink } from 'lucide-react';
+import { getAdminEvents, updateEvent, setEventStatus, duplicateEvent, deleteEvent } from '../../services/eventsService';
 
 const AdminEvents = () => {
   const navigate = useNavigate();
@@ -25,16 +25,32 @@ const AdminEvents = () => {
 
   const handleToggleStatus = async (event) => {
     const newStatus = event.status === 'published' ? 'draft' : 'published';
-    const { error } = await updateEvent(event.id, { status: newStatus });
-    if (!error) {
+    const res = await setEventStatus(event.id, newStatus);
+    if (res.success) {
       setEvents(prev => prev.map(e => e.id === event.id ? { ...e, status: newStatus } : e));
     }
   };
 
+  const handleDuplicate = async (event) => {
+    try {
+      const res = await duplicateEvent(event.id);
+      if (res.success) {
+        alert(`Event "${event.event_name}" duplicated successfully.`);
+        fetchEvents();
+      }
+    } catch (err) {
+      console.error('Error duplicating event:', err);
+    }
+  };
+
   const handleArchive = async (event) => {
-    const { error } = await updateEvent(event.id, { status: 'archived' });
-    if (!error) {
-      setEvents(prev => prev.map(e => e.id === event.id ? { ...e, status: 'archived' } : e));
+    const confirmed = window.confirm(`Are you sure you want to archive "${event.event_name}"?`);
+    if (!confirmed) return;
+
+    const res = await deleteEvent(event.id);
+    if (res.success) {
+      if (res.message) alert(res.message);
+      fetchEvents();
     }
   };
 
@@ -183,28 +199,44 @@ const AdminEvents = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <a
+                            href={`/events/${event.slug || event.id}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            title="View on Customer Site"
+                            className="p-2 border border-ticket-beige hover:border-ticket-burgundy hover:text-ticket-burgundy text-ticket-charcoal/60 rounded-xl transition-all"
+                          >
+                            <ExternalLink size={15} />
+                          </a>
                           <button
                             onClick={() => handleToggleStatus(event)}
                             title={event.status === 'published' ? 'Unpublish / Draft' : 'Publish'}
                             className="p-2 border border-ticket-beige hover:border-ticket-burgundy hover:text-ticket-burgundy text-ticket-charcoal/60 rounded-xl transition-all"
                           >
-                            {event.status === 'published' ? <EyeOff size={16} /> : <Eye size={16} />}
+                            {event.status === 'published' ? <EyeOff size={15} /> : <Eye size={15} />}
                           </button>
                           <button
                             onClick={() => navigate(`/admin/events/${event.id}/edit`)}
-                            title="Edit Event"
+                            title="Edit Event Details"
                             className="p-2 border border-ticket-beige hover:border-ticket-burgundy hover:text-ticket-burgundy text-ticket-charcoal/60 rounded-xl transition-all"
                           >
-                            <Edit size={16} />
+                            <Edit size={15} />
+                          </button>
+                          <button
+                            onClick={() => handleDuplicate(event)}
+                            title="Duplicate Event"
+                            className="p-2 border border-ticket-beige hover:border-ticket-gold hover:text-ticket-charcoal text-ticket-charcoal/60 rounded-xl transition-all"
+                          >
+                            <Copy size={15} />
                           </button>
                           {event.status !== 'archived' && (
                             <button
                               onClick={() => handleArchive(event)}
-                              title="Archive Event"
+                              title="Archive / Delete Event"
                               className="p-2 border border-ticket-beige hover:border-red-500 hover:text-red-500 text-ticket-charcoal/60 rounded-xl transition-all"
                             >
-                              <Archive size={16} />
+                              <Archive size={15} />
                             </button>
                           )}
                         </div>

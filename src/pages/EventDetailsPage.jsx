@@ -12,6 +12,8 @@ import WishlistButton from '../components/wishlist/WishlistButton';
 import { useAuth } from '../hooks/useAuth';
 import UnifiedBookingModal from '../components/booking/UnifiedBookingModal';
 
+import { getAdminEventById } from '../services/eventsService';
+
 export default function EventDetailsPage() {
   const { slug } = useParams();
   const { user } = useAuth();
@@ -23,16 +25,33 @@ export default function EventDetailsPage() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const foundMovie = getMovieBySlug(slug) || dummyMovies[0];
-    setMovie(foundMovie);
+    const initialMovie = getMovieBySlug(slug) || dummyMovies[0];
+    setMovie(initialMovie);
 
-    // Update document SEO Title & Description dynamically
-    if (foundMovie) {
-      document.title = foundMovie.seoTitle || `${foundMovie.title} – Showtimes & Tickets | TicketMahal`;
-      
+    // Fetch live updates from unified events store
+    getAdminEventById(slug).then(({ data }) => {
+      if (data) {
+        setMovie(prev => ({
+          ...(prev || {}),
+          ...data,
+          title: data.event_name || prev?.title,
+          image: data.event_image || prev?.image,
+          backdrop: data.backdrop_image || prev?.backdrop || data.event_image,
+          venue: data.venue_name || prev?.venue,
+          city: data.city || prev?.city,
+          releaseDate: data.event_date || prev?.releaseDate,
+          startingPrice: Number(data.starting_price) || prev?.startingPrice,
+          category: data.category || prev?.category,
+          shortDescription: data.description || prev?.shortDescription
+        }));
+      }
+    });
+
+    if (initialMovie) {
+      document.title = initialMovie.seoTitle || `${initialMovie.title} – Showtimes & Tickets | TicketMahal`;
       const metaDesc = document.querySelector('meta[name="description"]');
       if (metaDesc) {
-        metaDesc.setAttribute('content', foundMovie.seoDescription || foundMovie.shortDescription);
+        metaDesc.setAttribute('content', initialMovie.seoDescription || initialMovie.shortDescription);
       }
     }
   }, [slug]);

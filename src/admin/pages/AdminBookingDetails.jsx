@@ -217,19 +217,19 @@ const AdminBookingDetails = () => {
               {booking.booking_status !== 'cancelled' && booking.booking_status !== 'refunded' && (
                 <>
                   <button
-                    onClick={() => handleUpdateStatus('cancelled')}
+                    onClick={() => {
+                      if (window.confirm(`Are you sure you want to cancel booking ${booking.booking_number}? This will invalidate related ticket admissions.`)) {
+                        handleUpdateStatus('cancelled');
+                      }
+                    }}
                     disabled={updating}
                     className="w-full py-3 border border-red-200 text-red-600 hover:bg-red-50 font-semibold rounded-xl text-sm transition-all"
                   >
                     Cancel Booking
                   </button>
-                  <button
-                    onClick={() => handleUpdateStatus('refunded')}
-                    disabled={updating}
-                    className="w-full py-3 bg-ticket-charcoal text-ticket-white hover:bg-ticket-charcoal/95 font-semibold rounded-xl text-sm transition-all"
-                  >
-                    Refund Booking
-                  </button>
+                  <div className="p-3 bg-amber-50/80 border border-amber-200/60 rounded-xl text-[11px] text-amber-800 leading-relaxed">
+                    <strong>Payment Gateway Notice:</strong> System is operating under Demo Checkout mode. Merchant refunds through N-Genius are held until merchant gateway goes operational.
+                  </div>
                 </>
               )}
             </div>

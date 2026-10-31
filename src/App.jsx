@@ -38,6 +38,10 @@ import AdminBookings from './admin/pages/AdminBookings';
 import AdminBookingDetails from './admin/pages/AdminBookingDetails';
 import AdminTickets from './admin/pages/AdminTickets';
 import AdminUsers from './admin/pages/AdminUsers';
+import AdminPromoCodes from './admin/pages/AdminPromoCodes';
+import AdminCategories from './admin/pages/AdminCategories';
+import AdminVenues from './admin/pages/AdminVenues';
+import AdminReports from './admin/pages/AdminReports';
 
 function Home() {
   return (
@@ -219,6 +223,10 @@ function App() {
             <Route path="bookings/:bookingNumber" element={<AdminBookingDetails />} />
             <Route path="tickets" element={<AdminTickets />} />
             <Route path="users" element={<AdminUsers />} />
+            <Route path="promo-codes" element={<AdminPromoCodes />} />
+            <Route path="categories" element={<AdminCategories />} />
+            <Route path="venues" element={<AdminVenues />} />
+            <Route path="reports" element={<AdminReports />} />
           </Route>
         </Routes>
       </BrowserRouter>

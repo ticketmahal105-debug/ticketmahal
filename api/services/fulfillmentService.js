@@ -2,7 +2,12 @@ import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
 import { dummyMovies } from '../../src/data/dummyMovies.js';
 import { logActivity, sendOwnerBookingNotification } from './activityService.js';
-import { saveBookingToStore } from './persistenceService.js';
+import { 
+  saveBookingToStore, 
+  getEventFromStore, 
+  getPromoCodeFromStore, 
+  recordPromoUsage 
+} from './persistenceService.js';
 
 export function getSupabaseClient() {
   const url = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
@@ -27,7 +32,23 @@ export const serverBookingTicketsMap = new Map();
  * Validates event and calculates authoritative price server-side
  */
 export async function getAuthoritativeEventDetails(eventId, supabase) {
-  // 1. Search local verified catalog
+  // 1. Search persistent authoritative store first (picks up admin updates instantly)
+  const storeEvent = getEventFromStore(eventId);
+  if (storeEvent) {
+    return {
+      id: storeEvent.id,
+      title: storeEvent.event_name || storeEvent.title,
+      image: storeEvent.event_image || storeEvent.image,
+      startingPrice: Number(storeEvent.starting_price) || 120,
+      currency: storeEvent.currency || 'AED',
+      venue: storeEvent.venue_name || storeEvent.venue || 'Ticket Mahal Main Stage',
+      city: storeEvent.city || 'Dubai',
+      date: storeEvent.event_date || 'Upcoming Show',
+      category: storeEvent.category || 'Cinema'
+    };
+  }
+
+  // 2. Search local verified catalog
   const movie = dummyMovies.find(m => m.id === eventId || m.slug === eventId);
   if (movie) {
     return {
@@ -306,7 +327,8 @@ export async function fulfillConfirmedOrder({
   paymentProvider = 'demo',
   paymentMode = 'demo',
   paymentStatus = 'demo_paid',
-  paymentRef = null
+  paymentRef = null,
+  promoCode = null
 }) {
   const supabase = getSupabaseClient();
   const seatsList = Array.isArray(seats) && seats.length > 0 ? seats : [];
@@ -326,8 +348,30 @@ export async function fulfillConfirmedOrder({
 
   const unitPrice = event.startingPrice + tierAddon;
   const subtotal = unitPrice * qty;
-  const vat = Math.round(subtotal * 0.05 * 100) / 100; // 5% UAE VAT
-  const totalAmount = Math.round((subtotal + vat) * 100) / 100;
+
+  // Server-side promo discount calculation (Requirement G)
+  let discountAmount = 0;
+  let appliedPromo = null;
+  if (promoCode) {
+    const promo = getPromoCodeFromStore(promoCode);
+    if (promo && promo.status === 'active') {
+      if (promo.discount_type === 'percentage') {
+        discountAmount = (subtotal * Number(promo.discount_value)) / 100;
+        if (promo.max_discount && discountAmount > Number(promo.max_discount)) {
+          discountAmount = Number(promo.max_discount);
+        }
+      } else {
+        discountAmount = Math.min(Number(promo.discount_value), subtotal);
+      }
+      discountAmount = Math.round(discountAmount * 100) / 100;
+      appliedPromo = promo.code;
+      recordPromoUsage(appliedPromo, subtotal);
+    }
+  }
+
+  const taxableAmount = Math.max(0, subtotal - discountAmount);
+  const vat = Math.round(taxableAmount * 0.05 * 100) / 100; // 5% UAE VAT
+  const totalAmount = Math.round((taxableAmount + vat) * 100) / 100;
   const currency = event.currency || 'AED';
 
   // 2. Generate Unique Booking Identifier & Reference
@@ -353,6 +397,10 @@ export async function fulfillConfirmedOrder({
     quantity: qty,
     seats: seatsList.join(', ') || null,
     ticket_category: ticketTier || ticketType || 'Standard',
+    subtotal: subtotal,
+    discount_amount: discountAmount,
+    promo_code: appliedPromo,
+    vat: vat,
     total_price: totalAmount,
     total_amount: totalAmount,
     currency: currency,

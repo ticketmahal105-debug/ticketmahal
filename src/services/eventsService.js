@@ -16,47 +16,45 @@ function mapCatalogToAdminEvent(m) {
     end_time: '10:00 PM',
     description: m.shortDescription,
     status: 'published',
+    starting_price: Number(m.startingPrice) || 120,
     ticket_types: [
-      { id: `${m.id}-std`, name: 'Standard', price: m.startingPrice, capacity: 60, sold_quantity: 12 },
-      { id: `${m.id}-prem`, name: 'Premium', price: m.startingPrice + 40, capacity: 40, sold_quantity: 8 },
-      { id: `${m.id}-vip`, name: 'VIP', price: m.startingPrice + 100, capacity: 20, sold_quantity: 4 }
+      { id: `${m.id}-std`, name: 'Standard Admission', price: Number(m.startingPrice) || 120, capacity: 60, sold_quantity: 0, status: 'active', section: 'Main Hall' },
+      { id: `${m.id}-prem`, name: 'Premium Tier', price: (Number(m.startingPrice) || 120) + 40, capacity: 40, sold_quantity: 0, status: 'active', section: 'Balcony' },
+      { id: `${m.id}-vip`, name: 'VIP Royal Box', price: (Number(m.startingPrice) || 120) + 100, capacity: 20, sold_quantity: 0, status: 'active', section: 'Royal Box' }
     ]
   };
 }
 
-// Event queries
+// Fetch all events for Admin
 export const getAdminEvents = async () => {
+  // 1. Authoritative Server API
+  try {
+    const res = await fetch('/api/admin-events');
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success && Array.isArray(json.events) && json.events.length > 0) {
+        return { data: json.events, error: null };
+      }
+    }
+  } catch (err) {
+    console.warn('[eventsService] Server API notice:', err.message);
+  }
+
+  // 2. Supabase Fallback
   let dbEvents = [];
   try {
     const { data, error } = await supabase
       .from('events')
-      .select(`
-        *,
-        ticket_types (
-          id,
-          name,
-          price,
-          capacity,
-          sold_quantity
-        )
-      `)
+      .select('*, ticket_types(*)')
       .order('event_date', { ascending: false });
     if (!error && data) dbEvents = data;
   } catch (_) {}
 
-  // Local storage overrides/edits
-  let localEvents = [];
-  if (typeof window !== 'undefined') {
-    try {
-      localEvents = JSON.parse(localStorage.getItem('tm_local_events') || '[]');
-    } catch (_) {}
-  }
-
-  // Base verified catalog
+  // 3. Fallback Catalog
   const catalogEvents = dummyMovies.map(mapCatalogToAdminEvent);
 
   const map = new Map();
-  [...catalogEvents, ...dbEvents, ...localEvents].forEach(e => {
+  [...catalogEvents, ...dbEvents].forEach(e => {
     const k = e.slug || e.id;
     if (k) map.set(k, { ...map.get(k), ...e });
   });
@@ -64,27 +62,32 @@ export const getAdminEvents = async () => {
   return { data: Array.from(map.values()), error: null };
 };
 
+// Fetch single event for Admin Edit / Details
 export const getAdminEventById = async (id) => {
+  // 1. Authoritative Server API
+  try {
+    const res = await fetch(`/api/admin-events?id=${encodeURIComponent(id)}`);
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success && json.event) {
+        return { data: json.event, error: null };
+      }
+    }
+  } catch (err) {
+    console.warn('[eventsService] Server API single event notice:', err.message);
+  }
+
+  // 2. Supabase Fallback
   try {
     const { data, error } = await supabase
       .from('events')
-      .select(`
-        *,
-        ticket_types (*)
-      `)
+      .select('*, ticket_types(*)')
       .or(`id.eq.${id},slug.eq.${id}`)
       .single();
     if (!error && data) return { data, error: null };
   } catch (_) {}
 
-  if (typeof window !== 'undefined') {
-    try {
-      const local = JSON.parse(localStorage.getItem('tm_local_events') || '[]');
-      const found = local.find(e => e.id === id || e.slug === id);
-      if (found) return { data: found, error: null };
-    } catch (_) {}
-  }
-
+  // 3. Catalog Fallback
   const catalogMovie = dummyMovies.find(m => m.id === id || m.slug === id);
   if (catalogMovie) {
     return { data: mapCatalogToAdminEvent(catalogMovie), error: null };
@@ -93,68 +96,128 @@ export const getAdminEventById = async (id) => {
   return { data: null, error: new Error('Event not found') };
 };
 
+// Create new event
 export const createEvent = async (eventData, ticketTypes = []) => {
-  // 1. Insert Event
-  const { data: event, error: eventError } = await supabase
-    .from('events')
-    .insert([eventData])
-    .select()
-    .single();
-
-  if (eventError) return { error: eventError };
-
-  // 2. Insert Ticket Types
-  if (ticketTypes.length > 0) {
-    const preparedTickets = ticketTypes.map(t => ({
-      ...t,
-      event_id: event.id
-    }));
-    const { error: ticketError } = await supabase
-      .from('ticket_types')
-      .insert(preparedTickets);
-
-    if (ticketError) return { error: ticketError };
+  try {
+    const res = await fetch('/api/admin-events', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event: eventData,
+        ticket_types: ticketTypes
+      })
+    });
+    const json = await res.json();
+    if (json.success) {
+      return { data: json.event, error: null };
+    }
+    return { data: null, error: new Error(json.error || 'Failed to create event') };
+  } catch (err) {
+    console.error('[createEvent] Network error:', err);
+    return { data: null, error: err };
   }
-
-  return { data: event };
 };
 
+// Update existing event
 export const updateEvent = async (id, eventData, ticketTypes = []) => {
-  // Save to local persistence
-  if (typeof window !== 'undefined') {
-    try {
-      const local = JSON.parse(localStorage.getItem('tm_local_events') || '[]');
-      const index = local.findIndex(e => e.id === id || e.slug === id);
-      const updatedItem = { ...(local[index] || {}), ...eventData, id, ticket_types: ticketTypes.length > 0 ? ticketTypes : undefined };
-      if (index >= 0) local[index] = updatedItem;
-      else local.push(updatedItem);
-      localStorage.setItem('tm_local_events', JSON.stringify(local));
-    } catch (_) {}
-  }
-
   try {
-    const { data: event, error: eventError } = await supabase
-      .from('events')
-      .update(eventData)
-      .eq('id', id)
-      .select()
-      .single();
+    const res = await fetch('/api/admin-events', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event: { ...eventData, id },
+        ticket_types: ticketTypes
+      })
+    });
+    const json = await res.json();
+    if (json.success) {
+      return { data: json.event, error: null };
+    }
+    return { data: null, error: new Error(json.error || 'Failed to update event') };
+  } catch (err) {
+    console.error('[updateEvent] Network error:', err);
+    return { data: null, error: err };
+  }
+};
 
-    if (!eventError && event) return { data: event, error: null };
+// Toggle event status (e.g. published, draft, cancelled, sold_out)
+export const setEventStatus = async (id, status) => {
+  try {
+    const res = await fetch('/api/admin-events', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'set_status', id, status })
+    });
+    return await res.json();
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+};
+
+// Duplicate event
+export const duplicateEvent = async (id) => {
+  try {
+    const res = await fetch('/api/admin-events', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'duplicate', id })
+    });
+    return await res.json();
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+};
+
+// Safe Delete / Archive Event
+export const deleteEvent = async (id) => {
+  try {
+    const res = await fetch('/api/admin-events', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    });
+    return await res.json();
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+};
+
+// Delete ticket category from event configuration
+export const deleteTicketType = async (ticketTypeId) => {
+  try {
+    if (supabase) {
+      await supabase.from('ticket_types').delete().eq('id', ticketTypeId);
+    }
+  } catch (_) {}
+  return { success: true };
+};
+
+// Fetch Venues for event creation/editing
+export const getVenues = async () => {
+  try {
+    const res = await fetch('/api/admin-venues');
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success && Array.isArray(json.venues)) {
+        return { data: json.venues, error: null };
+      }
+    }
   } catch (_) {}
 
-  return { data: { id, ...eventData }, error: null };
+  return { data: [], error: null };
 };
 
-export const deleteTicketType = async (ticketTypeId) => {
-  return await supabase.from('ticket_types').delete().eq('id', ticketTypeId);
-};
-
-export const getVenues = async () => {
-  return await supabase.from('venues').select('*').order('name');
-};
-
+// Fetch Categories for event creation/editing
 export const getCategories = async () => {
-  // Fetch distinct categories from events or a static list if table doesn't exist
-  return ['Concerts', 'Sports', 'Theatre', 'Culture', 'Dining', 'Entertainment', 'Family'];
+  try {
+    const res = await fetch('/api/admin-categories');
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success && Array.isArray(json.categories)) {
+        return { data: json.categories.map(c => c.name), error: null };
+      }
+    }
+  } catch (_) {}
+
+  return { data: ['Movies', 'Live In Rhythm', 'The Laugh Lounge', 'Theatre & Plays', 'Experiences & Attractions', 'Beyond The Walls'], error: null };
 };

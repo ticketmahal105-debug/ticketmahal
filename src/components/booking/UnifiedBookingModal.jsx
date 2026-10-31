@@ -63,6 +63,13 @@ export default function UnifiedBookingModal({
   const [confirmedBookingData, setConfirmedBookingData] = useState(null);
   const [downloadingPdf, setDownloadingPdf] = useState(false);
 
+  // Promo Code State
+  const [promoCodeInput, setPromoCodeInput] = useState('');
+  const [appliedPromo, setAppliedPromo] = useState(null);
+  const [promoDiscount, setPromoDiscount] = useState(0);
+  const [promoError, setPromoError] = useState(null);
+  const [validatingPromo, setValidatingPromo] = useState(false);
+
   const sessionId = `${movie?.releaseDate || 'show'}_${selectedShowtime.replace(/\s+/g, '')}`;
 
   // Prepopulate customer info if authenticated
@@ -146,8 +153,47 @@ export default function UnifiedBookingModal({
   };
 
   const subtotal = selectedSeats.reduce((sum, s) => sum + calculateSeatPrice(s), 0);
-  const vat = Math.round(subtotal * 0.05 * 100) / 100;
-  const totalAmount = Math.round((subtotal + vat) * 100) / 100;
+  const taxableAmount = Math.max(0, subtotal - promoDiscount);
+  const vat = Math.round(taxableAmount * 0.05 * 100) / 100;
+  const totalAmount = Math.round((taxableAmount + vat) * 100) / 100;
+
+  const handleApplyPromo = async () => {
+    if (!promoCodeInput.trim()) return;
+    setValidatingPromo(true);
+    setSeatConflictError(null);
+    setPromoError(null);
+    try {
+      const res = await fetch('/api/validate-promo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: promoCodeInput.trim(),
+          orderAmount: subtotal,
+          eventId: movie.id || movie.slug,
+          customerEmail: customerInfo.email
+        })
+      });
+      const data = await res.json();
+      if (data.success && data.valid) {
+        setAppliedPromo(data.code);
+        setPromoDiscount(data.discount_amount);
+        setPromoError(null);
+      } else {
+        setPromoError(data.error || 'Invalid promo code');
+      }
+    } catch (e) {
+      setPromoError('Failed to validate promo code. Please try again.');
+    } finally {
+      setValidatingPromo(false);
+    }
+  };
+
+  const handleRemovePromo = () => {
+    setAppliedPromo(null);
+    setPromoDiscount(0);
+    setPromoCodeInput('');
+    setPromoError(null);
+  };
 
   // Seat toggle handler
   const handleToggleSeat = (seatId) => {
@@ -298,7 +344,8 @@ export default function UnifiedBookingModal({
           email: customerInfo.email,
           phone: customerInfo.phone
         },
-        userId: user?.id || null
+        userId: user?.id || null,
+        promoCode: appliedPromo
       });
 
       if (!res.success) {
@@ -748,11 +795,59 @@ export default function UnifiedBookingModal({
                   </div>
                 </div>
 
+                {/* Promo Code Input Section */}
+                <div className="border-t border-[#EDE3D5] pt-3">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Enter promo code (e.g. WELCOME10)"
+                      value={promoCodeInput}
+                      onChange={(e) => setPromoCodeInput(e.target.value.toUpperCase())}
+                      disabled={Boolean(appliedPromo) || validatingPromo}
+                      className="flex-1 px-3 py-2 text-xs uppercase font-mono tracking-wider border border-[#EDE3D5] rounded-xl bg-white focus:outline-none focus:border-[#7A1F2B]"
+                    />
+                    {appliedPromo ? (
+                      <button
+                        type="button"
+                        onClick={handleRemovePromo}
+                        className="px-3 py-2 text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-colors"
+                      >
+                        Remove
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleApplyPromo}
+                        disabled={validatingPromo || !promoCodeInput.trim()}
+                        className="px-4 py-2 text-xs font-bold text-white bg-[#7A1F2B] hover:bg-[#601822] disabled:opacity-50 rounded-xl transition-colors"
+                      >
+                        {validatingPromo ? 'Checking...' : 'Apply'}
+                      </button>
+                    )}
+                  </div>
+                  {appliedPromo && (
+                    <p className="text-[11px] text-emerald-600 font-semibold mt-1">
+                      ✓ Promo code <strong>{appliedPromo}</strong> applied successfully!
+                    </p>
+                  )}
+                  {promoError && (
+                    <p className="text-[11px] text-red-600 font-medium mt-1">
+                      {promoError}
+                    </p>
+                  )}
+                </div>
+
                 <div className="border-t border-[#EDE3D5] pt-3 space-y-2 text-xs">
                   <div className="flex justify-between text-neutral-600">
                     <span>Ticket Subtotal:</span>
                     <span className="font-mono">AED {subtotal}</span>
                   </div>
+                  {promoDiscount > 0 && (
+                    <div className="flex justify-between text-emerald-600 font-semibold">
+                      <span>Promo Discount ({appliedPromo}):</span>
+                      <span className="font-mono">-AED {promoDiscount.toFixed(2)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-neutral-600">
                     <span>5% UAE VAT:</span>
                     <span className="font-mono">AED {vat}</span>

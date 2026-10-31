@@ -1,8 +1,11 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Calendar, Ticket, Users, Settings, LogOut, Receipt, Tags, Map, FileBarChart } from 'lucide-react';
+import { 
+  LayoutDashboard, Calendar, Ticket, Users, Settings, LogOut, 
+  Receipt, Tags, Map, FileBarChart, Layers, X 
+} from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
-const AdminSidebar = () => {
+const AdminSidebar = ({ mobileOpen, onCloseMobile }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { signOut } = useAuth();
@@ -18,23 +21,33 @@ const AdminSidebar = () => {
     { label: 'Bookings', icon: <Receipt size={18} />, path: '/admin/bookings' },
     { label: 'Tickets', icon: <Ticket size={18} />, path: '/admin/tickets' },
     { label: 'Users', icon: <Users size={18} />, path: '/admin/users' },
-    // { label: 'Payments', icon: <CreditCard size={18} />, path: '/admin/payments' },
     { label: 'Promo Codes', icon: <Tags size={18} />, path: '/admin/promo-codes' },
-    { label: 'Categories', icon: <LayoutDashboard size={18} />, path: '/admin/categories' },
+    { label: 'Categories', icon: <Layers size={18} />, path: '/admin/categories' },
     { label: 'Venues', icon: <Map size={18} />, path: '/admin/venues' },
     { label: 'Reports', icon: <FileBarChart size={18} />, path: '/admin/reports' },
-    { label: 'Settings', icon: <Settings size={18} />, path: '/admin/settings' },
   ];
 
-  return (
-    <aside className="w-64 bg-ticket-white border-r border-ticket-beige/60 flex flex-col h-full hidden md:flex shrink-0">
-      <div className="p-6 border-b border-ticket-beige/60">
-        <Link to="/admin" className="font-playfair text-2xl font-bold text-ticket-charcoal tracking-wide">
+  const renderNavContent = (isMobile = false) => (
+    <>
+      <div className="p-6 border-b border-ticket-beige/60 flex items-center justify-between">
+        <Link 
+          to="/admin" 
+          onClick={isMobile ? onCloseMobile : undefined}
+          className="font-playfair text-2xl font-bold text-ticket-charcoal tracking-wide"
+        >
           Ticket Mahal
           <span className="block text-xs font-sans font-semibold text-ticket-burgundy uppercase tracking-[0.2em] mt-1">
             Admin Workspace
           </span>
         </Link>
+        {isMobile && (
+          <button 
+            onClick={onCloseMobile} 
+            className="p-2 text-ticket-charcoal/60 hover:text-ticket-charcoal rounded-lg"
+          >
+            <X size={20} />
+          </button>
+        )}
       </div>
 
       <div className="flex-1 overflow-y-auto py-6 px-4 flex flex-col gap-1.5 scrollbar-hide">
@@ -44,9 +57,10 @@ const AdminSidebar = () => {
             <Link
               key={item.label}
               to={item.path}
+              onClick={isMobile ? onCloseMobile : undefined}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                 isActive
-                  ? 'bg-ticket-burgundy/10 text-ticket-burgundy border border-ticket-gold/20'
+                  ? 'bg-ticket-burgundy/10 text-ticket-burgundy border border-ticket-gold/20 font-bold'
                   : 'text-ticket-charcoal/60 hover:bg-ivory hover:text-ticket-charcoal border border-transparent'
               }`}
             >
@@ -68,7 +82,29 @@ const AdminSidebar = () => {
           Logout
         </button>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop Persistent Sidebar */}
+      <aside className="w-64 bg-ticket-white border-r border-ticket-beige/60 flex flex-col h-full hidden md:flex shrink-0">
+        {renderNavContent(false)}
+      </aside>
+
+      {/* Mobile Drawer (Section P Requirement) */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 md:hidden flex">
+          <div 
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
+            onClick={onCloseMobile}
+          />
+          <div className="relative w-72 max-w-[80vw] bg-ticket-white h-full flex flex-col shadow-2xl z-10 animate-in slide-in-from-left duration-200">
+            {renderNavContent(true)}
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

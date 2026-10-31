@@ -10,9 +10,23 @@ import exportReportHandler from './api/export-report.js';
 import verifyTicketHandler from './api/verify-ticket.js';
 import ticketAccessHandler from './api/ticket-access.js';
 import adminBookingsHandler from './api/admin-bookings.js';
+import adminEventsHandler from './api/admin-events.js';
+import adminVenuesHandler from './api/admin-venues.js';
+import adminCategoriesHandler from './api/admin-categories.js';
+import adminPromoCodesHandler from './api/admin-promo-codes.js';
+import validatePromoHandler from './api/validate-promo.js';
+import adminTicketsHandler from './api/admin-tickets.js';
 
 function adaptServerlessHandler(handler) {
   return async (req, res) => {
+    // Populate req.query from req.url for Vercel/serverless compatibility
+    try {
+      const parsedUrl = new URL(req.url, 'http://localhost');
+      req.query = Object.fromEntries(parsedUrl.searchParams.entries());
+    } catch (_) {
+      req.query = {};
+    }
+
     const execute = async (bodyString) => {
       try {
         req.body = bodyString ? JSON.parse(bodyString) : {};
@@ -80,6 +94,12 @@ export default defineConfig(({ mode }) => {
           server.middlewares.use('/api/verify-ticket', adaptServerlessHandler(verifyTicketHandler));
           server.middlewares.use('/api/ticket-access', adaptServerlessHandler(ticketAccessHandler));
           server.middlewares.use('/api/admin-bookings', adaptServerlessHandler(adminBookingsHandler));
+          server.middlewares.use('/api/admin-events', adaptServerlessHandler(adminEventsHandler));
+          server.middlewares.use('/api/admin-venues', adaptServerlessHandler(adminVenuesHandler));
+          server.middlewares.use('/api/admin-categories', adaptServerlessHandler(adminCategoriesHandler));
+          server.middlewares.use('/api/admin-promo-codes', adaptServerlessHandler(adminPromoCodesHandler));
+          server.middlewares.use('/api/validate-promo', adaptServerlessHandler(validatePromoHandler));
+          server.middlewares.use('/api/admin-tickets', adaptServerlessHandler(adminTicketsHandler));
         }
       }
     ],

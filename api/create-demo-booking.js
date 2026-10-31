@@ -27,7 +27,8 @@ export default async function handler(req, res) {
       holdReference,
       customerInfo = {}, 
       userId,
-      idempotencyKey 
+      idempotencyKey,
+      promoCode
     } = req.body || {};
 
     if (!eventId) {
@@ -41,9 +42,8 @@ export default async function handler(req, res) {
     // Check Idempotency: prevent double-clicks, page refreshes, and duplicate submissions
     const key = idempotencyKey || req.headers['x-idempotency-key'];
     if (key && idempotencyStore.has(key)) {
-      const cached = idempotencyStore.get(key);
       console.log('[Idempotency] Returning cached booking for key:', key);
-      return res.status(200).json(cached);
+      return res.status(200).json(idempotencyStore.get(key));
     }
 
     // Call unified fulfillment service with strictly DEMO status
@@ -59,7 +59,8 @@ export default async function handler(req, res) {
       paymentProvider: 'demo',
       paymentMode: 'demo',
       paymentStatus: 'demo_paid', // Clearly separated from live 'paid'
-      paymentRef: null // Will generate internal DEMO-TM-XXXXXXXX
+      paymentRef: null, // Will generate internal DEMO-TM-XXXXXXXX
+      promoCode
     });
 
     const responsePayload = {

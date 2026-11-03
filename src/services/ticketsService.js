@@ -85,7 +85,8 @@ export const getAllTicketsAdmin = async () => {
   let serverTickets = [];
   try {
     const res = await fetch('/api/admin-bookings');
-    if (res.ok) {
+    const contentType = res.headers.get('content-type') || '';
+    if (res.ok && contentType.includes('application/json')) {
       const json = await res.json();
       if (json.success && Array.isArray(json.tickets)) {
         serverTickets = json.tickets;

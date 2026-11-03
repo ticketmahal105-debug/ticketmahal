@@ -28,7 +28,8 @@ const AdminDashboard = () => {
         let serverData = null;
         try {
           const res = await fetch('/api/admin-bookings');
-          if (res.ok) {
+          const contentType = res.headers.get('content-type') || '';
+          if (res.ok && contentType.includes('application/json')) {
             serverData = await res.json();
           }
         } catch (_) {}

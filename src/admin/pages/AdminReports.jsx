@@ -27,28 +27,68 @@ const AdminReports = () => {
     setLoading(true);
     try {
       // 1. Fetch bookings, tickets, and activities
-      const resBookings = await fetch('/api/admin-bookings');
-      const jsonBookings = await resBookings.json();
+      let bList = [], tList = [], aList = [];
+      try {
+        const resBookings = await fetch('/api/admin-bookings');
+        const cType = resBookings.headers.get('content-type') || '';
+        if (resBookings.ok && cType.includes('application/json')) {
+          const jsonBookings = await resBookings.json();
+          if (jsonBookings.success) {
+            bList = jsonBookings.bookings || [];
+            tList = jsonBookings.tickets || [];
+            aList = jsonBookings.activities || [];
+          }
+        }
+      } catch (_) {}
+
+      // Supabase fallback for bookings if endpoint unavailable
+      if (bList.length === 0) {
+        try {
+          const { data: dbB } = await supabase.from('bookings').select('*, events(id, event_name, event_date)');
+          if (dbB) bList = dbB;
+        } catch (_) {}
+      }
+      if (tList.length === 0) {
+        try {
+          const { data: dbT } = await supabase.from('tickets').select('*');
+          if (dbT) tList = dbT;
+        } catch (_) {}
+      }
+
+      setBookings(bList);
+      setTickets(tList);
+      setActivities(aList);
 
       // 2. Fetch events
-      const resEvents = await fetch('/api/admin-events');
-      const jsonEvents = await resEvents.json();
+      let evList = [];
+      try {
+        const resEvents = await fetch('/api/admin-events');
+        const cType = resEvents.headers.get('content-type') || '';
+        if (resEvents.ok && cType.includes('application/json')) {
+          const jsonEvents = await resEvents.json();
+          if (jsonEvents.success) evList = jsonEvents.events || [];
+        }
+      } catch (_) {}
+
+      if (evList.length === 0) {
+        try {
+          const { data: dbEv } = await supabase.from('events').select('*');
+          if (dbEv) evList = dbEv;
+        } catch (_) {}
+      }
+      setEvents(evList);
 
       // 3. Fetch promo codes
-      const resPromos = await fetch('/api/admin-promo-codes');
-      const jsonPromos = await resPromos.json();
-
-      if (jsonBookings.success) {
-        setBookings(jsonBookings.bookings || []);
-        setTickets(jsonBookings.tickets || []);
-        setActivities(jsonBookings.activities || []);
-      }
-      if (jsonEvents.success) {
-        setEvents(jsonEvents.events || []);
-      }
-      if (jsonPromos.success) {
-        setPromoCodes(jsonPromos.promoCodes || []);
-      }
+      let prList = [];
+      try {
+        const resPromos = await fetch('/api/admin-promo-codes');
+        const cType = resPromos.headers.get('content-type') || '';
+        if (resPromos.ok && cType.includes('application/json')) {
+          const jsonPromos = await resPromos.json();
+          if (jsonPromos.success) prList = jsonPromos.promoCodes || [];
+        }
+      } catch (_) {}
+      setPromoCodes(prList);
     } catch (err) {
       console.error('Error fetching reporting data:', err);
     } finally {

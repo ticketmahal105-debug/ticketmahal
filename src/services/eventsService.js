@@ -30,7 +30,8 @@ export const getAdminEvents = async () => {
   // 1. Authoritative Server API
   try {
     const res = await fetch('/api/admin-events');
-    if (res.ok) {
+    const contentType = res.headers.get('content-type') || '';
+    if (res.ok && contentType.includes('application/json')) {
       const json = await res.json();
       if (json.success && Array.isArray(json.events) && json.events.length > 0) {
         return { data: json.events, error: null };
@@ -67,7 +68,8 @@ export const getAdminEventById = async (id) => {
   // 1. Authoritative Server API
   try {
     const res = await fetch(`/api/admin-events?id=${encodeURIComponent(id)}`);
-    if (res.ok) {
+    const contentType = res.headers.get('content-type') || '';
+    if (res.ok && contentType.includes('application/json')) {
       const json = await res.json();
       if (json.success && json.event) {
         return { data: json.event, error: null };
@@ -196,7 +198,8 @@ export const deleteTicketType = async (ticketTypeId) => {
 export const getVenues = async () => {
   try {
     const res = await fetch('/api/admin-venues');
-    if (res.ok) {
+    const contentType = res.headers.get('content-type') || '';
+    if (res.ok && contentType.includes('application/json')) {
       const json = await res.json();
       if (json.success && Array.isArray(json.venues)) {
         return { data: json.venues, error: null };
@@ -211,7 +214,8 @@ export const getVenues = async () => {
 export const getCategories = async () => {
   try {
     const res = await fetch('/api/admin-categories');
-    if (res.ok) {
+    const contentType = res.headers.get('content-type') || '';
+    if (res.ok && contentType.includes('application/json')) {
       const json = await res.json();
       if (json.success && Array.isArray(json.categories)) {
         return { data: json.categories.map(c => c.name), error: null };

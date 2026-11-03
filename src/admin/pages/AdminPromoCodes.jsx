@@ -33,9 +33,12 @@ const AdminPromoCodes = () => {
     setLoading(true);
     try {
       const res = await fetch('/api/admin-promo-codes');
-      const json = await res.json();
-      if (json.success && Array.isArray(json.promoCodes)) {
-        setPromos(json.promoCodes);
+      const contentType = res.headers.get('content-type') || '';
+      if (res.ok && contentType.includes('application/json')) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.promoCodes)) {
+          setPromos(json.promoCodes);
+        }
       }
     } catch (err) {
       console.error('Error fetching promo codes:', err);

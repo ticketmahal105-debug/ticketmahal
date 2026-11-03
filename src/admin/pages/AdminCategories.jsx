@@ -26,9 +26,12 @@ const AdminCategories = () => {
     setLoading(true);
     try {
       const res = await fetch('/api/admin-categories');
-      const json = await res.json();
-      if (json.success && Array.isArray(json.categories)) {
-        setCategories(json.categories);
+      const contentType = res.headers.get('content-type') || '';
+      if (res.ok && contentType.includes('application/json')) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.categories)) {
+          setCategories(json.categories);
+        }
       }
     } catch (err) {
       console.error('Error fetching categories:', err);

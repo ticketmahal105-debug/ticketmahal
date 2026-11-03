@@ -34,11 +34,28 @@ const AdminUsers = () => {
       } catch (_) {}
 
       // 2. Fetch authoritative bookings, tickets, activities
-      const res = await fetch('/api/admin-bookings');
-      const json = await res.json();
-      const allBookings = json.bookings || [];
-      const allTickets = json.tickets || [];
-      const allActivities = json.activities || [];
+      let allBookings = [];
+      let allTickets = [];
+      let allActivities = [];
+
+      try {
+        const res = await fetch('/api/admin-bookings');
+        const contentType = res.headers.get('content-type') || '';
+        if (res.ok && contentType.includes('application/json')) {
+          const json = await res.json();
+          allBookings = json.bookings || [];
+          allTickets = json.tickets || [];
+          allActivities = json.activities || [];
+        }
+      } catch (_) {}
+
+      // Supabase bookings fallback
+      if (allBookings.length === 0) {
+        try {
+          const { data } = await supabase.from('bookings').select('*').order('created_at', { ascending: false });
+          if (data) allBookings = data;
+        } catch (_) {}
+      }
 
       setBookings(allBookings);
       setTickets(allTickets);

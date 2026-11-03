@@ -122,7 +122,8 @@ export const getBookingTickets = async (bookingId) => {
   // Check authoritative server API
   try {
     const res = await fetch('/api/admin-bookings');
-    if (res.ok) {
+    const contentType = res.headers.get('content-type') || '';
+    if (res.ok && contentType.includes('application/json')) {
       const json = await res.json();
       if (json.success && Array.isArray(json.tickets)) {
         const found = json.tickets.filter(t => t.booking_id === bookingId || t.booking_reference === bookingId);
@@ -151,7 +152,8 @@ export const getAllBookingsAdmin = async () => {
   let serverBookings = [];
   try {
     const res = await fetch('/api/admin-bookings');
-    if (res.ok) {
+    const contentType = res.headers.get('content-type') || '';
+    if (res.ok && contentType.includes('application/json')) {
       const json = await res.json();
       if (json.success && Array.isArray(json.bookings)) {
         serverBookings = json.bookings;
@@ -171,12 +173,6 @@ export const getAllBookingsAdmin = async () => {
           id,
           event_name,
           event_date
-        ),
-        profiles (
-          id,
-          email,
-          first_name,
-          last_name
         )
       `)
       .order('created_at', { ascending: false });
@@ -237,12 +233,6 @@ export const getAdminBookingDetails = async (bookingNumber) => {
           event_date,
           start_time,
           end_time
-        ),
-        profiles (
-          id,
-          email,
-          first_name,
-          last_name
         )
       `)
       .eq('booking_number', bookingNumber)
@@ -254,7 +244,8 @@ export const getAdminBookingDetails = async (bookingNumber) => {
   // Check authoritative server API
   try {
     const res = await fetch('/api/admin-bookings');
-    if (res.ok) {
+    const contentType = res.headers.get('content-type') || '';
+    if (res.ok && contentType.includes('application/json')) {
       const json = await res.json();
       if (json.success && Array.isArray(json.bookings)) {
         const found = json.bookings.find(b => b.booking_number === bookingNumber || b.id === bookingNumber);

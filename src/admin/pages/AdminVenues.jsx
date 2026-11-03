@@ -36,9 +36,12 @@ const AdminVenues = () => {
     setLoading(true);
     try {
       const res = await fetch('/api/admin-venues');
-      const json = await res.json();
-      if (json.success && Array.isArray(json.venues)) {
-        setVenues(json.venues);
+      const contentType = res.headers.get('content-type') || '';
+      if (res.ok && contentType.includes('application/json')) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.venues)) {
+          setVenues(json.venues);
+        }
       }
     } catch (err) {
       console.error('Error fetching venues:', err);

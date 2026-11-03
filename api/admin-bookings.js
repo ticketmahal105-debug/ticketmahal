@@ -95,13 +95,14 @@ export default async function handler(req, res) {
       bookingsMap.set(key, {
         ...existing,
         ...b,
+        purchased_at: b.purchased_at || existing.purchased_at || b.confirmed_at || b.created_at,
         events: resolvedEvent,
         profiles: resolvedProfile
       });
     });
 
     const allBookings = Array.from(bookingsMap.values()).sort(
-      (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0)
+      (a, b) => new Date(b.purchased_at || b.confirmed_at || b.created_at || 0) - new Date(a.purchased_at || a.confirmed_at || a.created_at || 0)
     );
 
     // 2. Collect tickets
@@ -120,7 +121,13 @@ export default async function handler(req, res) {
     [...persistentTickets, ...memoryTickets, ...dbTickets].forEach(t => {
       const key = t.ticket_number || t.id;
       if (!key) return;
-      ticketsMap.set(key, { ...ticketsMap.get(key), ...t });
+      const parentBooking = bookingsMap.get(t.booking_reference || t.booking_id);
+      const purchasedAt = t.purchased_at || parentBooking?.purchased_at || parentBooking?.confirmed_at || parentBooking?.created_at || t.created_at;
+      ticketsMap.set(key, { 
+        ...ticketsMap.get(key), 
+        ...t,
+        purchased_at: purchasedAt 
+      });
     });
 
     const allTickets = Array.from(ticketsMap.values()).sort(

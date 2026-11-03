@@ -45,6 +45,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const signUp = async (email, password, metadata) => {
+    const normalizedEmail = (email || '').trim();
     const isLocalhost =
       typeof window !== 'undefined' &&
       (window.location.hostname === 'localhost' ||
@@ -56,8 +57,8 @@ export const AuthProvider = ({ children }) => {
       : 'https://ticketmahal.ae/auth/callback';
 
     return await supabase.auth.signUp({
-      email,
-      password,
+      email: normalizedEmail,
+      password, // Password remains completely untouched
       options: {
         data: metadata,
         emailRedirectTo,
@@ -66,9 +67,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signIn = async (email, password) => {
+    const normalizedEmail = (email || '').trim();
     return await supabase.auth.signInWithPassword({
-      email,
-      password,
+      email: normalizedEmail,
+      password, // Password remains completely untouched
     });
   };
 
@@ -77,7 +79,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const resetPassword = async (email, redirectTo) => {
-    return await supabase.auth.resetPasswordForEmail(email, {
+    const normalizedEmail = (email || '').trim();
+    return await supabase.auth.resetPasswordForEmail(normalizedEmail, {
       redirectTo,
     });
   };

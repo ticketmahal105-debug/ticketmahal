@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
-import { initialAuthCallbackState } from './lib/supabase';
+import { initialAuthCallbackState, clearInitialAuthCallbackState } from './lib/supabase';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -86,33 +86,38 @@ function AuthCallbackHandler() {
 
     // If password recovery link, route to /reset-password
     if (type === 'recovery') {
+      clearInitialAuthCallbackState();
       navigate('/reset-password' + window.location.search + window.location.hash, { replace: true });
       return;
     }
 
-    // Check for email verification / auth callback indicators
-    const hasCode = searchParams.has('code') || Boolean(initialAuthCallbackState.code);
-    const hasTokenHash = searchParams.has('token_hash') || Boolean(initialAuthCallbackState.tokenHash);
+    // Check for email verification / auth callback indicators in current URL search or hash
+    const hasCode = searchParams.has('code');
+    const hasTokenHash = searchParams.has('token_hash');
     const hasSignupType =
       type === 'signup' ||
       type === 'email_verification' ||
       type === 'email_change' ||
       type === 'invite';
-    const hasAccessToken = hashParams.has('access_token') || Boolean(initialAuthCallbackState.accessToken);
+    const hasAccessToken = hashParams.has('access_token');
     const hasAuthError =
       searchParams.has('error_code') ||
       hashParams.has('error_code') ||
       searchParams.has('error') ||
-      hashParams.has('error') ||
-      initialAuthCallbackState.isError;
+      hashParams.has('error');
+
+    // Check initial auth state only on the initial mount when params might have been present
+    const initialHadParams = initialAuthCallbackState.hasAuthParams;
 
     if (
       hasCode ||
       hasTokenHash ||
       (hasAccessToken && (hasSignupType || !type)) ||
       hasAuthError ||
-      initialAuthCallbackState.hasAuthParams
+      initialHadParams
     ) {
+      // Clear initial state so that once the user is redirected or navigates away, it never bounces back
+      clearInitialAuthCallbackState();
       navigate('/auth/callback' + window.location.search + window.location.hash, { replace: true });
     }
   }, [location, navigate]);

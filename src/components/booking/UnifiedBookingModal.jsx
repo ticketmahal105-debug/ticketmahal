@@ -103,9 +103,43 @@ export default function UnifiedBookingModal({
         date: movie.releaseDate
       });
 
+      // Also merge any local bookings from localStorage for this event/showtime
+      const localSold = [];
+      try {
+        const local = JSON.parse(localStorage.getItem('tm_local_bookings') || '[]');
+        const normTarget = String(movie.id || movie.slug || '')
+          .toLowerCase()
+          .replace(/^movie-/, '')
+          .replace(/[^a-z0-9]/g, '');
+
+        local.forEach((b) => {
+          if (b.booking_status === 'cancelled') return;
+          const bNorm = String(b.event_id || '')
+            .toLowerCase()
+            .replace(/^movie-/, '')
+            .replace(/[^a-z0-9]/g, '');
+          if (bNorm !== normTarget) return;
+
+          if (b.showtime && selectedShowtime) {
+            const clean1 = b.showtime.replace(/\s+/g, '').toLowerCase();
+            const clean2 = selectedShowtime.replace(/\s+/g, '').toLowerCase();
+            if (clean1 !== clean2 && !clean1.includes(clean2) && !clean2.includes(clean1)) return;
+          }
+
+          if (Array.isArray(b.seats)) {
+            b.seats.forEach((s) => s && localSold.push(String(s).trim().toUpperCase()));
+          } else if (typeof b.seats === 'string') {
+            b.seats.split(',').forEach((s) => s && localSold.push(s.trim().toUpperCase()));
+          }
+        });
+      } catch (e) {}
+
       if (res && res.success) {
-        setSoldSeats(new Set(res.soldSeats || []));
-        setHeldSeats(new Set(res.heldSeats || []));
+        const serverSold = (res.soldSeats || []).map((s) => String(s).trim().toUpperCase());
+        setSoldSeats(new Set([...serverSold, ...localSold]));
+        setHeldSeats(new Set((res.heldSeats || []).map((s) => String(s).trim().toUpperCase())));
+      } else if (localSold.length > 0) {
+        setSoldSeats(new Set(localSold));
       }
       setLoadingSeats(false);
     };
@@ -288,36 +322,106 @@ export default function UnifiedBookingModal({
     }
   };
 
-  // Supabase Email Login / Sign Up
+  // Complete profile handler for authenticated users missing mobile / first name
+  const handleCompleteProfileSubmit = async (e) => {
+    e.preventDefault();
+    if (!customerInfo.name?.trim() || !customerInfo.phone?.trim()) {
+      setAuthError('Please provide your First Name and Mobile Number.');
+      return;
+    }
+    setAuthLoading(true);
+    setAuthError(null);
+    try {
+      if (user) {
+        const firstName = customerInfo.name.trim().split(' ')[0];
+        await supabase.auth.updateUser({
+          data: {
+            first_name: firstName,
+            full_name: customerInfo.name.trim(),
+            phone: customerInfo.phone.trim()
+          }
+        });
+        try {
+          await supabase.from('profiles').upsert({
+            id: user.id,
+            first_name: firstName,
+            phone: customerInfo.phone.trim(),
+            email: user.email,
+            updated_at: new Date().toISOString()
+          });
+        } catch (_) {}
+      }
+      setStep('ORDER_SUMMARY');
+    } catch (err) {
+      setAuthError(err.message || 'Failed to update profile.');
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  // Supabase Email Login / Sign Up with strict email normalization & untouched password
   const handleEmailAuth = async (e) => {
     e.preventDefault();
     setAuthLoading(true);
     setAuthError(null);
 
+    const normalizedEmail = (loginForm.email || '').trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(normalizedEmail)) {
+      setAuthError('Please enter a valid email address.');
+      setAuthLoading(false);
+      return;
+    }
+
+    if (!loginForm.password || loginForm.password.length < 6) {
+      setAuthError('Password must be at least 6 characters.');
+      setAuthLoading(false);
+      return;
+    }
+
     try {
       if (loginForm.isSignUp) {
         const { data, error } = await supabase.auth.signUp({
-          email: loginForm.email,
-          password: loginForm.password
+          email: normalizedEmail,
+          password: loginForm.password // password untouched
         });
-        if (error) throw error;
-        setCustomerInfo(prev => ({ ...prev, email: loginForm.email }));
+        if (error) {
+          const msg = (error.message || '').toLowerCase();
+          if (msg.includes('already registered') || msg.includes('already exists')) {
+            throw new Error('This email is already registered. Please sign in or use Forgot Password.');
+          }
+          throw error;
+        }
+        setCustomerInfo(prev => ({
+          ...prev,
+          email: normalizedEmail,
+          name: prev.name || normalizedEmail.split('@')[0]
+        }));
         setStep('ORDER_SUMMARY');
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({
-          email: loginForm.email,
-          password: loginForm.password
+          email: normalizedEmail,
+          password: loginForm.password // password untouched
         });
-        if (error) throw error;
+        if (error) {
+          const msg = (error.message || '').toLowerCase();
+          if (msg.includes('invalid') || msg.includes('credentials') || msg.includes('grant') || error.status === 400) {
+            throw new Error('Incorrect email or password. Please check your details and try again.');
+          } else if (msg.includes('not confirmed')) {
+            throw new Error('Please verify your email before signing in.');
+          }
+          throw new Error('Incorrect email or password. Please check your details and try again.');
+        }
         setCustomerInfo(prev => ({
           ...prev,
           email: data.user.email,
-          name: data.user.user_metadata?.first_name || data.user.email.split('@')[0]
+          name: data.user.user_metadata?.first_name || prev.name || data.user.email.split('@')[0],
+          phone: data.user.user_metadata?.phone || prev.phone || ''
         }));
         setStep('ORDER_SUMMARY');
       }
     } catch (err) {
-      setAuthError(err.message || 'Authentication failed');
+      setAuthError(err.message || 'Incorrect email or password. Please check your details and try again.');
     } finally {
       setAuthLoading(false);
     }
@@ -352,9 +456,28 @@ export default function UnifiedBookingModal({
         throw new Error(res.error || 'Failed to complete demo booking');
       }
 
+      // Immediately mark purchased seats as sold in local state
+      const upperSeats = selectedSeats.map((s) => String(s).trim().toUpperCase());
+      setSoldSeats((prev) => new Set([...prev, ...upperSeats]));
+
       // Save to client persistence for immediate visibility in /my-tickets and /my-bookings
       if (res.booking) saveLocalBookings([res.booking]);
       if (res.tickets) saveLocalTickets(res.tickets);
+
+      // Confirm with server seat hold registry
+      fetch('/api/seat-hold', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'confirm_seats',
+          eventId: movie.id || movie.slug,
+          sessionId,
+          showtime: selectedShowtime,
+          date: movie.releaseDate,
+          seats: upperSeats,
+          holdReference
+        })
+      }).catch(() => {});
 
       setConfirmedBookingData(res);
       setStep('CONFIRMED');
@@ -678,23 +801,69 @@ export default function UnifiedBookingModal({
 
             {/* GOOGLE AUTH */}
             {idMethod === 'google' && (
-              <div className="text-center py-6 space-y-4">
-                <p className="text-sm text-neutral-600">
-                  Sign in instantly with your Google account. Your seat hold of 10 minutes remains active.
-                </p>
-                <button
-                  onClick={handleGoogleAuth}
-                  disabled={authLoading}
-                  className="w-full py-3 bg-white border border-[#EDE3D5] hover:border-[#7A1F2B] rounded-xl font-bold text-sm text-[#292725] shadow-xs flex items-center justify-center gap-3 transition-all"
-                >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24">
-                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-                  </svg>
-                  {authLoading ? 'Connecting...' : 'Continue with Google'}
-                </button>
+              <div className="text-center py-4 space-y-4">
+                {user ? (
+                  <form onSubmit={handleCompleteProfileSubmit} className="text-left space-y-4">
+                    <div className="bg-[#FAF7F2] p-4 rounded-xl border border-[#EDE3D5]">
+                      <span className="text-xs font-bold uppercase tracking-wider text-[#7A1F2B] block mb-1">
+                        Complete Your Profile
+                      </span>
+                      <p className="text-xs text-neutral-600 leading-relaxed">
+                        Signed in as <strong>{user.email}</strong>. Please confirm your details below to finalize your booking.
+                      </p>
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-neutral-700 block mb-1">First Name *</label>
+                      <input
+                        type="text"
+                        required
+                        value={customerInfo.name}
+                        onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-xl border border-[#EDE3D5] text-sm focus:outline-none focus:border-[#7A1F2B] bg-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-neutral-700 block mb-1">Mobile Number *</label>
+                      <input
+                        type="tel"
+                        required
+                        placeholder="+971 50 123 4567"
+                        value={customerInfo.phone}
+                        onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-xl border border-[#EDE3D5] text-sm focus:outline-none focus:border-[#7A1F2B] bg-white"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={authLoading}
+                      className="w-full py-3.5 bg-[#7A1F2B] text-white font-bold rounded-xl shadow-lg hover:bg-[#601822] transition-all text-sm uppercase tracking-wider"
+                    >
+                      {authLoading ? 'Saving...' : 'Complete Profile & Continue →'}
+                    </button>
+                  </form>
+                ) : (
+                  <>
+                    <p className="text-sm text-neutral-600">
+                      Sign in instantly with your Google account. Your seat hold of 10 minutes remains active.
+                    </p>
+                    <button
+                      onClick={handleGoogleAuth}
+                      disabled={authLoading}
+                      className="w-full py-3 bg-white border border-[#EDE3D5] hover:border-[#7A1F2B] rounded-xl font-bold text-sm text-[#292725] shadow-xs flex items-center justify-center gap-3 transition-all"
+                    >
+                      <svg className="w-5 h-5" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                      </svg>
+                      {authLoading ? 'Connecting...' : 'Continue with Google'}
+                    </button>
+                  </>
+                )}
               </div>
             )}
 

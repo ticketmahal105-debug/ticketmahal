@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Search, CheckCircle2, XCircle } from 'lucide-react';
 import { getAllTicketsAdmin } from '../../services/ticketsService';
 import { supabase } from '../../lib/supabase';
+import { formatGstDateTime } from '../../utils/dateUtils';
 
 const AdminTickets = () => {
   const [tickets, setTickets] = useState([]);
@@ -132,51 +133,59 @@ const AdminTickets = () => {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-ticket-beige/40 bg-ticket-ivory/30 text-ticket-charcoal/50 text-xs font-semibold uppercase tracking-wider">
-                  <th className="px-5 py-4">Ticket ID</th>
-                  <th className="px-5 py-4">Booking Ref</th>
-                  <th className="px-5 py-4">Event</th>
-                  <th className="px-5 py-4">Customer</th>
-                  <th className="px-5 py-4">Category & Seat</th>
-                  <th className="px-5 py-4">Status</th>
-                  <th className="px-5 py-4">Check-In Time</th>
-                  <th className="px-5 py-4 text-right">Actions</th>
+                  <th className="px-4 py-4">Ticket ID</th>
+                  <th className="px-4 py-4">Booking Ref</th>
+                  <th className="px-4 py-4">Event</th>
+                  <th className="px-4 py-4">Customer</th>
+                  <th className="px-4 py-4">Seat</th>
+                  <th className="px-4 py-4">Status</th>
+                  <th className="px-4 py-4">Issued At</th>
+                  <th className="px-4 py-4">Purchased At</th>
+                  <th className="px-4 py-4">Check-In</th>
+                  <th className="px-4 py-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-beige/25">
                 {filteredTickets.map((t) => (
                   <tr key={t.id} className="hover:bg-ivory/10 transition-colors">
-                    <td className="px-5 py-4 font-semibold text-ticket-charcoal text-xs font-mono">
+                    <td className="px-4 py-4 font-semibold text-ticket-charcoal text-xs font-mono">
                       {t.ticket_number}
                     </td>
-                    <td className="px-5 py-4 text-xs font-mono text-ticket-burgundy font-semibold">
+                    <td className="px-4 py-4 text-xs font-mono text-ticket-burgundy font-semibold">
                       {t.booking_reference || t.bookings?.booking_number || '—'}
                     </td>
-                    <td className="px-5 py-4 text-xs text-ticket-charcoal/80 font-playfair font-semibold">
+                    <td className="px-4 py-4 text-xs text-ticket-charcoal/80 font-playfair font-semibold">
                       {t.events?.event_name}
                     </td>
-                    <td className="px-5 py-4">
+                    <td className="px-4 py-4">
                       <div className="text-xs font-medium text-ticket-charcoal">
                         {t.bookings?.customer_name || `${t.profiles?.first_name || ''} ${t.profiles?.last_name || ''}`.trim() || 'Valued Guest'}
                       </div>
                       <div className="text-[11px] text-ticket-charcoal/50">{t.bookings?.customer_email || t.profiles?.email}</div>
                     </td>
-                    <td className="px-5 py-4 text-xs">
-                      <span className="font-semibold text-ticket-burgundy uppercase tracking-wider block">
+                    <td className="px-4 py-4 text-xs">
+                      <span className="font-semibold text-ticket-burgundy block">
                         {t.ticket_type || 'General'}
                       </span>
                       <span className="text-ticket-charcoal/60 text-[11px]">
                         Seat: {t.seat || 'General Admission'}
                       </span>
                     </td>
-                    <td className="px-5 py-4 text-xs font-semibold">
-                      <span className={`px-2.5 py-1 rounded-full border ${getStatusBadge(t.status)}`}>
+                    <td className="px-4 py-4 text-xs font-semibold">
+                      <span className={`px-2 py-0.5 rounded-full border text-[11px] ${getStatusBadge(t.status)}`}>
                         {t.status}
                       </span>
                     </td>
-                    <td className="px-5 py-4 text-xs text-ticket-charcoal/50 font-mono">
-                      {t.checked_in_at || t.used_at ? new Date(t.checked_in_at || t.used_at).toLocaleTimeString() : '—'}
+                    <td className="px-4 py-4 text-xs text-ticket-charcoal/70 font-mono">
+                      {formatGstDateTime(t.created_at)}
                     </td>
-                    <td className="px-5 py-4 text-right">
+                    <td className="px-4 py-4 text-xs text-ticket-charcoal/70 font-mono">
+                      {formatGstDateTime(t.purchased_at || t.bookings?.purchased_at || t.bookings?.confirmed_at || t.bookings?.created_at || t.created_at)}
+                    </td>
+                    <td className="px-4 py-4 text-xs font-mono text-ticket-charcoal/50">
+                      {t.checked_in_at || t.used_at ? formatGstDateTime(t.checked_in_at || t.used_at) : '—'}
+                    </td>
+                    <td className="px-4 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <a
                           href={`/view-ticket/${t.ticket_number}`}

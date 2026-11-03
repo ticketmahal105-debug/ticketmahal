@@ -8,6 +8,7 @@ import {
   getPromoCodeFromStore, 
   recordPromoUsage 
 } from './persistenceService.js';
+import { confirmSeatsSold } from '../seat-hold.js';
 
 export function getSupabaseClient() {
   const url = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
@@ -413,6 +414,7 @@ export async function fulfillConfirmedOrder({
     customer_name: customerInfo.name || 'Valued Guest',
     customer_email: customerInfo.email || null,
     customer_phone: customerInfo.phone || null,
+    purchased_at: nowIso,
     created_at: nowIso,
     confirmed_at: nowIso
   };
@@ -426,9 +428,21 @@ export async function fulfillConfirmedOrder({
         .select()
         .single();
       if (!error && data) {
-        insertedBooking = data;
+        insertedBooking = { ...bookingRecord, ...data, purchased_at: data.purchased_at || bookingRecord.purchased_at };
       } else if (error) {
         console.warn('[Fulfillment] Supabase booking insert notice:', error.message);
+        // Schema fallback if purchased_at column doesn't exist in Supabase bookings table
+        if (error.message?.includes('column') || error.code === 'PGRST204') {
+          const { purchased_at, ...cleanRecord } = bookingRecord;
+          const { data: retryData, error: retryErr } = await supabase
+            .from('bookings')
+            .insert([cleanRecord])
+            .select()
+            .single();
+          if (!retryErr && retryData) {
+            insertedBooking = { ...bookingRecord, ...retryData, purchased_at: bookingRecord.purchased_at };
+          }
+        }
       }
     } catch (e) {
       console.warn('[Fulfillment] Supabase booking exception:', e.message);
@@ -463,6 +477,7 @@ export async function fulfillConfirmedOrder({
       status: 'valid',
       checked_in_at: null,
       created_at: nowIso,
+      purchased_at: nowIso,
       // Attached event data for immediate UI hydration
       events: {
         id: event.id,
@@ -492,12 +507,29 @@ export async function fulfillConfirmedOrder({
   serverBookingTicketsMap.set(guestTokenHash, generatedTickets);
   saveBookingToStore(insertedBooking, generatedTickets);
 
+  // Mark purchased seats as permanently sold in the authoritative seat registry
+  try {
+    confirmSeatsSold({
+      eventId: event.id || eventId,
+      showtime: showtime,
+      seats: seatsList
+    });
+  } catch (shErr) {
+    console.warn('[Fulfillment] Seat hold confirm notice:', shErr.message);
+  }
+
   // Insert individual tickets into Supabase
   if (supabase) {
     try {
       const dbTickets = generatedTickets.map(({ events, ...rest }) => rest);
-      const { error: tErr } = await supabase.from('tickets').insert(dbTickets);
-      if (tErr) console.warn('[Fulfillment] Supabase tickets insert notice:', tErr.message);
+      let { error: tErr } = await supabase.from('tickets').insert(dbTickets);
+      if (tErr && (tErr.message?.includes('column') || tErr.code === 'PGRST204')) {
+        const cleanDbTickets = dbTickets.map(({ purchased_at, ...tRest }) => tRest);
+        const { error: retryTErr } = await supabase.from('tickets').insert(cleanDbTickets);
+        if (retryTErr) console.warn('[Fulfillment] Supabase tickets retry notice:', retryTErr.message);
+      } else if (tErr) {
+        console.warn('[Fulfillment] Supabase tickets insert notice:', tErr.message);
+      }
     } catch (e) {
       console.warn('[Fulfillment] Supabase tickets insert exception:', e.message);
     }

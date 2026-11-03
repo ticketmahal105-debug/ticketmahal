@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase';
 import { getAllBookingsAdmin } from '../../services/bookingsService';
 import { getAdminEvents } from '../../services/eventsService';
 import { exportTicketMahalFullReport } from '../../utils/excelReportGenerator';
+import { formatGstRecent } from '../../utils/dateUtils';
 import StatCard from '../components/StatCard';
 
 const AdminDashboard = () => {
@@ -136,7 +137,9 @@ const AdminDashboard = () => {
     );
   }
 
-  const recentBookings = rawBookings.slice(0, 6);
+  const recentBookings = [...rawBookings]
+    .sort((a, b) => new Date(b.purchased_at || b.confirmed_at || b.created_at || 0) - new Date(a.purchased_at || a.confirmed_at || a.created_at || 0))
+    .slice(0, 6);
 
   return (
     <div className="flex flex-col gap-8">
@@ -236,6 +239,7 @@ const AdminDashboard = () => {
                       <th className="pb-3 font-semibold">Customer</th>
                       <th className="pb-3 font-semibold">Event / Seats</th>
                       <th className="pb-3 font-semibold">Amount</th>
+                      <th className="pb-3 font-semibold">Purchased</th>
                       <th className="pb-3 font-semibold text-right">Status</th>
                     </tr>
                   </thead>
@@ -267,6 +271,9 @@ const AdminDashboard = () => {
                         </td>
                         <td className="py-3 font-bold text-ticket-charcoal">
                           AED {b.total_amount || b.total_price || 0}
+                        </td>
+                        <td className="py-3 font-mono text-[11px] text-ticket-charcoal/70 whitespace-nowrap">
+                          {formatGstRecent(b.purchased_at || b.confirmed_at || b.created_at)}
                         </td>
                         <td className="py-3 text-right">
                           <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase border ${

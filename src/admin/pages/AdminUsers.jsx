@@ -4,6 +4,7 @@ import {
   User, Receipt, Ticket, Activity, X, Eye, ExternalLink, ShieldAlert 
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { formatGstDateTime } from '../../utils/dateUtils';
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
@@ -330,17 +331,26 @@ const AdminUsers = () => {
                 {selectedCustomer.bookings?.length === 0 ? (
                   <p className="text-xs text-ticket-charcoal/50 italic p-3 bg-ticket-ivory rounded-xl">No bookings on file.</p>
                 ) : (
-                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                  <div className="space-y-2 max-h-56 overflow-y-auto">
                     {selectedCustomer.bookings.map(b => (
-                      <div key={b.booking_number} className="p-3 bg-white border border-ticket-beige/60 rounded-xl flex items-center justify-between text-xs">
-                        <div>
-                          <span className="font-mono font-bold text-ticket-burgundy">{b.booking_number}</span>
-                          <span className="text-ticket-charcoal/80 ml-2 font-semibold">{b.events?.event_name || 'Event'}</span>
-                          <span className="text-ticket-charcoal/50 block text-[11px] mt-0.5">{new Date(b.created_at).toLocaleString()}</span>
+                      <div key={b.booking_number} className="p-3 bg-white border border-ticket-beige/60 rounded-xl flex items-center justify-between text-xs gap-3">
+                        <div className="space-y-0.5">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono font-bold text-ticket-burgundy">{b.booking_number}</span>
+                            <span className="text-ticket-charcoal/80 font-semibold">{b.events?.event_name || 'Event'}</span>
+                          </div>
+                          <div className="text-[11px] text-ticket-charcoal/60">
+                            {b.quantity || b.ticket_quantity || 1} Ticket(s) {b.seats ? `· Seat(s): ${b.seats}` : ''}
+                          </div>
+                          <div className="text-[11px] text-ticket-charcoal/50 font-mono">
+                            Purchased: <strong>{formatGstDateTime(b.purchased_at || b.confirmed_at || b.created_at)}</strong>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <span className="font-bold font-mono text-ticket-charcoal">AED {b.total_amount || 0}</span>
-                          <span className="block text-[10px] font-bold text-emerald-700 uppercase">{b.payment_status}</span>
+                        <div className="text-right shrink-0">
+                          <span className="font-bold font-mono text-ticket-charcoal block">AED {b.total_amount || b.total_price || 0}</span>
+                          <span className="inline-block mt-0.5 text-[10px] font-bold text-emerald-700 uppercase bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                            {b.booking_status || b.payment_status || 'confirmed'}
+                          </span>
                         </div>
                       </div>
                     ))}

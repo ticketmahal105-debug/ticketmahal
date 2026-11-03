@@ -4,6 +4,7 @@ import {
   Receipt, TrendingUp, CheckCircle2, ShieldCheck, Tag, Filter, RefreshCw
 } from 'lucide-react';
 import { exportTicketMahalFullReport } from '../../utils/excelReportGenerator';
+import { formatGstDate, formatGstTime, formatGstDateTime } from '../../utils/dateUtils';
 
 const AdminReports = () => {
   const [dateRange, setDateRange] = useState('30days'); // 'today' | '7days' | '30days' | 'all'
@@ -55,10 +56,11 @@ const AdminReports = () => {
     }
   };
 
-  // Filter bookings based on selected date range
+  // Filter bookings based on selected date range using authoritative purchase timestamp
   const filteredBookings = bookings.filter(b => {
-    if (!b.created_at) return true;
-    const bDate = new Date(b.created_at);
+    const purchaseTimestamp = b.purchased_at || b.confirmed_at || b.created_at;
+    if (!purchaseTimestamp) return true;
+    const bDate = new Date(purchaseTimestamp);
     const now = new Date();
 
     if (dateRange === 'today') {
@@ -342,6 +344,83 @@ const AdminReports = () => {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Booking Transactions Report Table (Requirement 15) */}
+      <div className="bg-ticket-white border border-ticket-beige/60 rounded-3xl p-6 shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="font-playfair text-xl font-bold text-ticket-charcoal">
+              Bookings Report & Purchase Audit
+            </h3>
+            <p className="text-xs text-ticket-charcoal/50 mt-0.5">
+              Filtered by selected period using authoritative server purchase timestamps (Asia/Dubai · GST).
+            </p>
+          </div>
+          <span className="text-xs font-mono font-bold text-ticket-burgundy bg-ticket-ivory px-3 py-1.5 rounded-full border border-ticket-beige/60">
+            {filteredBookings.length} Transaction(s)
+          </span>
+        </div>
+
+        {filteredBookings.length === 0 ? (
+          <div className="py-10 text-center text-ticket-charcoal/50 text-xs italic">
+            No booking transactions found for this date range.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-ticket-beige/40 bg-ticket-ivory/40 text-ticket-charcoal/50 font-semibold uppercase text-[10px]">
+                  <th className="py-3 px-4">Booking Ref</th>
+                  <th className="py-3 px-4">Customer</th>
+                  <th className="py-3 px-4">Event</th>
+                  <th className="py-3 px-4">Purchase Date</th>
+                  <th className="py-3 px-4">Purchase Time</th>
+                  <th className="py-3 px-4">Total</th>
+                  <th className="py-3 px-4 text-right">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-beige/25">
+                {filteredBookings.map(b => {
+                  const ts = b.purchased_at || b.confirmed_at || b.created_at;
+                  const isDemo = b.payment_status === 'demo_paid' || b.payment_provider === 'demo' || b.payment_mode === 'demo';
+                  return (
+                    <tr key={b.booking_number || b.id} className="hover:bg-ivory/10">
+                      <td className="py-3 px-4 font-mono font-bold text-ticket-burgundy">
+                        {b.booking_number}
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="font-medium text-ticket-charcoal">
+                          {b.customer_name || `${b.profiles?.first_name || ''} ${b.profiles?.last_name || ''}`.trim() || 'Valued Guest'}
+                        </div>
+                        <div className="text-[11px] text-ticket-charcoal/50">{b.customer_email || b.profiles?.email || '—'}</div>
+                      </td>
+                      <td className="py-3 px-4 text-ticket-charcoal/80 font-playfair font-semibold">
+                        {b.events?.event_name || 'Ticket Mahal Event'}
+                      </td>
+                      <td className="py-3 px-4 font-mono text-ticket-charcoal/80">
+                        {formatGstDate(ts)}
+                      </td>
+                      <td className="py-3 px-4 font-mono text-ticket-charcoal/80">
+                        {formatGstTime(ts)} GST
+                      </td>
+                      <td className="py-3 px-4 font-mono font-bold text-ticket-charcoal">
+                        AED {b.total_amount || b.total_price || 0}
+                      </td>
+                      <td className="py-3 px-4 text-right">
+                        <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                          isDemo ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'
+                        }`}>
+                          {isDemo ? 'DEMO' : (b.booking_status || 'CONFIRMED')}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

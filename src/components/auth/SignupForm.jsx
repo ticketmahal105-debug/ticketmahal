@@ -46,8 +46,18 @@ const SignupForm = ({ onSwitchToLogin }) => {
     e.preventDefault();
     setError('');
     
+    const normalizedEmail = (formData.email || '').trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(normalizedEmail)) {
+      return setError('Please enter a valid email address.');
+    }
+
+    if (!formData.password || formData.password.length < 6) {
+      return setError('Password must be at least 6 characters long.');
+    }
+
     if (formData.password !== formData.confirmPassword) {
-      return setError('Passwords do not match.');
+      return setError('Passwords do not match. Please ensure both passwords match.');
     }
     
     if (!formData.agreeTerms) {
@@ -57,22 +67,23 @@ const SignupForm = ({ onSwitchToLogin }) => {
     setLoading(true);
 
     try {
-      const { error: signUpError, data } = await signUp(formData.email, formData.password, {
-        first_name: formData.firstName,
-        last_name: formData.lastName,
+      const { error: signUpError, data } = await signUp(normalizedEmail, formData.password, {
+        first_name: formData.firstName.trim(),
+        last_name: formData.lastName.trim(),
         full_name: `${formData.firstName} ${formData.lastName}`.trim()
       });
       
       if (signUpError) {
-        if (signUpError.message.includes('already registered')) {
-          throw new Error('This email is already registered.');
+        const msg = (signUpError.message || '').toLowerCase();
+        if (msg.includes('already registered') || msg.includes('already exists') || msg.includes('user already registered')) {
+          throw new Error('This email already belongs to an account. Please sign in or use Forgot Password to recover your account.');
         }
         throw signUpError;
       }
       
       if (data?.user?.identities?.length === 0) {
         // User already exists edge case in Supabase
-        throw new Error('This email is already registered.');
+        throw new Error('This email already belongs to an account. Please sign in or use Forgot Password to recover your account.');
       }
       
       setSuccess(true);

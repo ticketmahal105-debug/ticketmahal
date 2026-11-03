@@ -15,21 +15,29 @@ const LoginForm = ({ onSwitchToSignup, onSwitchToForgot, onSuccess }) => {
     setError('');
     setLoading(true);
 
+    const normalizedEmail = (email || '').trim();
+
     try {
-      const { error: signInError } = await signIn(email, password);
+      const { error: signInError } = await signIn(normalizedEmail, password);
       
       if (signInError) {
-        if (signInError.message === 'Invalid login credentials') {
-          throw new Error('Invalid email or password.');
-        } else if (signInError.message === 'Email not confirmed') {
+        const msg = (signInError.message || '').toLowerCase();
+        if (
+          msg.includes('invalid') || 
+          msg.includes('credentials') || 
+          msg.includes('grant') || 
+          signInError.status === 400
+        ) {
+          throw new Error('Incorrect email or password. Please check your details and try again.');
+        } else if (msg.includes('not confirmed') || msg.includes('unconfirmed')) {
           throw new Error('Please verify your email before signing in.');
         }
-        throw signInError;
+        throw new Error('Incorrect email or password. Please check your details and try again.');
       }
       
       onSuccess?.();
     } catch (err) {
-      setError(err.message || 'Unable to connect. Please try again.');
+      setError(err.message || 'Incorrect email or password. Please check your details and try again.');
     } finally {
       setLoading(false);
     }

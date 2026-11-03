@@ -91,6 +91,26 @@ export const initialAuthCallbackState = (() => {
   };
 })();
 
+export function clearInitialAuthCallbackState() {
+  initialAuthCallbackState.hasAuthParams = false;
+  initialAuthCallbackState.isError = false;
+  initialAuthCallbackState.errorCode = null;
+  initialAuthCallbackState.error = null;
+  initialAuthCallbackState.errorDescription = '';
+  initialAuthCallbackState.code = null;
+  initialAuthCallbackState.tokenHash = null;
+  initialAuthCallbackState.accessToken = null;
+  initialAuthCallbackState.refreshToken = null;
+  initialAuthCallbackState.type = null;
+  initialAuthCallbackState.isRecovery = false;
+
+  try {
+    sessionStorage.removeItem('tm_auth_verification_attempt');
+  } catch {
+    // Ignore sessionStorage exceptions
+  }
+}
+
 export const supabase = createClient(
   supabaseUrl || 'https://placeholder.supabase.co',
   supabaseAnonKey || 'placeholder-key',

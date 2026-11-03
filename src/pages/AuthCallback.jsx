@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { AlertCircle, Mail, ArrowRight, Clock } from 'lucide-react';
-import { supabase, initialAuthCallbackState } from '../lib/supabase';
+import { supabase, initialAuthCallbackState, clearInitialAuthCallbackState } from '../lib/supabase';
 import Navbar from '../components/Navbar';
 
 const AuthCallback = () => {
@@ -21,6 +21,16 @@ const AuthCallback = () => {
   const location = useLocation();
   const processingRef = useRef(false);
   const prefersReducedMotion = useReducedMotion();
+
+  const handleNavigate = (path, options = {}) => {
+    clearInitialAuthCallbackState();
+    try {
+      sessionStorage.removeItem('tm_auth_verification_attempt');
+    } catch {
+      // Ignore
+    }
+    navigate(path, options);
+  };
 
   // Cooldown countdown timer
   useEffect(() => {
@@ -79,6 +89,7 @@ const AuthCallback = () => {
       if (user?.email) {
         setResendEmail(user.email);
       }
+      clearInitialAuthCallbackState();
       try {
         sessionStorage.removeItem('tm_auth_verification_attempt');
       } catch {
@@ -366,7 +377,7 @@ const AuthCallback = () => {
 
             {/* Primary Action Button */}
             <button
-              onClick={() => navigate('/')}
+              onClick={() => handleNavigate('/')}
               className="w-full py-3.5 px-6 rounded-full bg-[#7A1F2B] hover:bg-[#681923] text-white font-medium text-sm tracking-wide shadow-sm hover:ring-2 hover:ring-[#F5A300]/40 transition-all duration-300 flex items-center justify-center gap-2 group cursor-pointer"
             >
               <span>Explore Ticket Mahal</span>
@@ -376,7 +387,7 @@ const AuthCallback = () => {
             {/* Secondary Profile Link */}
             <div className="mt-4">
               <button
-                onClick={() => navigate('/profile')}
+                onClick={() => handleNavigate('/profile')}
                 className="inline-block text-xs sm:text-sm font-medium text-[#77736D] hover:text-[#7A1F2B] transition-colors py-1 cursor-pointer underline-offset-4 hover:underline"
               >
                 Go to My Profile
@@ -477,14 +488,14 @@ const AuthCallback = () => {
 
             <div className="pt-2 border-t border-[#EDE3D5]/60 flex items-center justify-center gap-4 text-xs font-medium text-[#77736D]">
               <button
-                onClick={() => navigate('/')}
+                onClick={() => handleNavigate('/')}
                 className="hover:text-[#7A1F2B] transition-colors cursor-pointer"
               >
                 Return to Homepage
               </button>
               <span>•</span>
               <button
-                onClick={() => navigate('/', { state: { openAuth: true } })}
+                onClick={() => handleNavigate('/', { state: { openAuth: true } })}
                 className="hover:text-[#7A1F2B] transition-colors cursor-pointer"
               >
                 Sign In
@@ -514,7 +525,7 @@ const AuthCallback = () => {
             </p>
 
             <button
-              onClick={() => navigate('/')}
+              onClick={() => handleNavigate('/')}
               className="w-full py-3.5 px-6 rounded-full bg-[#7A1F2B] hover:bg-[#681923] text-white font-medium text-sm tracking-wide shadow-sm hover:ring-2 hover:ring-[#F5A300]/40 transition-all duration-300 flex items-center justify-center gap-2 group cursor-pointer mb-3"
             >
               <span>Explore Ticket Mahal</span>
@@ -522,7 +533,7 @@ const AuthCallback = () => {
             </button>
 
             <button
-              onClick={() => navigate('/', { state: { openAuth: true } })}
+              onClick={() => handleNavigate('/', { state: { openAuth: true } })}
               className="inline-block text-xs sm:text-sm font-medium text-[#77736D] hover:text-[#7A1F2B] transition-colors py-1 cursor-pointer"
             >
               Sign In to Your Account

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, User, Calendar, Tag, ShieldCheck, RefreshCcw, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, User, Calendar, Tag, ShieldCheck, RefreshCcw, AlertTriangle, Clock } from 'lucide-react';
 import { getAdminBookingDetails, getBookingTickets } from '../../services/bookingsService';
 import { updateEvent } from '../../services/eventsService';
 import { supabase } from '../../lib/supabase';
+import { formatGstDateTime, formatGstFull } from '../../utils/dateUtils';
 
 const AdminBookingDetails = () => {
   const { bookingNumber } = useParams();
@@ -130,8 +131,11 @@ const AdminBookingDetails = () => {
                 <span>Event Information</span>
               </div>
               <h3 className="font-playfair text-xl font-bold text-ticket-charcoal mb-2">{booking.events?.event_name}</h3>
-              <p className="text-sm text-ticket-charcoal/60">{new Date(booking.events?.event_date).toLocaleDateString()}</p>
-              <p className="text-sm text-ticket-charcoal/60">{booking.events?.venue_name}, {booking.events?.city}</p>
+              <div className="space-y-1 text-xs text-ticket-charcoal/70">
+                <p><strong className="text-ticket-charcoal">Event Date:</strong> {booking.events?.event_date || 'Upcoming'}</p>
+                <p><strong className="text-ticket-charcoal">Event Showtime:</strong> {booking.showtime || '07:30 PM'}</p>
+                <p><strong className="text-ticket-charcoal">Venue:</strong> {booking.events?.venue_name}, {booking.events?.city}</p>
+              </div>
             </div>
 
             {/* Customer Info */}
@@ -144,9 +148,76 @@ const AdminBookingDetails = () => {
                 {booking.profiles?.first_name} {booking.profiles?.last_name}
               </h3>
               <p className="text-sm text-ticket-charcoal/60">{booking.profiles?.email}</p>
-              <p className="text-xs text-ticket-charcoal/40 mt-2">ID: {booking.profiles?.id}</p>
+              {booking.customer_phone && (
+                <p className="text-xs text-ticket-charcoal/60 mt-1">Mobile: {booking.customer_phone}</p>
+              )}
+              <p className="text-xs text-ticket-charcoal/40 mt-2">ID: {booking.profiles?.id || 'Guest Profile'}</p>
             </div>
 
+          </div>
+
+          {/* Dedicated Booking Lifecycle Timeline */}
+          <div className="bg-ticket-white border border-ticket-beige/60 rounded-3xl p-6 shadow-sm">
+            <div className="flex items-center gap-2 text-ticket-burgundy text-xs font-semibold uppercase tracking-wider mb-4 border-b border-ticket-beige/40 pb-2">
+              <Clock size={15} />
+              <span>Booking Lifecycle Timeline (Asia/Dubai · GST)</span>
+            </div>
+            
+            <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-ticket-beige/60">
+              {/* 1. Booking Created */}
+              {booking.created_at && (
+                <div className="relative">
+                  <div className="absolute -left-6 top-1 w-3 h-3 rounded-full bg-ticket-burgundy ring-4 ring-white" />
+                  <div className="text-xs font-bold uppercase tracking-wider text-ticket-charcoal">
+                    BOOKING CREATED
+                  </div>
+                  <div className="text-xs text-ticket-charcoal/70 font-mono mt-0.5">
+                    {formatGstDateTime(booking.created_at)}
+                  </div>
+                </div>
+              )}
+
+              {/* 2. Payment Confirmed */}
+              {(booking.purchased_at || booking.confirmed_at) && (
+                <div className="relative">
+                  <div className="absolute -left-6 top-1 w-3 h-3 rounded-full bg-emerald-600 ring-4 ring-white" />
+                  <div className="text-xs font-bold uppercase tracking-wider text-emerald-800">
+                    {(booking.payment_status === 'demo_paid' || booking.payment_provider === 'demo' || booking.payment_mode === 'demo')
+                      ? 'DEMO PAYMENT CONFIRMED'
+                      : 'PAYMENT CONFIRMED'}
+                  </div>
+                  <div className="text-xs text-ticket-charcoal/70 font-mono mt-0.5">
+                    {formatGstDateTime(booking.purchased_at || booking.confirmed_at)}
+                  </div>
+                </div>
+              )}
+
+              {/* 3. Tickets Issued */}
+              {tickets.length > 0 && (tickets[0]?.created_at || booking.purchased_at || booking.created_at) && (
+                <div className="relative">
+                  <div className="absolute -left-6 top-1 w-3 h-3 rounded-full bg-ticket-gold ring-4 ring-white" />
+                  <div className="text-xs font-bold uppercase tracking-wider text-ticket-charcoal">
+                    TICKETS ISSUED ({tickets.length} Pass{tickets.length > 1 ? 'es' : ''})
+                  </div>
+                  <div className="text-xs text-ticket-charcoal/70 font-mono mt-0.5">
+                    {formatGstDateTime(tickets[0]?.created_at || booking.purchased_at || booking.created_at)}
+                  </div>
+                </div>
+              )}
+
+              {/* 4. Confirmation Email Sent */}
+              {(booking.purchased_at || booking.confirmed_at) && (
+                <div className="relative">
+                  <div className="absolute -left-6 top-1 w-3 h-3 rounded-full bg-sky-600 ring-4 ring-white" />
+                  <div className="text-xs font-bold uppercase tracking-wider text-sky-900">
+                    CONFIRMATION EMAIL SENT
+                  </div>
+                  <div className="text-xs text-ticket-charcoal/70 font-mono mt-0.5">
+                    {formatGstDateTime(booking.purchased_at || booking.confirmed_at)}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Card: Tickets Issued */}
@@ -202,6 +273,15 @@ const AdminBookingDetails = () => {
             <div>
               <span className="text-xs text-ticket-charcoal/60 uppercase font-semibold">Payment State</span>
               <div className="text-xl font-bold text-ticket-charcoal capitalize mt-1">{booking.payment_status || 'Paid'}</div>
+            </div>
+
+            <div className="p-3 bg-ticket-ivory rounded-xl border border-ticket-beige/60">
+              <span className="text-[11px] text-ticket-charcoal/60 uppercase font-bold block mb-1">
+                PURCHASED AT (GST)
+              </span>
+              <div className="text-sm font-bold text-ticket-burgundy font-mono">
+                {formatGstDateTime(booking.purchased_at || booking.confirmed_at || booking.created_at)}
+              </div>
             </div>
 
             <div className="border-t border-beige/45 pt-4 flex flex-col gap-2">

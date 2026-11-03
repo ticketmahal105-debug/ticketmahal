@@ -206,13 +206,14 @@ export const getAllBookingsAdmin = async () => {
           email: b.customer_email || 'guest@ticketmahal.ae',
           first_name: (b.customer_name || 'Guest').split(' ')[0] || 'Guest',
           last_name: (b.customer_name || '').split(' ').slice(1).join(' ') || ''
-        }
+        },
+        purchased_at: b.purchased_at || existing.purchased_at || b.confirmed_at || b.created_at
       });
     }
   });
 
   const merged = Array.from(map.values()).sort(
-    (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0)
+    (a, b) => new Date(b.purchased_at || b.created_at || 0) - new Date(a.purchased_at || a.created_at || 0)
   );
 
   return { data: merged, error: null };

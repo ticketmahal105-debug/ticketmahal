@@ -1,4 +1,5 @@
 import * as XLSX from 'xlsx';
+import { formatGstDate, formatGstTime, formatGstDateTime } from './dateUtils';
 
 /**
  * Generates and downloads the authoritative Ticket-Mahal-Full-Report.xlsx workbook
@@ -29,7 +30,7 @@ export function exportTicketMahalFullReport({
     'Email': c.email || '—',
     'Mobile': c.phone || '—',
     'Signup Method': c.signup_method || c.app_metadata?.provider || 'Email / Quick Order',
-    'Registration Date': c.created_at ? new Date(c.created_at).toLocaleDateString() : '—',
+    'Registration Date': c.created_at ? formatGstDate(c.created_at) : '—',
     'Bookings Count': c.bookings_count || (c.bookings ? c.bookings.length : 1),
     'Tickets Count': c.tickets_count || (c.tickets ? c.tickets.length : 1)
   }));
@@ -38,23 +39,24 @@ export function exportTicketMahalFullReport({
   ]);
   XLSX.utils.book_append_sheet(wb, wsCustomers, 'Customers');
 
-  // 2. BOOKINGS WORKSHEET
+  // 2. BOOKINGS WORKSHEET (Strictly conforms to Requirement 16)
   const bookingsData = (bookings || []).map(b => {
     const total = Number(b.total_amount || b.total_price || 0);
     const subtotal = b.subtotal !== undefined ? Number(b.subtotal) : Math.round((total / 1.05) * 100) / 100;
     const vat = b.vat !== undefined ? Number(b.vat) : Math.round((total - subtotal) * 100) / 100;
     const discount = b.discount_amount !== undefined ? Number(b.discount_amount) : 0;
+    const purchaseTimestamp = b.purchased_at || b.confirmed_at || b.created_at || Date.now();
 
     return {
       'Booking Reference': b.booking_number,
-      'Customer': b.customer_name || `${b.profiles?.first_name || ''} ${b.profiles?.last_name || ''}`.trim() || 'Valued Guest',
+      'Customer Name': b.customer_name || `${b.profiles?.first_name || ''} ${b.profiles?.last_name || ''}`.trim() || 'Valued Guest',
       'Email': b.customer_email || b.profiles?.email || '—',
       'Mobile': b.customer_phone || b.profiles?.phone || '—',
       'Event': b.events?.event_name || b.events?.title || 'Ticket Mahal Event',
-      'Date': b.events?.event_date || 'Upcoming',
-      'Time': b.showtime || b.events?.start_time || '07:30 PM',
+      'Event Date': b.events?.event_date || 'Upcoming',
+      'Event Time': b.showtime || b.events?.start_time || '07:30 PM',
       'Venue': b.events?.venue_name || 'Ticket Mahal Stage',
-      'Ticket Categories': b.ticket_category || b.ticket_type || 'Standard',
+      'Ticket Category': b.ticket_category || b.ticket_type || 'Standard',
       'Seats': b.seats || 'General Admission',
       'Quantity': b.quantity || b.ticket_quantity || 1,
       'Subtotal': subtotal,
@@ -65,7 +67,8 @@ export function exportTicketMahalFullReport({
       'Payment Provider': b.payment_provider || 'demo',
       'Payment Status': b.payment_status || 'demo_paid',
       'Booking Status': b.booking_status || 'confirmed',
-      'Created At': new Date(b.created_at || Date.now()).toLocaleString()
+      'PURCHASE DATE': formatGstDate(purchaseTimestamp),
+      'PURCHASE TIME': `${formatGstTime(purchaseTimestamp)} GST`
     };
   });
   const wsBookings = XLSX.utils.json_to_sheet(bookingsData.length > 0 ? bookingsData : [
@@ -84,8 +87,9 @@ export function exportTicketMahalFullReport({
     'Row': t.row || (t.seat ? t.seat.charAt(0) : '—'),
     'Seat': t.seat || 'General Admission',
     'Status': t.status || 'valid',
-    'Issued At': new Date(t.created_at || Date.now()).toLocaleString(),
-    'Checked In At': (t.checked_in_at || t.used_at) ? new Date(t.checked_in_at || t.used_at).toLocaleString() : 'Not Checked In'
+    'Issued At': formatGstDateTime(t.created_at || Date.now()),
+    'Purchased At': formatGstDateTime(t.purchased_at || t.bookings?.purchased_at || t.bookings?.confirmed_at || t.bookings?.created_at || t.created_at),
+    'Checked In At': (t.checked_in_at || t.used_at) ? formatGstDateTime(t.checked_in_at || t.used_at) : 'Not Checked In'
   }));
   const wsTickets = XLSX.utils.json_to_sheet(ticketsData.length > 0 ? ticketsData : [
     { 'Ticket ID': 'No tickets found' }

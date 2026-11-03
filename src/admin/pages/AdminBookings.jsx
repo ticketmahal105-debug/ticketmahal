@@ -4,6 +4,7 @@ import { Search, Eye, Filter, FileSpreadsheet } from 'lucide-react';
 import { getAllBookingsAdmin } from '../../services/bookingsService';
 import { getAdminEvents } from '../../services/eventsService';
 import { exportTicketMahalFullReport } from '../../utils/excelReportGenerator';
+import { formatGstDateTime } from '../../utils/dateUtils';
 
 const AdminBookings = () => {
   const navigate = useNavigate();
@@ -164,7 +165,7 @@ const AdminBookings = () => {
                   <th className="px-6 py-4">Tickets</th>
                   <th className="px-6 py-4">Total</th>
                   <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4">Date</th>
+                  <th className="px-6 py-4">Purchased At</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
@@ -210,8 +211,8 @@ const AdminBookings = () => {
                         {isDemoBooking(b) ? 'Demo Booking' : (b.booking_status || 'Pending')}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-ticket-charcoal/50">
-                      {new Date(b.created_at).toLocaleDateString()}
+                    <td className="px-6 py-4 text-xs font-medium text-ticket-charcoal/70">
+                      {formatGstDateTime(b.purchased_at || b.confirmed_at || b.created_at)}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <button

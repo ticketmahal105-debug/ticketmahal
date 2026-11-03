@@ -80,6 +80,25 @@ export async function sendOwnerBookingNotification({ booking, tickets, event, se
   const fromAddress = process.env.RESEND_FROM_EMAIL || 'Ticket Mahal Alerts <onboarding@resend.dev>';
   const seatList = Array.isArray(seats) && seats.length > 0 ? seats.join(', ') : 'Assigned at check-in';
 
+  const purchaseIso = booking.purchased_at || booking.confirmed_at || booking.created_at || new Date().toISOString();
+  let gstPurchasedAt = '—';
+  try {
+    const d = new Date(purchaseIso);
+    const datePart = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Dubai',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    }).format(d);
+    const timePart = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Dubai',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    }).format(d);
+    gstPurchasedAt = `${datePart} · ${timePart} GST`;
+  } catch (_) {}
+
   const html = `
     <!DOCTYPE html>
     <html>
@@ -95,6 +114,10 @@ export async function sendOwnerBookingNotification({ booking, tickets, event, se
           <tr>
             <td style="padding: 8px 0; color: #8F877C; width: 40%;">Booking Reference:</td>
             <td style="padding: 8px 0; font-weight: bold; color: #7A1F2B; font-family: monospace;">${booking.booking_number}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; color: #8F877C;">PURCHASED AT:</td>
+            <td style="padding: 8px 0; font-weight: bold; color: #7A1F2B;">${gstPurchasedAt}</td>
           </tr>
           <tr>
             <td style="padding: 8px 0; color: #8F877C;">Customer Name:</td>
@@ -113,8 +136,12 @@ export async function sendOwnerBookingNotification({ booking, tickets, event, se
             <td style="padding: 8px 0; font-weight: 600;">${event.title || event.event_name}</td>
           </tr>
           <tr>
-            <td style="padding: 8px 0; color: #8F877C;">Date & Showtime:</td>
-            <td style="padding: 8px 0;">${booking.showtime}</td>
+            <td style="padding: 8px 0; color: #8F877C;">Event Date & Showtime:</td>
+            <td style="padding: 8px 0;">${event.date || event.event_date || 'Upcoming'} · ${booking.showtime}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; color: #8F877C;">Ticket Category:</td>
+            <td style="padding: 8px 0; font-weight: 600;">${booking.ticket_category || 'Standard'}</td>
           </tr>
           <tr>
             <td style="padding: 8px 0; color: #8F877C;">Seats:</td>
@@ -137,8 +164,8 @@ export async function sendOwnerBookingNotification({ booking, tickets, event, se
             </td>
           </tr>
           <tr>
-            <td style="padding: 8px 0; color: #8F877C;">Booking Time:</td>
-            <td style="padding: 8px 0; font-size: 12px; color: #8F877C;">${new Date().toLocaleString()}</td>
+            <td style="padding: 8px 0; color: #8F877C;">Booking Status:</td>
+            <td style="padding: 8px 0; font-weight: 600; text-transform: uppercase;">${booking.booking_status || 'confirmed'}</td>
           </tr>
         </table>
       </div>

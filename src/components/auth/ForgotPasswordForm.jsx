@@ -13,11 +13,18 @@ const ForgotPasswordForm = ({ onBack }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    const normalizedEmail = (email || '').trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(normalizedEmail)) {
+      return setError('Please enter a valid email address.');
+    }
+
     setLoading(true);
 
     try {
       const redirectUrl = `${window.location.origin}/reset-password`;
-      const { error: resetError } = await resetPassword(email, redirectUrl);
+      const { error: resetError } = await resetPassword(normalizedEmail, redirectUrl);
       
       if (resetError) throw resetError;
       

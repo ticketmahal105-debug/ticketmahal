@@ -16,8 +16,40 @@ export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
 
   if (req.method === 'POST') {
+    const { action, booking, tickets, ticket_number } = req.body || {};
+
+    // Allows checking in or reactivating tickets
+    if (action === 'check_in' || action === 'reactivate' || action === 'cancel_ticket') {
+      const newStatus = action === 'check_in' ? 'used' : (action === 'cancel_ticket' ? 'cancelled' : 'valid');
+      const usedAt = action === 'check_in' ? new Date().toISOString() : null;
+
+      // Update in persistence store
+      const persistentTickets = getAllTicketsFromStore();
+      const target = persistentTickets.find(t => t.ticket_number === ticket_number || t.id === ticket_number);
+      if (target) {
+        target.status = newStatus;
+        target.checked_in_at = usedAt;
+      }
+
+      // Update in Supabase
+      const supabase = getSupabaseAdmin();
+      if (supabase) {
+        try {
+          await supabase
+            .from('tickets')
+            .update({ status: newStatus, checked_in_at: usedAt })
+            .or(`ticket_number.eq.${ticket_number},id.eq.${ticket_number}`);
+        } catch (_) {}
+      }
+
+      return res.status(200).json({ 
+        success: true, 
+        message: `Ticket ${ticket_number} marked as ${newStatus}`,
+        status: newStatus 
+      });
+    }
+
     // Allows client to sync a newly created booking into the authoritative persistent store
-    const { booking, tickets } = req.body || {};
     if (booking) {
       saveBookingToStore(booking, tickets || []);
       if (booking.booking_number) {
@@ -51,12 +83,6 @@ export default async function handler(req, res) {
               venue_name,
               city,
               event_image
-            ),
-            profiles (
-              id,
-              email,
-              first_name,
-              last_name
             )
           `)
           .order('created_at', { ascending: false });

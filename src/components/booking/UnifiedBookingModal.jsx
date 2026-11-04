@@ -197,10 +197,11 @@ export default function UnifiedBookingModal({
     setSeatConflictError(null);
     setPromoError(null);
     try {
-      const res = await fetch('/api/validate-promo', {
+      const res = await fetch('/api/admin-promo-codes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          action: 'validate',
           code: promoCodeInput.trim(),
           orderAmount: subtotal,
           eventId: movie.id || movie.slug,

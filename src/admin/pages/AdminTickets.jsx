@@ -31,7 +31,7 @@ const AdminTickets = () => {
     try {
       let updated = false;
       try {
-        const res = await fetch('/api/admin-tickets', {
+        const res = await fetch('/api/admin-bookings', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

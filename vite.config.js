@@ -4,9 +4,7 @@ import createOrderHandler from './api/create-ngenius-order.js';
 import verifyPaymentHandler from './api/verify-ngenius-payment.js';
 import webhookHandler from './api/ngenius-webhook.js';
 import createDemoBookingHandler from './api/create-demo-booking.js';
-import paymentConfigHandler from './api/payment-config.js';
 import seatHoldHandler from './api/seat-hold.js';
-import exportReportHandler from './api/export-report.js';
 import verifyTicketHandler from './api/verify-ticket.js';
 import ticketAccessHandler from './api/ticket-access.js';
 import adminBookingsHandler from './api/admin-bookings.js';
@@ -14,8 +12,6 @@ import adminEventsHandler from './api/admin-events.js';
 import adminVenuesHandler from './api/admin-venues.js';
 import adminCategoriesHandler from './api/admin-categories.js';
 import adminPromoCodesHandler from './api/admin-promo-codes.js';
-import validatePromoHandler from './api/validate-promo.js';
-import adminTicketsHandler from './api/admin-tickets.js';
 
 function adaptServerlessHandler(handler) {
   return async (req, res) => {
@@ -88,9 +84,7 @@ export default defineConfig(({ mode }) => {
           server.middlewares.use('/api/verify-ngenius-payment', adaptServerlessHandler(verifyPaymentHandler));
           server.middlewares.use('/api/ngenius-webhook', adaptServerlessHandler(webhookHandler));
           server.middlewares.use('/api/create-demo-booking', adaptServerlessHandler(createDemoBookingHandler));
-          server.middlewares.use('/api/payment-config', adaptServerlessHandler(paymentConfigHandler));
           server.middlewares.use('/api/seat-hold', adaptServerlessHandler(seatHoldHandler));
-          server.middlewares.use('/api/export-report', adaptServerlessHandler(exportReportHandler));
           server.middlewares.use('/api/verify-ticket', adaptServerlessHandler(verifyTicketHandler));
           server.middlewares.use('/api/ticket-access', adaptServerlessHandler(ticketAccessHandler));
           server.middlewares.use('/api/admin-bookings', adaptServerlessHandler(adminBookingsHandler));
@@ -98,8 +92,6 @@ export default defineConfig(({ mode }) => {
           server.middlewares.use('/api/admin-venues', adaptServerlessHandler(adminVenuesHandler));
           server.middlewares.use('/api/admin-categories', adaptServerlessHandler(adminCategoriesHandler));
           server.middlewares.use('/api/admin-promo-codes', adaptServerlessHandler(adminPromoCodesHandler));
-          server.middlewares.use('/api/validate-promo', adaptServerlessHandler(validatePromoHandler));
-          server.middlewares.use('/api/admin-tickets', adaptServerlessHandler(adminTicketsHandler));
         }
       }
     ],

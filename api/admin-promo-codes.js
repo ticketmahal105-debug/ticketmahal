@@ -41,6 +41,85 @@ export default async function handler(req, res) {
     if (req.method === 'POST') {
       const { action, id, status, promo } = req.body || {};
 
+      if (action === 'validate') {
+        const { code, orderAmount, eventId, customerEmail } = req.body || {};
+        if (!code) {
+          return res.status(400).json({ success: false, valid: false, error: 'Promo code is required' });
+        }
+
+        const cleanCode = code.trim().toUpperCase();
+        const promos = getAllPromoCodesFromStore();
+        const promo = promos.find(p => (p.code || '').trim().toUpperCase() === cleanCode);
+
+        if (!promo) {
+          return res.status(200).json({ success: false, valid: false, error: 'Invalid or unrecognized promo code' });
+        }
+
+        if (promo.status && promo.status !== 'active') {
+          return res.status(200).json({ success: false, valid: false, error: 'This promo code is no longer active' });
+        }
+
+        const now = new Date();
+        if (promo.valid_from && new Date(promo.valid_from) > now) {
+          return res.status(200).json({ success: false, valid: false, error: 'This promo code is not active yet' });
+        }
+        if (promo.valid_until && new Date(promo.valid_until) < now) {
+          return res.status(200).json({ success: false, valid: false, error: 'This promo code has expired' });
+        }
+
+        const numericOrder = Number(orderAmount) || 0;
+        if (promo.min_order_amount && numericOrder < Number(promo.min_order_amount)) {
+          return res.status(200).json({ 
+            success: false, 
+            valid: false, 
+            error: `Minimum order amount of AED ${promo.min_order_amount} required` 
+          });
+        }
+
+        const bookings = getAllBookingsFromStore();
+        const matchingBookings = bookings.filter(b => 
+          (b.promo_code && b.promo_code.toUpperCase() === cleanCode) ||
+          (b.discount_code && b.discount_code.toUpperCase() === cleanCode)
+        );
+
+        if (promo.usage_limit && matchingBookings.length >= Number(promo.usage_limit)) {
+          return res.status(200).json({ success: false, valid: false, error: 'This promo code has reached its usage limit' });
+        }
+
+        if (customerEmail && promo.per_customer_limit) {
+          const customerUses = matchingBookings.filter(b => 
+            (b.customer_email || '').toLowerCase() === customerEmail.toLowerCase()
+          ).length;
+          if (customerUses >= Number(promo.per_customer_limit)) {
+            return res.status(200).json({ 
+              success: false, 
+              valid: false, 
+              error: 'You have already reached the maximum usage for this code' 
+            });
+          }
+        }
+
+        let discountAmount = 0;
+        if (promo.discount_type === 'percentage') {
+          discountAmount = (numericOrder * (Number(promo.discount_value) || 0)) / 100;
+          if (promo.max_discount && discountAmount > Number(promo.max_discount)) {
+            discountAmount = Number(promo.max_discount);
+          }
+        } else {
+          discountAmount = Math.min(Number(promo.discount_value) || 0, numericOrder);
+        }
+
+        return res.status(200).json({
+          success: true,
+          valid: true,
+          code: promo.code,
+          discount_amount: Math.round(discountAmount * 100) / 100,
+          discount_type: promo.discount_type,
+          discount_value: promo.discount_value,
+          message: `Promo code "${promo.code}" applied!`
+        });
+      }
+
       if (action === 'toggle_status') {
         const promos = getAllPromoCodesFromStore();
         const existing = promos.find(p => p.id === id);

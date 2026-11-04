@@ -5,8 +5,8 @@ import {
   deleteEventFromStore,
   getAllBookingsFromStore,
   recordActivityToStore
-} from './services/persistenceService.js';
-import { getSupabaseAdmin } from './services/fulfillmentService.js';
+} from '../server/services/persistenceService.js';
+import { getSupabaseAdmin } from '../server/services/fulfillmentService.js';
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
@@ -191,7 +191,7 @@ export default async function handler(req, res) {
     const entity = req.query?.entity || req.body?.entity;
 
     if (entity === 'categories' || req.query?.category_id || req.body?.category) {
-      const { getAllCategoriesFromStore, saveCategoryToStore, deleteCategoryFromStore } = await import('./services/persistenceService.js');
+      const { getAllCategoriesFromStore, saveCategoryToStore, deleteCategoryFromStore } = await import('../server/services/persistenceService.js');
       if (req.method === 'GET') {
         const categories = getAllCategoriesFromStore();
         const events = getAllEventsFromStore();
@@ -223,7 +223,7 @@ export default async function handler(req, res) {
     }
 
     if (entity === 'venues' || req.query?.venue_id || req.body?.venue) {
-      const { getAllVenuesFromStore, saveVenueToStore, deleteVenueFromStore } = await import('./services/persistenceService.js');
+      const { getAllVenuesFromStore, saveVenueToStore, deleteVenueFromStore } = await import('../server/services/persistenceService.js');
       if (req.method === 'GET') {
         const venues = getAllVenuesFromStore();
         const events = getAllEventsFromStore();

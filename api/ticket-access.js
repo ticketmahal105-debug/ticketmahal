@@ -1,28 +1,131 @@
 import crypto from 'crypto';
-import { getSupabaseAdmin, serverTicketRegistry, serverBookingRegistry, serverBookingTicketsMap } from './services/fulfillmentService.js';
+import { getSupabaseAdmin, serverTicketRegistry, serverBookingRegistry, serverBookingTicketsMap } from '../server/services/fulfillmentService.js';
+import { logActivity } from '../server/services/activityService.js';
 import { dummyMovies } from '../src/data/dummyMovies.js';
 
-/**
- * Server-Side Ticket Access API (/api/ticket-access)
- * Authoritatively validates guest access tokens, booking references, or ticket IDs
- * and returns the authorized booking and individual tickets for E-Ticket display.
- * 
- * Supports:
- * - Guest access tokens from email (crypto unguessable token)
- * - Authenticated user booking/ticket queries
- */
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
 
+  const isVerify = req.query?.action === 'verify' || req.body?.checkIn !== undefined;
   const token = req.method === 'GET'
     ? req.query?.token || new URL(req.url, 'http://localhost').searchParams.get('token')
     : req.body?.token;
 
   if (!token || typeof token !== 'string') {
     return res.status(400).json({
+      valid: false,
       success: false,
-      error: 'Missing ticket access credential.'
+      error: 'Missing ticket token or credential.'
     });
+  }
+
+  // Handle Verify / Check-in Mode
+  if (isVerify) {
+    let lookupToken = token.trim();
+    if (lookupToken.includes('/verify-ticket/')) {
+      lookupToken = lookupToken.split('/verify-ticket/').pop().split('?')[0];
+    }
+
+    const supabase = getSupabaseAdmin();
+    const nowIso = new Date().toISOString();
+
+    try {
+      let ticketRecord = null;
+      if (serverTicketRegistry.has(lookupToken)) {
+        ticketRecord = serverTicketRegistry.get(lookupToken);
+      } else if (serverTicketRegistry.has(token.trim())) {
+        ticketRecord = serverTicketRegistry.get(token.trim());
+      }
+
+      if (supabase && !ticketRecord) {
+        const { data: directMatch } = await supabase
+          .from('tickets')
+          .select('*, events (*), bookings (*)')
+          .or(`qr_token.eq.${lookupToken},ticket_number.eq.${lookupToken}`)
+          .limit(1)
+          .maybeSingle();
+
+        if (directMatch) {
+          ticketRecord = directMatch;
+        } else {
+          const tokenHash = crypto.createHash('sha256').update(lookupToken).digest('hex');
+          const { data: hashMatch } = await supabase
+            .from('tickets')
+            .select('*, events (*), bookings (*)')
+            .eq('qr_token_hash', tokenHash)
+            .limit(1)
+            .maybeSingle();
+          if (hashMatch) ticketRecord = hashMatch;
+        }
+      }
+
+      if (!ticketRecord) {
+        return res.status(404).json({
+          valid: false,
+          status: 'INVALID_TICKET',
+          message: 'This ticket does not exist in the Ticket Mahal registry.'
+        });
+      }
+
+      const event = ticketRecord.events || {};
+      const booking = ticketRecord.bookings || {};
+      const isCancelled = ticketRecord.status === 'cancelled' || booking.booking_status === 'cancelled';
+      const isAlreadyCheckedIn = ticketRecord.status === 'used' || ticketRecord.status === 'checked_in' || Boolean(ticketRecord.checked_in_at || ticketRecord.used_at);
+
+      if (isCancelled) {
+        return res.status(200).json({
+          valid: false,
+          status: 'CANCELLED',
+          message: 'This ticket has been cancelled and is invalid for entry.'
+        });
+      }
+
+      if (isAlreadyCheckedIn) {
+        return res.status(200).json({
+          valid: false,
+          status: 'ALREADY_USED',
+          message: 'This ticket was already checked in at the entrance.',
+          checkedInAt: ticketRecord.checked_in_at || ticketRecord.used_at
+        });
+      }
+
+      const shouldCheckIn = req.method === 'POST' && req.body?.checkIn === true;
+      if (shouldCheckIn) {
+        ticketRecord.status = 'used';
+        ticketRecord.checked_in_at = nowIso;
+        if (supabase) {
+          try {
+            await supabase.from('tickets').update({ status: 'used', checked_in_at: nowIso }).eq('id', ticketRecord.id);
+          } catch (_) {}
+        }
+        try {
+          await logActivity({
+            action: 'ticket_checked_in',
+            customer: booking.customer_name || 'Guest',
+            event: event.event_name || 'Event',
+            bookingReference: ticketRecord.booking_reference,
+            status: 'success',
+            details: `Ticket ${ticketRecord.ticket_number} checked in successfully.`
+          });
+        } catch (_) {}
+
+        return res.status(200).json({
+          valid: true,
+          status: 'CHECKED_IN',
+          message: 'Admission verified! Ticket checked in successfully.',
+          ticket: ticketRecord
+        });
+      }
+
+      return res.status(200).json({
+        valid: true,
+        status: 'VALID',
+        message: 'Ticket is valid and ready for admission.',
+        ticket: ticketRecord
+      });
+    } catch (e) {
+      return res.status(500).json({ valid: false, error: e.message });
+    }
   }
 
   const cleanToken = token.trim();

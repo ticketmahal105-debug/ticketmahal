@@ -4,7 +4,7 @@ import {
   deletePromoCodeFromStore,
   getAllBookingsFromStore,
   recordActivityToStore 
-} from './services/persistenceService.js';
+} from '../server/services/persistenceService.js';
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');

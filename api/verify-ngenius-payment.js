@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { fulfillConfirmedOrder } from './services/fulfillmentService.js';
+import { fulfillConfirmedOrder } from '../server/services/fulfillmentService.js';
 
 function getSupabaseClient() {
   const url = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;

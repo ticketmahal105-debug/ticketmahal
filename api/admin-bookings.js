@@ -3,13 +3,13 @@ import {
   getAllTicketsFromStore, 
   getAllActivitiesFromStore,
   saveBookingToStore 
-} from './services/persistenceService.js';
+} from '../server/services/persistenceService.js';
 import { 
   serverBookingRegistry, 
   serverBookingTicketsMap,
   getSupabaseAdmin 
-} from './services/fulfillmentService.js';
-import { getActivities } from './services/activityService.js';
+} from '../server/services/fulfillmentService.js';
+import { getActivities } from '../server/services/activityService.js';
 import { dummyMovies } from '../src/data/dummyMovies.js';
 
 export default async function handler(req, res) {

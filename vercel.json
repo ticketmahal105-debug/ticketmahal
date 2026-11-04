@@ -9,6 +9,14 @@
       "destination": "/api/admin-events?entity=venues"
     },
     {
+      "source": "/api/create-demo-booking",
+      "destination": "/api/create-ngenius-order?action=demo"
+    },
+    {
+      "source": "/api/verify-ticket",
+      "destination": "/api/ticket-access?action=verify"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "/api/$1"
     },

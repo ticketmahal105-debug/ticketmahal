@@ -3,9 +3,7 @@ import react from '@vitejs/plugin-react';
 import createOrderHandler from './api/create-ngenius-order.js';
 import verifyPaymentHandler from './api/verify-ngenius-payment.js';
 import webhookHandler from './api/ngenius-webhook.js';
-import createDemoBookingHandler from './api/create-demo-booking.js';
 import seatHoldHandler from './api/seat-hold.js';
-import verifyTicketHandler from './api/verify-ticket.js';
 import ticketAccessHandler from './api/ticket-access.js';
 import adminBookingsHandler from './api/admin-bookings.js';
 import adminEventsHandler from './api/admin-events.js';
@@ -81,9 +79,17 @@ export default defineConfig(({ mode }) => {
           server.middlewares.use('/api/create-ngenius-order', adaptServerlessHandler(createOrderHandler));
           server.middlewares.use('/api/verify-ngenius-payment', adaptServerlessHandler(verifyPaymentHandler));
           server.middlewares.use('/api/ngenius-webhook', adaptServerlessHandler(webhookHandler));
-          server.middlewares.use('/api/create-demo-booking', adaptServerlessHandler(createDemoBookingHandler));
+          server.middlewares.use('/api/create-demo-booking', adaptServerlessHandler((req, res) => {
+            req.query = req.query || {};
+            req.query.action = 'demo';
+            return createOrderHandler(req, res);
+          }));
           server.middlewares.use('/api/seat-hold', adaptServerlessHandler(seatHoldHandler));
-          server.middlewares.use('/api/verify-ticket', adaptServerlessHandler(verifyTicketHandler));
+          server.middlewares.use('/api/verify-ticket', adaptServerlessHandler((req, res) => {
+            req.query = req.query || {};
+            req.query.action = 'verify';
+            return ticketAccessHandler(req, res);
+          }));
           server.middlewares.use('/api/ticket-access', adaptServerlessHandler(ticketAccessHandler));
           server.middlewares.use('/api/admin-bookings', adaptServerlessHandler(adminBookingsHandler));
           server.middlewares.use('/api/admin-events', adaptServerlessHandler(adminEventsHandler));

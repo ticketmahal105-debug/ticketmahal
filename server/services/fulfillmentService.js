@@ -8,7 +8,7 @@ import {
   getPromoCodeFromStore, 
   recordPromoUsage 
 } from './persistenceService.js';
-import { confirmSeatsSold } from '../seat-hold.js';
+import { confirmSeatsSold } from '../../api/seat-hold.js';
 
 export function getSupabaseClient() {
   const url = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;

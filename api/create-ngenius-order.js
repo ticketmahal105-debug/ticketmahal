@@ -61,6 +61,45 @@ export default async function handler(req, res) {
   try {
     const { eventId, showtime, ticketQuantity = 1, customerInfo = {}, redirectUrl, userId } = req.body || {};
 
+    const isDemo = req.query?.action === 'demo' || req.body?.action === 'demo' || req.body?.paymentMode === 'demo';
+    if (isDemo) {
+      const { fulfillConfirmedOrder } = await import('../server/services/fulfillmentService.js');
+      const { 
+        ticketTier, 
+        ticketType, 
+        seats = [], 
+        promoCode, 
+        holdReference 
+      } = req.body || {};
+      const result = await fulfillConfirmedOrder({
+        eventId,
+        showtime,
+        ticketQuantity: seats.length > 0 ? seats.length : ticketQuantity,
+        ticketType: ticketTier || ticketType || 'Standard',
+        ticketTier: ticketTier || ticketType || 'Standard',
+        seats,
+        customerInfo,
+        userId,
+        paymentProvider: 'demo',
+        paymentMode: 'demo',
+        paymentStatus: 'demo_paid',
+        paymentRef: null,
+        promoCode,
+        holdReference
+      });
+      return res.status(200).json({
+        success: true,
+        booking: result.booking,
+        tickets: result.tickets,
+        event: result.event,
+        guestAccessToken: result.guestAccessToken,
+        ticketAccessUrl: result.ticketAccessUrl,
+        paymentMode: 'demo',
+        emailSent: result.emailResult?.sent ?? false,
+        emailResult: result.emailResult
+      });
+    }
+
     const apiKey = process.env.NGENIUS_API_KEY || process.env.VITE_NGENIUS_API_KEY;
     const outletId = process.env.NGENIUS_OUTLET_ID || process.env.VITE_NGENIUS_OUTLET_ID || '77df254a-a9c0-4b1c-88d5-6b3f2c8e35ac';
     const ngeniusEnv = (process.env.NGENIUS_ENV || process.env.VITE_NGENIUS_ENV || 'live').toLowerCase();

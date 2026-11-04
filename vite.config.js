@@ -9,8 +9,6 @@ import verifyTicketHandler from './api/verify-ticket.js';
 import ticketAccessHandler from './api/ticket-access.js';
 import adminBookingsHandler from './api/admin-bookings.js';
 import adminEventsHandler from './api/admin-events.js';
-import adminVenuesHandler from './api/admin-venues.js';
-import adminCategoriesHandler from './api/admin-categories.js';
 import adminPromoCodesHandler from './api/admin-promo-codes.js';
 
 function adaptServerlessHandler(handler) {
@@ -89,8 +87,16 @@ export default defineConfig(({ mode }) => {
           server.middlewares.use('/api/ticket-access', adaptServerlessHandler(ticketAccessHandler));
           server.middlewares.use('/api/admin-bookings', adaptServerlessHandler(adminBookingsHandler));
           server.middlewares.use('/api/admin-events', adaptServerlessHandler(adminEventsHandler));
-          server.middlewares.use('/api/admin-venues', adaptServerlessHandler(adminVenuesHandler));
-          server.middlewares.use('/api/admin-categories', adaptServerlessHandler(adminCategoriesHandler));
+          server.middlewares.use('/api/admin-venues', adaptServerlessHandler((req, res) => {
+            req.query = req.query || {};
+            req.query.entity = 'venues';
+            return adminEventsHandler(req, res);
+          }));
+          server.middlewares.use('/api/admin-categories', adaptServerlessHandler((req, res) => {
+            req.query = req.query || {};
+            req.query.entity = 'categories';
+            return adminEventsHandler(req, res);
+          }));
           server.middlewares.use('/api/admin-promo-codes', adaptServerlessHandler(adminPromoCodesHandler));
         }
       }

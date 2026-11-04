@@ -187,6 +187,63 @@ export default async function handler(req, res) {
       return res.status(200).json({ success: true, deleted: true, event: deleted });
     }
 
+    // Category & Venue dispatch when consolidated
+    const entity = req.query?.entity || req.body?.entity;
+
+    if (entity === 'categories' || req.query?.category_id || req.body?.category) {
+      const { getAllCategoriesFromStore, saveCategoryToStore, deleteCategoryFromStore } = await import('./services/persistenceService.js');
+      if (req.method === 'GET') {
+        const categories = getAllCategoriesFromStore();
+        const events = getAllEventsFromStore();
+        const enriched = categories.map(cat => ({
+          ...cat,
+          events_count: events.filter(e => e.category && (e.category.toLowerCase() === cat.name.toLowerCase() || e.category.toLowerCase() === cat.slug.toLowerCase())).length
+        }));
+        return res.status(200).json({ success: true, categories: enriched });
+      }
+      if (req.method === 'POST') {
+        const { action, categories, category } = req.body || {};
+        if (action === 'reorder' && Array.isArray(categories)) {
+          categories.forEach((item, index) => saveCategoryToStore({ ...item, display_order: index + 1 }));
+          return res.status(200).json({ success: true, categories: getAllCategoriesFromStore() });
+        }
+        const saved = saveCategoryToStore(category || req.body);
+        return res.status(200).json({ success: true, category: saved });
+      }
+      if (req.method === 'DELETE') {
+        const { id } = req.body || req.query || {};
+        const events = getAllEventsFromStore();
+        const target = getAllCategoriesFromStore().find(c => c.id === id || c.slug === id);
+        if (target && events.some(e => e.category && (e.category.toLowerCase() === target.name.toLowerCase() || e.category.toLowerCase() === target.slug.toLowerCase()))) {
+          return res.status(400).json({ success: false, error: 'Cannot delete category: existing events belong to it.' });
+        }
+        const deleted = deleteCategoryFromStore(id);
+        return res.status(200).json({ success: true, category: deleted });
+      }
+    }
+
+    if (entity === 'venues' || req.query?.venue_id || req.body?.venue) {
+      const { getAllVenuesFromStore, saveVenueToStore, deleteVenueFromStore } = await import('./services/persistenceService.js');
+      if (req.method === 'GET') {
+        const venues = getAllVenuesFromStore();
+        const events = getAllEventsFromStore();
+        const enriched = venues.map(v => ({
+          ...v,
+          events_count: events.filter(e => (e.venue_name && e.venue_name.toLowerCase() === v.name.toLowerCase()) || e.venue_id === v.id).length
+        }));
+        return res.status(200).json({ success: true, venues: enriched });
+      }
+      if (req.method === 'POST') {
+        const saved = saveVenueToStore(req.body?.venue || req.body);
+        return res.status(200).json({ success: true, venue: saved });
+      }
+      if (req.method === 'DELETE') {
+        const { id } = req.body || req.query || {};
+        const deleted = deleteVenueFromStore(id);
+        return res.status(200).json({ success: true, venue: deleted });
+      }
+    }
+
     return res.status(405).json({ success: false, error: 'Method not allowed' });
   } catch (error) {
     console.error('[Admin Events API Error]:', error);

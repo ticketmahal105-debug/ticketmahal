@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/api/admin-categories",
+      "destination": "/api/admin-events?entity=categories"
+    },
+    {
+      "source": "/api/admin-venues",
+      "destination": "/api/admin-events?entity=venues"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "/api/$1"
     },

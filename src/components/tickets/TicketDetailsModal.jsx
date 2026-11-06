@@ -71,15 +71,15 @@ const TicketDetailsModal = ({ ticket, user, onClose }) => {
           </button>
 
           {/* Event Image Header */}
-          <div className="relative h-44 w-full overflow-hidden bg-ticket-beige/30">
-            {event?.event_image ? (
+          <div className="relative w-full overflow-hidden bg-[#FAF7F2] border-b border-ticket-beige/40 flex items-center justify-center p-2">
+            {(event?.event_image || event?.image || event?.poster) ? (
               <img
-                src={event.event_image}
-                alt={event.event_name}
-                className="w-full h-full object-cover"
+                src={event.event_image || event.image || event.poster}
+                alt={event.event_name || 'Event Poster'}
+                className="block w-full h-auto max-h-72 object-contain object-center rounded-xl mx-auto"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-ticket-burgundy/10 to-beige/30">
+              <div className="w-full h-44 flex items-center justify-center bg-gradient-to-br from-ticket-burgundy/10 to-beige/30 rounded-xl">
                 <span className="font-playfair text-3xl text-ticket-burgundy/50 font-semibold">
                   {event?.event_name?.charAt(0) || 'T'}
                 </span>
@@ -87,7 +87,7 @@ const TicketDetailsModal = ({ ticket, user, onClose }) => {
             )}
             {/* Cancelled overlay */}
             {isCancelled && (
-              <div className="absolute inset-0 bg-ticket-charcoal/50 flex items-center justify-center">
+              <div className="absolute inset-0 bg-ticket-charcoal/50 flex items-center justify-center rounded-xl">
                 <span className="text-ticket-white font-semibold text-xl tracking-wider uppercase border-2 border-white/50 px-4 py-2 rounded-lg">
                   Cancelled
                 </span>

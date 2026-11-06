@@ -282,27 +282,18 @@ export default function ViewTicketPage() {
             </div>
           </div>
 
-          {/* SECTION 2: ORIGINAL EVENT ARTWORK (Wide Aspect Preservation) */}
-          <div className="mt-5 relative w-full h-44 sm:h-56 bg-neutral-900 rounded-xl overflow-hidden shadow-sm">
-            {event?.event_image ? (
-              <>
-                {/* Ambient backdrop */}
-                <img
-                  src={event.event_image}
-                  alt=""
-                  className="absolute inset-0 w-full h-full object-cover blur-md opacity-35 scale-105 pointer-events-none select-none"
-                />
-                {/* Sharp main image */}
-                <img
-                  src={event.event_image}
-                  alt={event.event_name || 'Event Artwork'}
-                  className="relative z-10 w-full h-full object-cover object-center"
-                />
-              </>
+          {/* SECTION 2: ORIGINAL EVENT POSTER (Full Artwork - No Cropping) */}
+          <div className="mt-5 w-full rounded-xl overflow-hidden bg-[#FAF7F2] border border-[#F0EBE1] flex items-center justify-center shadow-sm">
+            {(event?.event_image || event?.image || event?.poster) ? (
+              <img
+                src={event.event_image || event.image || event.poster}
+                alt={event?.event_name || event?.title || 'Event Poster'}
+                className="block w-full h-auto max-h-[520px] object-contain object-center rounded-xl mx-auto"
+              />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-r from-[#2D181E] to-[#7A1F2B]">
+              <div className="w-full h-44 flex items-center justify-center bg-gradient-to-r from-[#2D181E] to-[#7A1F2B]">
                 <span className="font-playfair text-3xl font-bold text-[#F5A300]">
-                  {event?.event_name || 'Ticket Mahal'}
+                  {event?.event_name || event?.title || 'Ticket Mahal'}
                 </span>
               </div>
             )}

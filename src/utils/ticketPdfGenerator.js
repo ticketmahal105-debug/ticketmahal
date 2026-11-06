@@ -84,42 +84,62 @@ export async function downloadTicketPdf({ ticket, booking, user }) {
   doc.setLineWidth(0.3);
   doc.line(margin + 10, y, margin + contentWidth - 10, y);
 
-  // 2. ORIGINAL EVENT POSTER BANNER
+  // 2. ORIGINAL EVENT POSTER BANNER (Preserve Aspect Ratio - No Cropping/Distortion)
   y += 5;
   const bannerWidth = contentWidth - 20; // 154 mm
-  const bannerHeight = 52;
+  const bannerBoxHeight = 56; // Allocated printable height for poster container
   const bannerX = margin + 10;
   const bannerY = y;
 
-  // Placeholder background if image fails to load
-  doc.setFillColor(30, 20, 24);
-  doc.roundedRect(bannerX, bannerY, bannerWidth, bannerHeight, 2, 2, 'F');
+  // Subtle Ivory/Cream container background (#FAF7F2) with rounded corners and fine warm border
+  doc.setFillColor(250, 247, 242); // #FAF7F2
+  doc.setDrawColor(240, 235, 225); // #F0EBE1
+  doc.setLineWidth(0.4);
+  doc.roundedRect(bannerX, bannerY, bannerWidth, bannerBoxHeight, 2.5, 2.5, 'FD');
 
-  if (event.event_image || event.image) {
+  const posterImgUrl = event.event_image || event.image || event.poster;
+  if (posterImgUrl) {
     try {
-      const imgUrl = event.event_image || event.image;
       const img = new Image();
       img.crossOrigin = 'anonymous';
       await new Promise((resolve) => {
         img.onload = resolve;
         img.onerror = resolve;
-        img.src = imgUrl;
+        img.src = posterImgUrl;
       });
 
       if (img.width && img.height) {
+        const imgAspect = img.width / img.height;
+        const boxAspect = bannerWidth / bannerBoxHeight;
+
+        let renderW, renderH;
+        if (imgAspect > boxAspect) {
+          // Landscape / wide banner: fit to width with 2mm internal margin
+          renderW = bannerWidth - 4;
+          renderH = renderW / imgAspect;
+        } else {
+          // Portrait / square poster: fit to height with 2mm internal margin
+          renderH = bannerBoxHeight - 4;
+          renderW = renderH * imgAspect;
+        }
+
+        // Keep image centered horizontally and vertically
+        const renderX = bannerX + (bannerWidth - renderW) / 2;
+        const renderY = bannerY + (bannerBoxHeight - renderH) / 2;
+
         const canvas = document.createElement('canvas');
         canvas.width = img.width;
         canvas.height = img.height;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0);
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-        doc.addImage(dataUrl, 'JPEG', bannerX, bannerY, bannerWidth, bannerHeight);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+        doc.addImage(dataUrl, 'JPEG', renderX, renderY, renderW, renderH);
       }
     } catch (_) {}
   }
 
   // 3. PHYSICAL-TICKET SHAPED MAIN BODY
-  y = bannerY + bannerHeight + 7;
+  y = bannerY + bannerBoxHeight + 7;
   const ticketBodyY = y;
   const ticketBodyHeight = 84;
   const ticketBodyWidth = contentWidth - 20;

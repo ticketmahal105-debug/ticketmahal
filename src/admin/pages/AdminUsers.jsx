@@ -228,23 +228,23 @@ const AdminUsers = () => {
       ) : (
         <div className="bg-ticket-white border border-ticket-beige/60 rounded-3xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="min-w-[1050px] w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-ticket-beige/40 bg-ticket-ivory/30 text-ticket-charcoal/50 text-xs font-semibold uppercase tracking-wider">
-                  <th className="px-6 py-4">Customer</th>
-                  <th className="px-6 py-4">Contact</th>
-                  <th className="px-6 py-4">Account Type</th>
-                  <th className="px-6 py-4">Bookings</th>
-                  <th className="px-6 py-4">Tickets</th>
-                  <th className="px-6 py-4">Total Spend</th>
-                  <th className="px-6 py-4">Last Activity</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                  <th className="px-6 py-4 whitespace-nowrap">Customer</th>
+                  <th className="px-6 py-4 whitespace-nowrap">Contact</th>
+                  <th className="px-6 py-4 whitespace-nowrap">Account Type</th>
+                  <th className="px-6 py-4 whitespace-nowrap text-center">Bookings</th>
+                  <th className="px-6 py-4 whitespace-nowrap text-center">Tickets</th>
+                  <th className="px-6 py-4 whitespace-nowrap text-right">Total Spend</th>
+                  <th className="px-6 py-4 whitespace-nowrap">Last Activity</th>
+                  <th className="px-6 py-4 text-right whitespace-nowrap">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-beige/25">
                 {filteredUsers.map((u) => (
                   <tr key={u.email} className="hover:bg-ivory/10 transition-colors">
-                    <td className="px-6 py-4 font-semibold text-ticket-charcoal text-sm">
+                    <td className="px-6 py-4 font-semibold text-ticket-charcoal text-sm whitespace-nowrap align-middle">
                       <div className="font-semibold text-ticket-charcoal font-playfair text-base">
                         {u.name}
                       </div>
@@ -252,7 +252,7 @@ const AdminUsers = () => {
                         {u.id}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 whitespace-nowrap align-middle">
                       <div className="flex items-center gap-2 text-sm text-ticket-charcoal/80">
                         <Mail size={13} className="text-ticket-burgundy shrink-0" />
                         <span>{u.email}</span>
@@ -264,35 +264,35 @@ const AdminUsers = () => {
                         </div>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-xs font-semibold">
-                      <span className={`px-2.5 py-0.5 rounded-full border ${
+                    <td className="px-6 py-4 whitespace-nowrap align-middle">
+                      <span className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap border shadow-2xs ${
                         u.account_type === 'Admin' 
                           ? 'bg-ticket-burgundy/10 text-ticket-burgundy border-ticket-gold/30 font-bold'
                           : u.account_type === 'Google'
                             ? 'bg-blue-50 text-blue-700 border-blue-200'
-                            : u.account_type.includes('Guest')
-                              ? 'bg-amber-50 text-amber-800 border-amber-200'
+                            : u.account_type.includes('Guest') || u.account_type.includes('Quick')
+                              ? 'bg-amber-50 text-amber-800 border-amber-300 font-medium'
                               : 'bg-emerald-50 text-emerald-700 border-emerald-200'
                       }`}>
                         {u.account_type}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm font-semibold font-mono text-ticket-charcoal">
+                    <td className="px-6 py-4 text-sm font-semibold font-mono text-ticket-charcoal text-center whitespace-nowrap align-middle">
                       {u.bookings_count}
                     </td>
-                    <td className="px-6 py-4 text-sm font-semibold font-mono text-ticket-burgundy">
+                    <td className="px-6 py-4 text-sm font-semibold font-mono text-ticket-burgundy text-center whitespace-nowrap align-middle">
                       {u.tickets_count}
                     </td>
-                    <td className="px-6 py-4 text-sm font-bold text-ticket-charcoal font-mono">
+                    <td className="px-6 py-4 text-sm font-bold text-ticket-charcoal font-mono text-right whitespace-nowrap align-middle">
                       AED {u.total_spend.toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 text-xs text-ticket-charcoal/50">
+                    <td className="px-6 py-4 text-xs text-ticket-charcoal/50 whitespace-nowrap align-middle">
                       {u.last_booking ? new Date(u.last_booking).toLocaleDateString() : '—'}
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-4 text-right whitespace-nowrap align-middle">
                       <button
                         onClick={() => setSelectedCustomer(u)}
-                        className="px-3 py-1.5 text-xs font-semibold text-ticket-burgundy border border-ticket-beige hover:border-ticket-burgundy hover:bg-ticket-burgundy/5 rounded-xl transition-all"
+                        className="px-3 py-1.5 text-xs font-semibold text-ticket-burgundy border border-ticket-beige hover:border-ticket-burgundy hover:bg-ticket-burgundy/5 rounded-xl transition-all inline-flex items-center gap-1 cursor-pointer"
                       >
                         View History
                       </button>
@@ -365,7 +365,7 @@ const AdminUsers = () => {
                         </div>
                         <div className="text-right shrink-0">
                           <span className="font-bold font-mono text-ticket-charcoal block">AED {b.total_amount || b.total_price || 0}</span>
-                          <span className="inline-block mt-0.5 text-[10px] font-bold text-emerald-700 uppercase bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                          <span className="inline-flex items-center justify-center mt-1 text-[10px] font-bold text-emerald-700 uppercase bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 whitespace-nowrap">
                             {b.booking_status || b.payment_status || 'confirmed'}
                           </span>
                         </div>
@@ -391,8 +391,8 @@ const AdminUsers = () => {
                           <span className="text-ticket-charcoal/60 ml-2">Seat: {t.seat || 'General'}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                            t.status === 'valid' ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-700'
+                          <span className={`inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase whitespace-nowrap border ${
+                            t.status === 'valid' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-gray-100 text-gray-700 border-gray-300'
                           }`}>
                             {t.status}
                           </span>

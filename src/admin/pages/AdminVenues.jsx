@@ -233,11 +233,11 @@ const AdminVenues = () => {
             >
               <div>
                 <div className="flex items-start justify-between gap-2 mb-3">
-                  <span className="px-2.5 py-1 bg-ticket-burgundy/10 text-ticket-burgundy text-[11px] font-bold rounded-full border border-ticket-gold/20">
+                  <span className="inline-flex items-center justify-center px-2.5 py-1 bg-ticket-burgundy/10 text-ticket-burgundy text-[11px] font-bold rounded-full border border-ticket-gold/20 whitespace-nowrap shadow-2xs">
                     {venue.city}, {venue.emirate || 'UAE'}
                   </span>
-                  <span className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-full ${
-                    venue.status === 'active' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-gray-100 text-gray-600'
+                  <span className={`inline-flex items-center justify-center px-2.5 py-0.5 text-[10px] font-bold uppercase rounded-full whitespace-nowrap border shadow-2xs ${
+                    venue.status === 'active' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-gray-100 text-gray-600 border-gray-300'
                   }`}>
                     {venue.status}
                   </span>

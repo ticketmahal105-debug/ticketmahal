@@ -147,40 +147,40 @@ const AdminTickets = () => {
       ) : (
         <div className="bg-ticket-white border border-ticket-beige/60 rounded-3xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="min-w-[1100px] w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-ticket-beige/40 bg-ticket-ivory/30 text-ticket-charcoal/50 text-xs font-semibold uppercase tracking-wider">
-                  <th className="px-4 py-4">Ticket ID</th>
-                  <th className="px-4 py-4">Booking Ref</th>
-                  <th className="px-4 py-4">Event</th>
-                  <th className="px-4 py-4">Customer</th>
-                  <th className="px-4 py-4">Seat</th>
-                  <th className="px-4 py-4">Status</th>
-                  <th className="px-4 py-4">Issued At</th>
-                  <th className="px-4 py-4">Purchased At</th>
-                  <th className="px-4 py-4">Check-In</th>
-                  <th className="px-4 py-4 text-right">Actions</th>
+                  <th className="px-4 py-4 whitespace-nowrap">Ticket ID</th>
+                  <th className="px-4 py-4 whitespace-nowrap">Booking Ref</th>
+                  <th className="px-4 py-4 whitespace-nowrap">Event</th>
+                  <th className="px-4 py-4 whitespace-nowrap">Customer</th>
+                  <th className="px-4 py-4 whitespace-nowrap">Seat / Tier</th>
+                  <th className="px-4 py-4 whitespace-nowrap text-center">Status</th>
+                  <th className="px-4 py-4 whitespace-nowrap">Issued At</th>
+                  <th className="px-4 py-4 whitespace-nowrap">Purchased At</th>
+                  <th className="px-4 py-4 whitespace-nowrap">Check-In</th>
+                  <th className="px-4 py-4 text-right whitespace-nowrap">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-beige/25">
                 {filteredTickets.map((t) => (
                   <tr key={t.id} className="hover:bg-ivory/10 transition-colors">
-                    <td className="px-4 py-4 font-semibold text-ticket-charcoal text-xs font-mono">
+                    <td className="px-4 py-4 font-semibold text-ticket-charcoal text-xs font-mono whitespace-nowrap align-middle">
                       {t.ticket_number}
                     </td>
-                    <td className="px-4 py-4 text-xs font-mono text-ticket-burgundy font-semibold">
+                    <td className="px-4 py-4 text-xs font-mono text-ticket-burgundy font-semibold whitespace-nowrap align-middle">
                       {t.booking_reference || t.bookings?.booking_number || '—'}
                     </td>
-                    <td className="px-4 py-4 text-xs text-ticket-charcoal/80 font-playfair font-semibold">
+                    <td className="px-4 py-4 text-xs text-ticket-charcoal/80 font-playfair font-semibold whitespace-nowrap align-middle">
                       {t.events?.event_name}
                     </td>
-                    <td className="px-4 py-4">
+                    <td className="px-4 py-4 whitespace-nowrap align-middle">
                       <div className="text-xs font-medium text-ticket-charcoal">
                         {t.bookings?.customer_name || `${t.profiles?.first_name || ''} ${t.profiles?.last_name || ''}`.trim() || 'Valued Guest'}
                       </div>
                       <div className="text-[11px] text-ticket-charcoal/50">{t.bookings?.customer_email || t.profiles?.email}</div>
                     </td>
-                    <td className="px-4 py-4 text-xs">
+                    <td className="px-4 py-4 text-xs whitespace-nowrap align-middle">
                       <span className="font-semibold text-ticket-burgundy block">
                         {t.ticket_type || 'General'}
                       </span>
@@ -188,34 +188,34 @@ const AdminTickets = () => {
                         Seat: {t.seat || 'General Admission'}
                       </span>
                     </td>
-                    <td className="px-4 py-4 text-xs font-semibold">
-                      <span className={`px-2 py-0.5 rounded-full border text-[11px] ${getStatusBadge(t.status)}`}>
+                    <td className="px-4 py-4 text-xs font-semibold text-center whitespace-nowrap align-middle">
+                      <span className={`inline-flex items-center justify-center px-2.5 py-0.5 rounded-full border text-[11px] font-semibold whitespace-nowrap shadow-2xs ${getStatusBadge(t.status)}`}>
                         {t.status}
                       </span>
                     </td>
-                    <td className="px-4 py-4 text-xs text-ticket-charcoal/70 font-mono">
+                    <td className="px-4 py-4 text-xs text-ticket-charcoal/70 font-mono whitespace-nowrap align-middle">
                       {formatGstDateTime(t.created_at)}
                     </td>
-                    <td className="px-4 py-4 text-xs text-ticket-charcoal/70 font-mono">
+                    <td className="px-4 py-4 text-xs text-ticket-charcoal/70 font-mono whitespace-nowrap align-middle">
                       {formatGstDateTime(t.purchased_at || t.bookings?.purchased_at || t.bookings?.confirmed_at || t.bookings?.created_at || t.created_at)}
                     </td>
-                    <td className="px-4 py-4 text-xs font-mono text-ticket-charcoal/50">
+                    <td className="px-4 py-4 text-xs font-mono text-ticket-charcoal/50 whitespace-nowrap align-middle">
                       {t.checked_in_at || t.used_at ? formatGstDateTime(t.checked_in_at || t.used_at) : '—'}
                     </td>
-                    <td className="px-4 py-4 text-right">
+                    <td className="px-4 py-4 text-right whitespace-nowrap align-middle">
                       <div className="flex items-center justify-end gap-2">
                         <a
                           href={`/view-ticket/${t.ticket_number}`}
                           target="_blank"
                           rel="noreferrer"
-                          className="px-2.5 py-1 text-[11px] font-semibold text-[#7A1F2B] border border-[#7A1F2B]/30 hover:bg-[#7A1F2B]/10 rounded-lg transition-colors"
+                          className="px-2.5 py-1 text-[11px] font-semibold text-[#7A1F2B] border border-[#7A1F2B]/30 hover:bg-[#7A1F2B]/10 rounded-lg transition-colors inline-flex items-center"
                         >
                           View Pass
                         </a>
                         {t.status !== 'cancelled' && (
                           <button
                             onClick={() => handleToggleUsed(t)}
-                            className={`p-1.5 border border-ticket-beige rounded-lg transition-all ${
+                            className={`p-1.5 border border-ticket-beige rounded-lg transition-all inline-flex items-center justify-center cursor-pointer ${
                               t.status === 'used'
                                 ? 'hover:border-green-500 hover:text-green-500 text-green-600'
                                 : 'hover:border-ticket-burgundy hover:text-ticket-burgundy text-ticket-charcoal/60'

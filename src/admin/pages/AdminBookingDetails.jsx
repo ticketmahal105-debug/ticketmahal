@@ -240,8 +240,8 @@ const AdminBookingDetails = () => {
                     </div>
                     <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
                       <span className="text-xs text-ticket-charcoal/50">Qty: {ticket.quantity || 1}</span>
-                      <span className={`px-2.5 py-1 rounded-full border text-xs font-semibold capitalize ${
-                        ticket.status === 'active' 
+                      <span className={`inline-flex items-center justify-center px-3 py-1 rounded-full border text-xs font-semibold capitalize whitespace-nowrap shadow-2xs ${
+                        ticket.status === 'active' || ticket.status === 'valid'
                           ? 'bg-green-50 text-green-700 border-green-200' 
                           : 'bg-red-50 text-red-700 border-red-200'
                       }`}>

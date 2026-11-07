@@ -129,15 +129,15 @@ const AdminEvents = () => {
       ) : (
         <div className="bg-ticket-white border border-ticket-beige/60 rounded-3xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="min-w-[950px] w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-ticket-beige/40 bg-ticket-ivory/30 text-ticket-charcoal/50 text-xs font-semibold uppercase tracking-wider">
-                  <th className="px-6 py-4">Event Info</th>
-                  <th className="px-6 py-4">Date & Time</th>
-                  <th className="px-6 py-4">Location</th>
-                  <th className="px-6 py-4">Capacity / Sales</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                  <th className="px-6 py-4 whitespace-nowrap min-w-[220px]">Event Info</th>
+                  <th className="px-6 py-4 whitespace-nowrap">Date & Time</th>
+                  <th className="px-6 py-4 whitespace-nowrap">Location</th>
+                  <th className="px-6 py-4 whitespace-nowrap">Capacity / Sales</th>
+                  <th className="px-6 py-4 whitespace-nowrap text-center">Status</th>
+                  <th className="px-6 py-4 text-right whitespace-nowrap">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-beige/25">
@@ -147,7 +147,7 @@ const AdminEvents = () => {
                   
                   return (
                     <tr key={event.id} className="hover:bg-ivory/10 transition-colors">
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 whitespace-nowrap align-middle">
                         <div className="flex items-center gap-3">
                           <div className="w-12 h-12 bg-beige/20 rounded-xl overflow-hidden shrink-0 border border-ticket-beige/40">
                             {event.event_image ? (
@@ -164,7 +164,7 @@ const AdminEvents = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-ticket-charcoal/80">
+                      <td className="px-6 py-4 text-sm text-ticket-charcoal/80 whitespace-nowrap align-middle">
                         <div className="flex items-center gap-2">
                           <Calendar size={14} className="text-ticket-burgundy shrink-0" />
                           <span>{new Date(event.event_date).toLocaleDateString()}</span>
@@ -173,7 +173,7 @@ const AdminEvents = () => {
                           <span className="text-xs text-ticket-charcoal/50 block ml-6 mt-0.5">{event.start_time} - {event.end_time || 'End'}</span>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-sm text-ticket-charcoal/80">
+                      <td className="px-6 py-4 text-sm text-ticket-charcoal/80 whitespace-nowrap align-middle">
                         <div className="flex items-center gap-2">
                           <MapPin size={14} className="text-ticket-burgundy shrink-0" />
                           <span className="truncate max-w-[150px]">{event.venue_name || 'TBD'}</span>
@@ -182,9 +182,9 @@ const AdminEvents = () => {
                           <span className="text-xs text-ticket-charcoal/50 block ml-6 mt-0.5">{event.city}</span>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-sm text-ticket-charcoal/80">
+                      <td className="px-6 py-4 text-sm text-ticket-charcoal/80 whitespace-nowrap align-middle">
                         <div>
-                          <span className="font-semibold text-ticket-charcoal">{totalSold}</span> / {totalCapacity} Sold
+                          <span className="font-semibold text-ticket-charcoal font-mono">{totalSold}</span> / <span className="font-mono">{totalCapacity}</span> Sold
                         </div>
                         <div className="w-24 bg-beige/35 h-1.5 rounded-full mt-1.5 overflow-hidden">
                           <div 
@@ -193,26 +193,26 @@ const AdminEvents = () => {
                           />
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-xs font-semibold">
-                        <span className={`px-2.5 py-1 rounded-full border ${getStatusStyle(event.status)}`}>
+                      <td className="px-6 py-4 text-xs font-semibold text-center whitespace-nowrap align-middle">
+                        <span className={`inline-flex items-center justify-center px-3 py-1 rounded-full border whitespace-nowrap shadow-2xs ${getStatusStyle(event.status)}`}>
                           {event.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-right">
+                      <td className="px-6 py-4 text-right whitespace-nowrap align-middle">
                         <div className="flex items-center justify-end gap-1.5">
                           <a
                             href={`/events/${event.slug || event.id}`}
                             target="_blank"
                             rel="noreferrer"
                             title="View on Customer Site"
-                            className="p-2 border border-ticket-beige hover:border-ticket-burgundy hover:text-ticket-burgundy text-ticket-charcoal/60 rounded-xl transition-all"
+                            className="p-2 border border-ticket-beige hover:border-ticket-burgundy hover:text-ticket-burgundy text-ticket-charcoal/60 rounded-xl transition-all inline-flex items-center justify-center"
                           >
                             <ExternalLink size={15} />
                           </a>
                           <button
                             onClick={() => handleToggleStatus(event)}
                             title={event.status === 'published' ? 'Unpublish / Draft' : 'Publish'}
-                            className="p-2 border border-ticket-beige hover:border-ticket-burgundy hover:text-ticket-burgundy text-ticket-charcoal/60 rounded-xl transition-all"
+                            className="p-2 border border-ticket-beige hover:border-ticket-burgundy hover:text-ticket-burgundy text-ticket-charcoal/60 rounded-xl transition-all inline-flex items-center justify-center cursor-pointer"
                           >
                             {event.status === 'published' ? <EyeOff size={15} /> : <Eye size={15} />}
                           </button>

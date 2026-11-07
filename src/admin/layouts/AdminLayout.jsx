@@ -12,7 +12,7 @@ const AdminLayout = () => {
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         <AdminTopbar onToggleMobileMenu={() => setMobileMenuOpen(prev => !prev)} />
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8">
-          <div className="max-w-7xl mx-auto">
+          <div className="w-full max-w-[1600px] mx-auto">
             <Outlet />
           </div>
         </main>

@@ -156,31 +156,31 @@ const AdminBookings = () => {
       ) : (
         <div className="bg-ticket-white border border-ticket-beige/60 rounded-3xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="min-w-[1050px] w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-ticket-beige/40 bg-ticket-ivory/30 text-ticket-charcoal/50 text-xs font-semibold uppercase tracking-wider">
-                  <th className="px-6 py-4">Booking Ref</th>
-                  <th className="px-6 py-4">Customer</th>
-                  <th className="px-6 py-4">Event</th>
-                  <th className="px-6 py-4">Tickets</th>
-                  <th className="px-6 py-4">Total</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4">Purchased At</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                  <th className="px-6 py-4 whitespace-nowrap">Booking Ref</th>
+                  <th className="px-6 py-4 whitespace-nowrap">Customer</th>
+                  <th className="px-6 py-4 whitespace-nowrap">Event</th>
+                  <th className="px-6 py-4 whitespace-nowrap text-center">Tickets</th>
+                  <th className="px-6 py-4 whitespace-nowrap text-right">Total</th>
+                  <th className="px-6 py-4 whitespace-nowrap text-center">Status</th>
+                  <th className="px-6 py-4 whitespace-nowrap">Purchased At</th>
+                  <th className="px-6 py-4 text-right whitespace-nowrap">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-beige/25">
                 {filteredBookings.map((b) => (
                   <tr key={b.id} className="hover:bg-ivory/10 transition-colors">
-                    <td className="px-6 py-4 font-semibold text-ticket-charcoal text-sm">
+                    <td className="px-6 py-4 font-semibold text-ticket-charcoal text-sm whitespace-nowrap align-middle">
                       <div className="flex items-center gap-2">
-                        <span>{b.booking_number}</span>
+                        <span className="font-mono">{b.booking_number}</span>
                         {isDemoBooking(b) ? (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-300">
+                          <span className="inline-flex items-center justify-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-300 whitespace-nowrap">
                             DEMO
                           </span>
                         ) : b.payment_status === 'paid' ? (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300">
+                          <span className="inline-flex items-center justify-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300 whitespace-nowrap">
                             REAL PAID
                           </span>
                         ) : null}
@@ -191,33 +191,33 @@ const AdminBookings = () => {
                         </div>
                       )}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 whitespace-nowrap align-middle">
                       <div className="text-sm font-medium text-ticket-charcoal">
-                        {b.profiles?.first_name} {b.profiles?.last_name}
+                        {b.customer_name || `${b.profiles?.first_name || ''} ${b.profiles?.last_name || ''}`.trim() || 'Valued Guest'}
                       </div>
-                      <div className="text-xs text-ticket-charcoal/50">{b.profiles?.email}</div>
+                      <div className="text-xs text-ticket-charcoal/50">{b.customer_email || b.profiles?.email || '—'}</div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-ticket-charcoal/80">
-                      {b.events?.event_name}
+                    <td className="px-6 py-4 text-sm text-ticket-charcoal/80 whitespace-nowrap align-middle">
+                      {b.events?.event_name || 'Ticket Mahal Event'}
                     </td>
-                    <td className="px-6 py-4 text-sm text-ticket-charcoal/80">
+                    <td className="px-6 py-4 text-sm font-semibold font-mono text-ticket-charcoal text-center whitespace-nowrap align-middle">
                       {b.ticket_quantity || b.quantity || 1}
                     </td>
-                    <td className="px-6 py-4 text-sm font-semibold text-ticket-charcoal">
+                    <td className="px-6 py-4 text-sm font-bold text-ticket-charcoal font-mono text-right whitespace-nowrap align-middle">
                       AED {Number(b.total_amount || b.total_price || 0).toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 text-xs font-semibold">
-                      <span className={`px-2.5 py-1 rounded-full border ${getStatusBadge(b.booking_status, b)}`}>
+                    <td className="px-6 py-4 text-xs font-semibold text-center whitespace-nowrap align-middle">
+                      <span className={`inline-flex items-center justify-center px-3 py-1 rounded-full border whitespace-nowrap shadow-2xs ${getStatusBadge(b.booking_status, b)}`}>
                         {isDemoBooking(b) ? 'Demo Booking' : (b.booking_status || 'Pending')}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-xs font-medium text-ticket-charcoal/70">
+                    <td className="px-6 py-4 text-xs font-medium text-ticket-charcoal/70 whitespace-nowrap align-middle">
                       {formatGstDateTime(b.purchased_at || b.confirmed_at || b.created_at)}
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-4 text-right whitespace-nowrap align-middle">
                       <button
                         onClick={() => navigate(`/admin/bookings/${b.booking_number}`)}
-                        className="p-2 border border-ticket-beige hover:border-ticket-burgundy hover:text-ticket-burgundy text-ticket-charcoal/60 rounded-xl transition-all"
+                        className="p-2 border border-ticket-beige hover:border-ticket-burgundy hover:text-ticket-burgundy text-ticket-charcoal/60 rounded-xl transition-all cursor-pointer inline-flex items-center justify-center"
                         title="View Details"
                       >
                         <Eye size={16} />

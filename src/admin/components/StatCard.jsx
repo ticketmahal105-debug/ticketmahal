@@ -18,11 +18,13 @@ const StatCard = ({ title, value, icon, trend, trendValue, delay = 0 }) => {
         </div>
       </div>
       
-      <div className="flex items-end gap-3">
-        <span className="font-playfair text-3xl font-bold text-ticket-charcoal">{value}</span>
+      <div className="flex items-baseline justify-between gap-2 flex-wrap">
+        <span className="font-playfair text-2xl sm:text-3xl font-bold text-ticket-charcoal whitespace-nowrap">{value}</span>
         {trendValue && (
-          <div className={`flex items-center gap-0.5 text-xs font-semibold mb-1 ${isPositive ? 'text-green-600' : 'text-red-500'}`}>
-            {isPositive ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
+          <div className={`inline-flex items-center gap-1 text-xs font-semibold whitespace-nowrap px-2 py-0.5 rounded-full ${
+            isPositive ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-600 border border-red-200'
+          }`}>
+            {isPositive ? <ArrowUpRight size={13} /> : <ArrowDownRight size={13} />}
             <span>{trendValue}</span>
           </div>
         )}

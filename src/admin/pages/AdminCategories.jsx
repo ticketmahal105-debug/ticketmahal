@@ -201,26 +201,26 @@ const AdminCategories = () => {
       ) : (
         <div className="bg-ticket-white border border-ticket-beige/60 rounded-3xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="min-w-[850px] w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-ticket-beige/40 bg-ticket-ivory/30 text-ticket-charcoal/50 text-xs font-semibold uppercase tracking-wider">
-                  <th className="px-6 py-4">Order</th>
-                  <th className="px-6 py-4">Category Name</th>
-                  <th className="px-6 py-4">URL Slug</th>
-                  <th className="px-6 py-4">Linked Events</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                  <th className="px-6 py-4 whitespace-nowrap text-center">Order</th>
+                  <th className="px-6 py-4 whitespace-nowrap min-w-[200px]">Category Name</th>
+                  <th className="px-6 py-4 whitespace-nowrap">URL Slug</th>
+                  <th className="px-6 py-4 whitespace-nowrap text-center">Linked Events</th>
+                  <th className="px-6 py-4 whitespace-nowrap text-center">Status</th>
+                  <th className="px-6 py-4 text-right whitespace-nowrap">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-beige/25">
                 {filtered.map((cat, idx) => (
                   <tr key={cat.id} className="hover:bg-ivory/10 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-1">
+                    <td className="px-6 py-4 whitespace-nowrap align-middle">
+                      <div className="flex items-center justify-center gap-1">
                         <button
                           disabled={idx === 0}
                           onClick={() => handleMoveOrder(idx, -1)}
-                          className="p-1 hover:bg-ticket-ivory rounded disabled:opacity-20 text-ticket-charcoal/60"
+                          className="p-1 hover:bg-ticket-ivory rounded disabled:opacity-20 text-ticket-charcoal/60 cursor-pointer"
                         >
                           <ArrowUp size={14} />
                         </button>
@@ -228,13 +228,13 @@ const AdminCategories = () => {
                         <button
                           disabled={idx === categories.length - 1}
                           onClick={() => handleMoveOrder(idx, 1)}
-                          className="p-1 hover:bg-ticket-ivory rounded disabled:opacity-20 text-ticket-charcoal/60"
+                          className="p-1 hover:bg-ticket-ivory rounded disabled:opacity-20 text-ticket-charcoal/60 cursor-pointer"
                         >
                           <ArrowDown size={14} />
                         </button>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 whitespace-nowrap align-middle">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-xl bg-ticket-burgundy/10 border border-ticket-gold/20 flex items-center justify-center shrink-0">
                           {getIconComponent(cat.icon)}
@@ -245,16 +245,16 @@ const AdminCategories = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 font-mono text-xs text-ticket-burgundy font-semibold">
+                    <td className="px-6 py-4 font-mono text-xs text-ticket-burgundy font-semibold whitespace-nowrap align-middle">
                       /category/{cat.slug}
                     </td>
-                    <td className="px-6 py-4 text-sm font-semibold text-ticket-charcoal">
-                      <span className="px-3 py-1 bg-ticket-ivory border border-ticket-beige rounded-full text-xs">
+                    <td className="px-6 py-4 text-sm font-semibold text-ticket-charcoal text-center whitespace-nowrap align-middle">
+                      <span className="inline-flex items-center justify-center px-3 py-1 bg-ticket-ivory border border-ticket-beige rounded-full text-xs whitespace-nowrap">
                         {cat.events_count || 0} Events
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-xs font-semibold">
-                      <span className={`px-2.5 py-1 rounded-full border ${
+                    <td className="px-6 py-4 text-xs font-semibold text-center whitespace-nowrap align-middle">
+                      <span className={`inline-flex items-center justify-center px-3 py-1 rounded-full border whitespace-nowrap shadow-2xs ${
                         cat.status === 'active' 
                           ? 'bg-green-50 text-green-700 border-green-200' 
                           : 'bg-beige/20 text-ticket-charcoal/60 border-ticket-beige/40'
@@ -262,19 +262,19 @@ const AdminCategories = () => {
                         {cat.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-4 text-right whitespace-nowrap align-middle">
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => handleOpenEdit(cat)}
                           title="Edit Category"
-                          className="p-2 border border-ticket-beige hover:border-ticket-burgundy hover:text-ticket-burgundy text-ticket-charcoal/60 rounded-xl transition-all"
+                          className="p-2 border border-ticket-beige hover:border-ticket-burgundy hover:text-ticket-burgundy text-ticket-charcoal/60 rounded-xl transition-all cursor-pointer inline-flex items-center justify-center"
                         >
                           <Edit size={16} />
                         </button>
                         <button
                           onClick={() => handleDelete(cat)}
                           title="Deactivate / Delete"
-                          className="p-2 border border-ticket-beige hover:border-red-500 hover:text-red-500 text-ticket-charcoal/60 rounded-xl transition-all"
+                          className="p-2 border border-ticket-beige hover:border-red-500 hover:text-red-500 text-ticket-charcoal/60 rounded-xl transition-all cursor-pointer inline-flex items-center justify-center"
                         >
                           <Trash2 size={16} />
                         </button>

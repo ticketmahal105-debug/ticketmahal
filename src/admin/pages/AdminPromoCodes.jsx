@@ -197,22 +197,22 @@ const AdminPromoCodes = () => {
       ) : (
         <div className="bg-ticket-white border border-ticket-beige/60 rounded-3xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="min-w-[950px] w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-ticket-beige/40 bg-ticket-ivory/30 text-ticket-charcoal/50 text-xs font-semibold uppercase tracking-wider">
-                  <th className="px-6 py-4">Promo Code</th>
-                  <th className="px-6 py-4">Discount</th>
-                  <th className="px-6 py-4">Validity Period</th>
-                  <th className="px-6 py-4">Uses / Limit</th>
-                  <th className="px-6 py-4">Revenue Affected</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                  <th className="px-6 py-4 whitespace-nowrap min-w-[200px]">Promo Code</th>
+                  <th className="px-6 py-4 whitespace-nowrap">Discount</th>
+                  <th className="px-6 py-4 whitespace-nowrap">Validity Period</th>
+                  <th className="px-6 py-4 whitespace-nowrap text-center">Uses / Limit</th>
+                  <th className="px-6 py-4 whitespace-nowrap text-right">Revenue Affected</th>
+                  <th className="px-6 py-4 whitespace-nowrap text-center">Status</th>
+                  <th className="px-6 py-4 text-right whitespace-nowrap">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-beige/25">
                 {filteredPromos.map((promo) => (
                   <tr key={promo.id} className="hover:bg-ivory/10 transition-colors">
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 whitespace-nowrap align-middle">
                       <div className="flex items-center gap-2">
                         <Tag size={16} className="text-ticket-burgundy shrink-0" />
                         <div>
@@ -221,7 +221,7 @@ const AdminPromoCodes = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 whitespace-nowrap align-middle">
                       <span className="text-sm font-semibold text-ticket-burgundy">
                         {promo.discount_type === 'percentage' ? `${promo.discount_value}% OFF` : `AED ${promo.discount_value} FLAT`}
                       </span>
@@ -229,21 +229,21 @@ const AdminPromoCodes = () => {
                         Min: AED {promo.min_order_amount || 0} {promo.max_discount ? `• Max: AED ${promo.max_discount}` : ''}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-xs text-ticket-charcoal/70">
+                    <td className="px-6 py-4 text-xs text-ticket-charcoal/70 whitespace-nowrap align-middle">
                       <div>From: {promo.valid_from || 'Always'}</div>
                       <div>Until: {promo.valid_until || 'No Expiry'}</div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-ticket-charcoal">
-                      <div className="font-semibold">{promo.uses_count || 0} Uses</div>
+                    <td className="px-6 py-4 text-sm text-ticket-charcoal text-center whitespace-nowrap align-middle">
+                      <div className="font-semibold font-mono">{promo.uses_count || 0} Uses</div>
                       <span className="text-xs text-ticket-charcoal/50">
                         {promo.remaining_uses !== undefined ? `${promo.remaining_uses} remaining` : 'Unlimited'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm font-semibold text-ticket-charcoal">
+                    <td className="px-6 py-4 text-sm font-bold text-ticket-charcoal font-mono text-right whitespace-nowrap align-middle">
                       AED {Number(promo.revenue_affected || 0).toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 text-xs font-semibold">
-                      <span className={`px-2.5 py-1 rounded-full border ${
+                    <td className="px-6 py-4 text-xs font-semibold text-center whitespace-nowrap align-middle">
+                      <span className={`inline-flex items-center justify-center px-3 py-1 rounded-full border whitespace-nowrap shadow-2xs ${
                         promo.status === 'active' 
                           ? 'bg-green-50 text-green-700 border-green-200' 
                           : 'bg-beige/20 text-ticket-charcoal/60 border-ticket-beige/40'
@@ -251,12 +251,12 @@ const AdminPromoCodes = () => {
                         {promo.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-4 text-right whitespace-nowrap align-middle">
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => handleToggleStatus(promo)}
                           title={promo.status === 'active' ? 'Deactivate' : 'Activate'}
-                          className={`p-2 border rounded-xl transition-all ${
+                          className={`p-2 border rounded-xl transition-all cursor-pointer inline-flex items-center justify-center ${
                             promo.status === 'active' 
                               ? 'border-ticket-beige hover:border-amber-500 text-ticket-charcoal/60 hover:text-amber-600' 
                               : 'border-ticket-beige hover:border-green-500 text-ticket-charcoal/60 hover:text-green-600'

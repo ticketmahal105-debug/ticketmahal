@@ -289,14 +289,14 @@ const AdminReports = () => {
             Event Sales & Capacity Performance
           </h3>
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+            <table className="min-w-[650px] w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="border-b border-ticket-beige/40 bg-ticket-ivory/40 text-ticket-charcoal/50 font-semibold uppercase">
-                  <th className="py-3 px-4">Event</th>
-                  <th className="py-3 px-4">Category</th>
-                  <th className="py-3 px-4">Bookings</th>
-                  <th className="py-3 px-4">Tickets Sold</th>
-                  <th className="py-3 px-4">Total Value</th>
+                  <th className="py-3 px-4 whitespace-nowrap min-w-[180px]">Event</th>
+                  <th className="py-3 px-4 whitespace-nowrap">Category</th>
+                  <th className="py-3 px-4 whitespace-nowrap text-center">Bookings</th>
+                  <th className="py-3 px-4 whitespace-nowrap text-center">Tickets Sold</th>
+                  <th className="py-3 px-4 whitespace-nowrap text-right">Total Value</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-beige/25">
@@ -311,19 +311,19 @@ const AdminReports = () => {
 
                   return (
                     <tr key={e.id} className="hover:bg-ivory/10">
-                      <td className="py-3 px-4 font-semibold text-ticket-charcoal font-playfair text-sm">
+                      <td className="py-3 px-4 font-semibold text-ticket-charcoal font-playfair text-sm whitespace-nowrap align-middle">
                         {e.event_name || e.title}
                       </td>
-                      <td className="py-3 px-4 text-ticket-burgundy font-medium uppercase tracking-wider">
+                      <td className="py-3 px-4 text-ticket-burgundy font-medium uppercase tracking-wider whitespace-nowrap align-middle">
                         {e.category}
                       </td>
-                      <td className="py-3 px-4 font-mono font-bold">
+                      <td className="py-3 px-4 font-mono font-bold text-center whitespace-nowrap align-middle">
                         {matchingBookings.length}
                       </td>
-                      <td className="py-3 px-4 font-mono">
+                      <td className="py-3 px-4 font-mono text-center whitespace-nowrap align-middle">
                         {ticketsSold}
                       </td>
-                      <td className="py-3 px-4 font-semibold font-mono text-ticket-charcoal">
+                      <td className="py-3 px-4 font-semibold font-mono text-ticket-charcoal text-right whitespace-nowrap align-middle">
                         AED {turnover.toLocaleString()}
                       </td>
                     </tr>
@@ -408,16 +408,16 @@ const AdminReports = () => {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
+            <table className="min-w-[850px] w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="border-b border-ticket-beige/40 bg-ticket-ivory/40 text-ticket-charcoal/50 font-semibold uppercase text-[10px]">
-                  <th className="py-3 px-4">Booking Ref</th>
-                  <th className="py-3 px-4">Customer</th>
-                  <th className="py-3 px-4">Event</th>
-                  <th className="py-3 px-4">Purchase Date</th>
-                  <th className="py-3 px-4">Purchase Time</th>
-                  <th className="py-3 px-4">Total</th>
-                  <th className="py-3 px-4 text-right">Status</th>
+                  <th className="py-3 px-4 whitespace-nowrap">Booking Ref</th>
+                  <th className="py-3 px-4 whitespace-nowrap min-w-[160px]">Customer</th>
+                  <th className="py-3 px-4 whitespace-nowrap min-w-[160px]">Event</th>
+                  <th className="py-3 px-4 whitespace-nowrap">Purchase Date</th>
+                  <th className="py-3 px-4 whitespace-nowrap">Purchase Time</th>
+                  <th className="py-3 px-4 whitespace-nowrap text-right">Total</th>
+                  <th className="py-3 px-4 text-right whitespace-nowrap">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-beige/25">
@@ -426,30 +426,30 @@ const AdminReports = () => {
                   const isDemo = b.payment_status === 'demo_paid' || b.payment_provider === 'demo' || b.payment_mode === 'demo';
                   return (
                     <tr key={b.booking_number || b.id} className="hover:bg-ivory/10">
-                      <td className="py-3 px-4 font-mono font-bold text-ticket-burgundy">
+                      <td className="py-3 px-4 font-mono font-bold text-ticket-burgundy whitespace-nowrap align-middle">
                         {b.booking_number}
                       </td>
-                      <td className="py-3 px-4">
+                      <td className="py-3 px-4 whitespace-nowrap align-middle">
                         <div className="font-medium text-ticket-charcoal">
                           {b.customer_name || `${b.profiles?.first_name || ''} ${b.profiles?.last_name || ''}`.trim() || 'Valued Guest'}
                         </div>
                         <div className="text-[11px] text-ticket-charcoal/50">{b.customer_email || b.profiles?.email || '—'}</div>
                       </td>
-                      <td className="py-3 px-4 text-ticket-charcoal/80 font-playfair font-semibold">
+                      <td className="py-3 px-4 text-ticket-charcoal/80 font-playfair font-semibold whitespace-nowrap align-middle">
                         {b.events?.event_name || 'Ticket Mahal Event'}
                       </td>
-                      <td className="py-3 px-4 font-mono text-ticket-charcoal/80">
+                      <td className="py-3 px-4 font-mono text-ticket-charcoal/80 whitespace-nowrap align-middle">
                         {formatGstDate(ts)}
                       </td>
-                      <td className="py-3 px-4 font-mono text-ticket-charcoal/80">
+                      <td className="py-3 px-4 font-mono text-ticket-charcoal/80 whitespace-nowrap align-middle">
                         {formatGstTime(ts)} GST
                       </td>
-                      <td className="py-3 px-4 font-mono font-bold text-ticket-charcoal">
-                        AED {b.total_amount || b.total_price || 0}
+                      <td className="py-3 px-4 font-mono font-bold text-ticket-charcoal text-right whitespace-nowrap align-middle">
+                        AED {Number(b.total_amount || b.total_price || 0).toLocaleString()}
                       </td>
-                      <td className="py-3 px-4 text-right">
-                        <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                          isDemo ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'
+                      <td className="py-3 px-4 text-right whitespace-nowrap align-middle">
+                        <span className={`inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase whitespace-nowrap border shadow-2xs ${
+                          isDemo ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-emerald-100 text-emerald-800 border-emerald-300'
                         }`}>
                           {isDemo ? 'DEMO' : (b.booking_status || 'CONFIRMED')}
                         </span>

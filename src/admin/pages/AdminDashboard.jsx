@@ -241,15 +241,15 @@ const AdminDashboard = () => {
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse text-xs">
+                <table className="min-w-[650px] w-full text-left border-collapse text-xs">
                   <thead>
                     <tr className="border-b border-ticket-beige/40 text-ticket-charcoal/50 uppercase tracking-wider text-[10px]">
-                      <th className="pb-3 font-semibold">Booking Ref</th>
-                      <th className="pb-3 font-semibold">Customer</th>
-                      <th className="pb-3 font-semibold">Event / Seats</th>
-                      <th className="pb-3 font-semibold">Amount</th>
-                      <th className="pb-3 font-semibold">Purchased</th>
-                      <th className="pb-3 font-semibold text-right">Status</th>
+                      <th className="pb-3 font-semibold whitespace-nowrap">Booking Ref</th>
+                      <th className="pb-3 font-semibold whitespace-nowrap min-w-[150px]">Customer</th>
+                      <th className="pb-3 font-semibold whitespace-nowrap min-w-[150px]">Event / Seats</th>
+                      <th className="pb-3 font-semibold whitespace-nowrap text-right">Amount</th>
+                      <th className="pb-3 font-semibold whitespace-nowrap text-center">Purchased</th>
+                      <th className="pb-3 font-semibold text-right whitespace-nowrap">Status</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-ticket-beige/30">
@@ -259,33 +259,33 @@ const AdminDashboard = () => {
                         onClick={() => navigate(`/admin/bookings/${b.booking_number}`)}
                         className="hover:bg-ticket-beige/10 transition-colors cursor-pointer"
                       >
-                        <td className="py-3 font-mono font-bold text-ticket-burgundy">
+                        <td className="py-3 font-mono font-bold text-ticket-burgundy whitespace-nowrap align-middle">
                           {b.booking_number}
                         </td>
-                        <td className="py-3">
+                        <td className="py-3 whitespace-nowrap align-middle">
                           <div className="font-semibold text-ticket-charcoal">
                             {b.customer_name || `${b.profiles?.first_name || ''} ${b.profiles?.last_name || ''}`.trim() || 'Valued Guest'}
                           </div>
-                          <div className="text-[11px] text-ticket-charcoal/50 truncate max-w-[130px]">
+                          <div className="text-[11px] text-ticket-charcoal/50">
                             {b.customer_email || b.profiles?.email || '—'}
                           </div>
                         </td>
-                        <td className="py-3">
-                          <div className="font-medium text-ticket-charcoal truncate max-w-[150px]">
+                        <td className="py-3 whitespace-nowrap align-middle">
+                          <div className="font-medium text-ticket-charcoal">
                             {b.events?.event_name || 'Ticket Mahal Event'}
                           </div>
                           <div className="text-[11px] text-ticket-burgundy/80 font-medium">
                             {b.seats ? `Seat(s): ${b.seats}` : `${b.quantity || 1} Admission(s)`}
                           </div>
                         </td>
-                        <td className="py-3 font-bold text-ticket-charcoal">
-                          AED {b.total_amount || b.total_price || 0}
+                        <td className="py-3 font-bold text-ticket-charcoal font-mono text-right whitespace-nowrap align-middle">
+                          AED {Number(b.total_amount || b.total_price || 0).toLocaleString()}
                         </td>
-                        <td className="py-3 font-mono text-[11px] text-ticket-charcoal/70 whitespace-nowrap">
+                        <td className="py-3 font-mono text-[11px] text-ticket-charcoal/70 text-center whitespace-nowrap align-middle">
                           {formatGstRecent(b.purchased_at || b.confirmed_at || b.created_at)}
                         </td>
-                        <td className="py-3 text-right">
-                          <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase border ${
+                        <td className="py-3 text-right whitespace-nowrap align-middle">
+                          <span className={`inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase whitespace-nowrap border shadow-2xs ${
                             isDemo(b)
                               ? 'bg-amber-50 text-amber-800 border-amber-300'
                               : 'bg-green-50 text-green-700 border-green-200'

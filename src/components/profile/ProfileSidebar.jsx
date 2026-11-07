@@ -2,9 +2,11 @@ import { User, Ticket, Calendar, Heart, LogOut } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { useWishlist } from '../../hooks/useWishlist';
 
 const ProfileSidebar = () => {
   const { signOut } = useAuth();
+  const { wishlistCount } = useWishlist();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -17,7 +19,7 @@ const ProfileSidebar = () => {
     { label: 'My Profile', icon: <User size={18} />, path: '/profile' },
     { label: 'My Tickets', icon: <Ticket size={18} />, path: '/my-tickets' },
     { label: 'My Bookings', icon: <Calendar size={18} />, path: '/bookings' },
-    { label: 'Wishlist', icon: <Heart size={18} />, path: '/wishlist' },
+    { label: 'Wishlist', icon: <Heart size={18} />, path: '/wishlist', count: wishlistCount },
   ];
 
   return (
@@ -28,16 +30,23 @@ const ProfileSidebar = () => {
           <button
             key={item.label}
             onClick={() => navigate(item.path)}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition-all duration-300 ${
+            className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-medium transition-all duration-300 ${
               isActive
                 ? 'bg-ticket-burgundy/10 text-ticket-charcoal border border-ticket-gold/20'
                 : 'text-ticket-charcoal/60 hover:bg-ivory hover:text-ticket-charcoal border border-transparent'
             }`}
           >
-            <span className={isActive ? 'text-ticket-burgundy' : 'text-ticket-charcoal/40'}>
-              {item.icon}
-            </span>
-            {item.label}
+            <div className="flex items-center gap-3">
+              <span className={isActive ? 'text-ticket-burgundy' : 'text-ticket-charcoal/40'}>
+                {item.icon}
+              </span>
+              <span>{item.label}</span>
+            </div>
+            {typeof item.count === 'number' && item.count > 0 && (
+              <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#7A1F2B]/10 text-[#7A1F2B] border border-[#7A1F2B]/20">
+                {item.count}
+              </span>
+            )}
           </button>
         );
       })}

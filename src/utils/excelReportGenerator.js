@@ -19,7 +19,8 @@ export function exportTicketMahalFullReport({
   customers = [],
   events = [],
   activities = [],
-  promoCodes = []
+  promoCodes = [],
+  wishlistAnalytics = []
 }) {
   const wb = XLSX.utils.book_new();
 
@@ -163,6 +164,19 @@ export function exportTicketMahalFullReport({
     { 'Code': 'No promo codes configured' }
   ]);
   XLSX.utils.book_append_sheet(wb, wsPromo, 'Promo Codes');
+
+  // 8. WISHLIST ANALYTICS WORKSHEET (Requirement 14: Aggregate wishlist saves per event)
+  if (wishlistAnalytics && wishlistAnalytics.length > 0) {
+    const wishlistData = wishlistAnalytics.map((w, idx) => ({
+      'Popularity Rank': idx + 1,
+      'Event ID': w.eventId,
+      'Event Name': w.eventName,
+      'Category': w.category,
+      'Total Wishlist Saves': w.totalSaves
+    }));
+    const wsWishlist = XLSX.utils.json_to_sheet(wishlistData);
+    XLSX.utils.book_append_sheet(wb, wsWishlist, 'Wishlist Analytics');
+  }
 
   // Write file to download
   XLSX.writeFile(wb, 'Ticket-Mahal-Full-Report.xlsx');

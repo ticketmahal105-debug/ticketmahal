@@ -1,12 +1,14 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
+import { useWishlist } from '../hooks/useWishlist';
 import { User, Ticket, Calendar, Heart, LogOut, ChevronDown, ShieldAlert } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
 const UserMenu = () => {
   const { user, signOut } = useAuth();
+  const { wishlistCount } = useWishlist();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -131,9 +133,17 @@ const UserMenu = () => {
               </button>
               <button 
                 onClick={() => { setIsOpen(false); navigate('/wishlist'); }}
-                className="w-full text-left px-4 py-2.5 text-sm text-ticket-charcoal/70 hover:text-ticket-charcoal hover:bg-ivory transition-colors flex items-center gap-3"
+                className="w-full text-left px-4 py-2.5 text-sm text-ticket-charcoal/70 hover:text-ticket-charcoal hover:bg-ivory transition-colors flex items-center justify-between"
               >
-                <Heart size={16} className="text-ticket-charcoal/40" /> Wishlist
+                <div className="flex items-center gap-3">
+                  <Heart size={16} className="text-ticket-charcoal/40" />
+                  <span>Wishlist</span>
+                </div>
+                {wishlistCount > 0 && (
+                  <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#7A1F2B]/10 text-[#7A1F2B] border border-[#7A1F2B]/20">
+                    {wishlistCount}
+                  </span>
+                )}
               </button>
             </div>
 

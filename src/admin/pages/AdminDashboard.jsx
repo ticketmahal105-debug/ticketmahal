@@ -4,6 +4,7 @@ import { DollarSign, Receipt, Ticket, Users, Calendar, ArrowRight, ShieldCheck, 
 import { supabase } from '../../lib/supabase';
 import { getAllBookingsAdmin } from '../../services/bookingsService';
 import { getAdminEvents } from '../../services/eventsService';
+import { getWishlistAnalyticsAdmin } from '../../services/wishlistService';
 import { exportTicketMahalFullReport } from '../../utils/excelReportGenerator';
 import { formatGstRecent } from '../../utils/dateUtils';
 import StatCard from '../components/StatCard';
@@ -107,12 +108,19 @@ const AdminDashboard = () => {
         } catch (_) {}
       }
 
+      let wishlistStats = [];
+      try {
+        const { data: wData } = await getWishlistAnalyticsAdmin();
+        if (wData) wishlistStats = wData;
+      } catch (_) {}
+
       exportTicketMahalFullReport({
         bookings: rawBookings,
         tickets: allTickets,
         customers: [],
         events: allEvents || [],
-        activities: activities
+        activities: activities,
+        wishlistAnalytics: wishlistStats
       });
     } catch (err) {
       console.error('Export error:', err);

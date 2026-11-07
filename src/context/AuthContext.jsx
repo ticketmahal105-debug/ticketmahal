@@ -91,12 +91,32 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
+  const signInWithGoogle = async () => {
+    const isLocalhost =
+      typeof window !== 'undefined' &&
+      (window.location.hostname === 'localhost' ||
+       window.location.hostname === '127.0.0.1' ||
+       window.location.hostname.endsWith('.local'));
+
+    const redirectTo = isLocalhost
+      ? `${window.location.origin}/auth/callback`
+      : 'https://ticketmahal.ae/auth/callback';
+
+    return await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo,
+      },
+    });
+  };
+
   const value = {
     user,
     session,
     loading,
     signUp,
     signIn,
+    signInWithGoogle,
     signOut,
     resetPassword,
     updatePassword,
